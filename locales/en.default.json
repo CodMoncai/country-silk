@@ -363,7 +363,7 @@
     "form_email_label": "Email",
     "form_message_label": "Message",
     "form_message_placeholder": "Add a note about your request",
-    "form_helper_text": "We will email your request to {{ email }} and send you a copy.",
+    "form_helper_text": "We will email your request and send you a copy.",
     "admin_email_missing": "Add a quote recipient email in theme settings to enable quote requests.",
     "email_subject": "Quote request from {{ shop_name }}",
     "email_intro": "Quote request from {{ shop_name }}",

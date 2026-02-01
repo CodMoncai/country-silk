@@ -42,7 +42,7 @@
     <h3 class="quote-request__title">{{ 'quotes.form_title' | t }}</h3>
     {% if admin_email != blank %}
       <small class="quote-request__helper">
-        {{ 'quotes.form_helper_text' | t: email: admin_email | escape }}
+        {{ 'quotes.form_helper_text' | t }}
       </small>
     {% else %}
       <small

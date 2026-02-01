@@ -19,5 +19,5 @@ so the admin can control the recipient email in theme settings.
 ## Notes
 
 - `mailto:` relies on the customer's email client. Provide a helper message
-  explaining the email will open in their client.
+  explaining the email will open in their client and avoid displaying the admin email.
 - Disable the request button if the admin email setting is blank.

@@ -58,10 +58,10 @@
   },
   "actions": {
     // Quick add button on product cards, shortened version of add to cart
-    "add": "Add",
-    "add_to_cart": "Add to cart",
+    "add": "Add to quote",
+    "add_to_cart": "Add to quote",
     // Success message shown after adding item to cart
-    "added": "Added",
+    "added": "Added to quote",
     // Button to apply discount code to cart
     "apply": "Apply",
     "back": "Back",
@@ -161,7 +161,7 @@
     "cart_title": "Cart",
     "cart_subtotal": "Subtotal",
     "cart_total": "Cart total",
-    "checkout": "Check out",
+    "checkout": "Request quote",
     "collection_placeholder": "Collection title",
     "discount_code": "Discount code",
     "shipping_discount_error": "Shipping discounts are shown at checkout after adding an address",
@@ -259,8 +259,8 @@
     "view_cart": "View cart",
     "your_cart": "Your cart",
     "items_added_to_cart": {
-      "one": "1 item added to cart",
-      "other": "{{ count }} items added to cart"
+      "one": "1 item added to quote",
+      "other": "{{ count }} items added to quote"
     },
     // Button to go from search preview to full search results page
     "search_results_view_all": "View all",
@@ -340,10 +340,10 @@
   },
   "products": {
     "product": {
-      "add_to_cart": "Add to cart",
-      "adding_to_cart": "Adding...",
-      "added_to_cart": "Added to cart",
-      "add_to_cart_error": "Error adding to cart",
+      "add_to_cart": "Add to quote",
+      "adding_to_cart": "Adding to quote...",
+      "added_to_cart": "Added to quote",
+      "add_to_cart_error": "Error adding to quote",
       "quantity_error_max": "This item has a maximum of {{ maximum }}",
       "sold_out": "Sold out",
       "unavailable": "Unavailable",
@@ -351,9 +351,31 @@
       "quantity_increments": "Increments of {{ increment }}",
       "quantity_minimum": "Minimum of {{ minimum }}",
       "quantity_maximum": "Maximum of {{ maximum }}",
-      "in_cart": "in cart",
+      "in_cart": "in quote",
       "default_title": "Default Title",
-      "sticky_add_to_cart": "Quick add to cart bar"
+      "sticky_add_to_cart": "Quick add to quote bar"
     }
+  },
+  "quotes": {
+    "request_quote": "Request quote",
+    "form_title": "Request a quote",
+    "form_name_label": "Name",
+    "form_email_label": "Email",
+    "form_message_label": "Message",
+    "form_message_placeholder": "Add a note about your request",
+    "form_helper_text": "We will email your request to {{ email }} and send you a copy.",
+    "admin_email_missing": "Add a quote recipient email in theme settings to enable quote requests.",
+    "email_subject": "Quote request from {{ shop_name }}",
+    "email_intro": "Quote request from {{ shop_name }}",
+    "email_name_label": "Name",
+    "email_email_label": "Email",
+    "email_message_label": "Message",
+    "email_items_label": "Items:",
+    "email_total_label": "Total: {{ total }}",
+    "email_note_label": "Note: {{ note }}",
+    "email_required_error": "Enter your email address so we can send you a copy.",
+    "email_invalid_error": "Enter a valid email address.",
+    "email_admin_error": "Quote recipient email is not configured. Please set it in theme settings.",
+    "email_opened": "Your email client is opening with your quote request."
   }
 }

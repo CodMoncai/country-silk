@@ -1,0 +1,208 @@
+{%- doc -%}
+  Renders a quote request form that opens an email client with cart details.
+{%- enddoc -%}
+
+{%- liquid
+  assign admin_email = settings.quote_request_email | strip
+  assign quote_form_suffix = section.id | default: 'cart'
+  assign quote_form_id = 'QuoteRequestForm-' | append: quote_form_suffix
+
+  if settings.currency_code_enabled_cart_total
+    assign quote_total = cart.total_price | money_with_currency
+  else
+    assign quote_total = cart.total_price | money
+  endif
+-%}
+
+{%- capture quote_details -%}
+{{ 'quotes.email_items_label' | t }}
+{% for item in cart.items %}
+- {{ item.quantity }} × {{ item.product.title }}{% if item.variant.title != 'Default Title' %} ({{ item.variant.title }}){% endif %}{% if item.sku != blank %} [{{ item.sku }}]{% endif %}: {{ item.final_line_price | money }}
+{% endfor %}
+{{ 'quotes.email_total_label' | t: total: quote_total }}
+{% if cart.note != blank %}
+{{ 'quotes.email_note_label' | t: note: cart.note | strip_html }}
+{% endif %}
+{%- endcapture -%}
+
+<quote-request-component
+  class="quote-request"
+  data-admin-email="{{ admin_email | escape }}"
+  data-email-subject="{{ 'quotes.email_subject' | t: shop_name: shop.name | escape }}"
+  data-email-intro="{{ 'quotes.email_intro' | t: shop_name: shop.name | escape }}"
+  data-email-name-label="{{ 'quotes.email_name_label' | t | escape }}"
+  data-email-email-label="{{ 'quotes.email_email_label' | t | escape }}"
+  data-email-message-label="{{ 'quotes.email_message_label' | t | escape }}"
+  data-email-required-error="{{ 'quotes.email_required_error' | t | escape }}"
+  data-email-invalid-error="{{ 'quotes.email_invalid_error' | t | escape }}"
+  data-email-admin-error="{{ 'quotes.email_admin_error' | t | escape }}"
+  data-email-opened="{{ 'quotes.email_opened' | t | escape }}"
+>
+  <div class="quote-request__header">
+    <h3 class="quote-request__title">{{ 'quotes.form_title' | t }}</h3>
+    {% if admin_email != blank %}
+      <small class="quote-request__helper">
+        {{ 'quotes.form_helper_text' | t: email: admin_email | escape }}
+      </small>
+    {% else %}
+      <small
+        class="quote-request__helper"
+        role="status"
+      >
+        {{ 'quotes.admin_email_missing' | t }}
+      </small>
+    {% endif %}
+  </div>
+
+  <form
+    class="quote-request__form"
+    ref="form"
+    on:submit="/handleSubmit"
+  >
+    <div class="quote-request__field">
+      <label
+        class="quote-request__label"
+        for="{{ quote_form_id }}-name"
+      >
+        {{ 'quotes.form_name_label' | t }}
+      </label>
+      <input
+        id="{{ quote_form_id }}-name"
+        class="quote-request__input"
+        type="text"
+        name="quote_request[name]"
+        autocomplete="name"
+        ref="nameInput"
+      >
+    </div>
+
+    <div class="quote-request__field">
+      <label
+        class="quote-request__label"
+        for="{{ quote_form_id }}-email"
+      >
+        {{ 'quotes.form_email_label' | t }}
+      </label>
+      <input
+        id="{{ quote_form_id }}-email"
+        class="quote-request__input"
+        type="email"
+        name="quote_request[email]"
+        autocomplete="email"
+        aria-required="true"
+        data-required="true"
+        ref="emailInput"
+      >
+    </div>
+
+    <div class="quote-request__field">
+      <label
+        class="quote-request__label"
+        for="{{ quote_form_id }}-message"
+      >
+        {{ 'quotes.form_message_label' | t }}
+      </label>
+      <textarea
+        id="{{ quote_form_id }}-message"
+        class="quote-request__input quote-request__input--textarea"
+        name="quote_request[message]"
+        rows="4"
+        ref="messageInput"
+        placeholder="{{ 'quotes.form_message_placeholder' | t }}"
+      ></textarea>
+    </div>
+
+    <textarea
+      class="quote-request__details visually-hidden"
+      aria-hidden="true"
+      tabindex="-1"
+      ref="details"
+    >{{ quote_details | strip }}</textarea>
+
+    <div
+      class="quote-request__error"
+      ref="errorMessage"
+      role="alert"
+      hidden
+    ></div>
+    <div
+      class="quote-request__status"
+      ref="statusMessage"
+      role="status"
+      hidden
+    ></div>
+
+    <button
+      type="submit"
+      class="button cart__checkout-button quote-request__submit"
+      ref="submitButton"
+      {% if admin_email == blank or cart.empty? %}
+        disabled
+      {% endif %}
+    >
+      {{ 'quotes.request_quote' | t }}
+    </button>
+  </form>
+</quote-request-component>
+
+{% stylesheet %}
+  .quote-request {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    width: 100%;
+  }
+
+  .quote-request__header {
+    display: grid;
+    gap: var(--gap-3xs);
+    text-align: center;
+  }
+
+  .quote-request__title {
+    margin: 0;
+    font-size: var(--cart-font-size--md);
+  }
+
+  .quote-request__helper {
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .quote-request__form {
+    display: grid;
+    gap: var(--gap-sm);
+  }
+
+  .quote-request__field {
+    display: grid;
+    gap: var(--gap-3xs);
+  }
+
+  .quote-request__label {
+    font-size: var(--cart-font-size--2xs);
+    font-weight: 500;
+  }
+
+  .quote-request__input {
+    width: 100%;
+    color: var(--color-input-text);
+    background-color: var(--color-input-background);
+    padding: var(--padding-sm) var(--padding-md);
+    border-radius: var(--style-border-radius-inputs);
+    border: var(--style-border-width-inputs) solid var(--color-input-border);
+  }
+
+  .quote-request__input--textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .quote-request__error,
+  .quote-request__status {
+    font-size: var(--cart-font-size--2xs);
+  }
+
+  .quote-request__error {
+    color: rgb(var(--color-foreground-rgb) / 0.9);
+  }
+{% endstylesheet %}

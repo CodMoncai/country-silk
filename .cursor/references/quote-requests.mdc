@@ -1,0 +1,23 @@
+# Quote Requests via Email
+
+When a theme needs quote requests (instead of checkout), use a mailto-based flow
+so the admin can control the recipient email in theme settings.
+
+## Pattern
+
+- Add a theme setting for the destination email (`settings.quote_request_email`).
+- Replace checkout CTA with a quote request form.
+- Use a custom element and JavaScript to open a `mailto:` link.
+- Include cart line items, totals, and optional cart note in the email body.
+- Add the customer's email as a `cc` so they receive a copy.
+
+## Required Translations
+
+- Form text and helper copy under `locales/en.default.json` (e.g. `quotes.*`).
+- Theme settings labels and info under `locales/en.default.schema.json`.
+
+## Notes
+
+- `mailto:` relies on the customer's email client. Provide a helper message
+  explaining the email will open in their client.
+- Disable the request button if the admin email setting is blank.

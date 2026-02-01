@@ -1764,6 +1764,16 @@
         "info": "t:info.checkout_buttons",
         "default": true
       },
+      {
+        "type": "header",
+        "content": "t:content.quote_requests"
+      },
+      {
+        "type": "text",
+        "id": "quote_request_email",
+        "label": "t:settings.quote_request_email",
+        "info": "t:info.quote_request_email"
+      },
 
       {
         "type": "url",

@@ -471,13 +471,14 @@
     },
     "divider_4dtKqB": {
       "type": "divider",
+      "custom_css": [],
       "name": "t:names.divider_section",
       "settings": {
         "color_scheme": "scheme-58084d4c-a86e-4d0a-855e-a0966e5043f7",
         "section_width": "full-width",
         "thickness": 2.5,
-        "corner_radius": "square",
-        "width_percent": 100,
+        "corner_radius": "rounded",
+        "width_percent": 70,
         "alignment_horizontal": "center",
         "padding-block-start": 16,
         "padding-block-end": 16

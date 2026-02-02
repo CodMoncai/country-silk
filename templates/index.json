@@ -293,8 +293,8 @@
               "type": "_image",
               "static": true,
               "settings": {
-                "height": "large",
-                "ratio": "square",
+                "height": "small",
+                "ratio": "landscape",
                 "border_radius": 0
               },
               "blocks": {}

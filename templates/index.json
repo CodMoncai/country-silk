@@ -497,7 +497,7 @@
               "static": true,
               "settings": {
                 "height": "small",
-                "ratio": "square",
+                "ratio": "landscape",
                 "border_radius": 0
               },
               "blocks": {}

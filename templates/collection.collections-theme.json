@@ -219,6 +219,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "image": "shopify://shop_images/7521ABC8-FFFE-481F-B66E-B6EB1E3B1EED.png",
                 "link": "",
                 "image_ratio": "landscape",
                 "width": "fill",

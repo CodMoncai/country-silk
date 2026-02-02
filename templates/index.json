@@ -508,7 +508,14 @@
       },
       "name": "t:names.collection_links_spotlight",
       "settings": {
-        "collection_list": [],
+        "collection_list": [
+          "90mm-balls",
+          "ball-garland",
+          "balls-in-tube",
+          "beaded-garland",
+          "bells",
+          "bows"
+        ],
         "layout": "spotlight",
         "section_width": "page-width",
         "alignment": "left",

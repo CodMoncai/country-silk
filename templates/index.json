@@ -237,8 +237,8 @@
               "settings": {
                 "source": "uploaded",
                 "video_url": "",
-                "video_autoplay": false,
-                "video_loop": true,
+                "video_autoplay": true,
+                "video_loop": false,
                 "alt": "",
                 "custom_width": 100,
                 "custom_width_mobile": 100,

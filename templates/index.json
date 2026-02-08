@@ -7,7 +7,7 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
- {
+{
   "sections": {
     "hero_jVaWmY": {
       "type": "hero",
@@ -60,8 +60,24 @@
       ],
       "name": "t:names.hero",
       "settings": {
-        "media_type_1": "image",
+        "media_type_1": "video",
+        "video_source_1": "url",
+        "video_url_1": "https://vimeo.com/982250397",
+        "video_alt_1": "",
         "media_type_2": "image",
+        "video_source_2": "uploaded",
+        "video_url_2": "",
+        "video_alt_2": "",
+        "stack_media_on_mobile": false,
+        "custom_mobile_media": false,
+        "media_type_1_mobile": "image",
+        "video_source_1_mobile": "uploaded",
+        "video_url_1_mobile": "",
+        "video_alt_1_mobile": "",
+        "media_type_2_mobile": "image",
+        "video_source_2_mobile": "uploaded",
+        "video_url_2_mobile": "",
+        "video_alt_2_mobile": "",
         "link": "",
         "open_in_new_tab": false,
         "content_direction": "column",

@@ -1085,7 +1085,8 @@
     "pills_usage": "適用された絞り込み、ディスカウントコード、検索候補に使用されます",
     "hide_logo_on_home_page_help": "ロゴは、固定ヘッダーが有効な場合は表示されたままになります",
     "media_type_info": "機能はメニューリンクから入力されます",
-    "logo_height": "ヘッダーのロゴにのみ影響します"
+    "logo_height": "ヘッダーのロゴにのみ影響します",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "product_list": "特集コレクション",

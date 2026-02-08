@@ -1,6 +1,7 @@
 {% liquid
   assign items_in_cart = cart | line_items_for: product
   assign quick_order_form_id = 'QuickOrder-ProductForm-' | append: product.id | append: '-' | append: section.id
+  assign display_pricing = product.metafields.custom.display_pricing.value | default: true, allow_false: true
 %}
 
 <script
@@ -67,12 +68,18 @@
               <div
                 class="quick-order-list__grid-cell quick-order-list__grid-cell--price hidden--mobile"
                 role="columnheader"
+                {% unless display_pricing %}
+                  hidden
+                {% endunless %}
               >
                 {{ 'content.price' | t }}
               </div>
               <div
                 class="quick-order-list__grid-cell quick-order-list__grid-cell--total"
                 role="columnheader"
+                {% unless display_pricing %}
+                  hidden
+                {% endunless %}
               >
                 {{ 'content.variant_total' | t }}
               </div>
@@ -181,26 +188,28 @@
                             {% endif %}
                           </div>
                           <div class="variant-item__mobile-price-container">
-                            {%- if has_discount -%}
-                              <dl class="variant-item__discounted-prices variant-item__discounted-prices--mobile">
-                                <dt class="visually-hidden">{{ 'content.price_regular' | t }}</dt>
-                                <dd>
-                                  <s class="compare-at-price">
-                                    {{ compare_at_price_formatted }}
-                                  </s>
-                                </dd>
-                                <dt class="visually-hidden">{{ 'content.price_sale' | t }}</dt>
-                                <dd>
-                                  <span class="variant-item__mobile-price">
-                                    {{ display_price_per_item_formatted }}
-                                  </span>
-                                </dd>
-                              </dl>
-                            {%- else -%}
-                              <span class="variant-item__mobile-price">
-                                {{ display_price_per_item_formatted }}
-                              </span>
-                            {%- endif -%}
+                            {% if display_pricing %}
+                              {%- if has_discount -%}
+                                <dl class="variant-item__discounted-prices variant-item__discounted-prices--mobile">
+                                  <dt class="visually-hidden">{{ 'content.price_regular' | t }}</dt>
+                                  <dd>
+                                    <s class="compare-at-price">
+                                      {{ compare_at_price_formatted }}
+                                    </s>
+                                  </dd>
+                                  <dt class="visually-hidden">{{ 'content.price_sale' | t }}</dt>
+                                  <dd>
+                                    <span class="variant-item__mobile-price">
+                                      {{ display_price_per_item_formatted }}
+                                    </span>
+                                  </dd>
+                                </dl>
+                              {%- else -%}
+                                <span class="variant-item__mobile-price">
+                                  {{ display_price_per_item_formatted }}
+                                </span>
+                              {%- endif -%}
+                            {% endif %}
                           </div>
                           <div class="variant-item__mobile-quantity">
                             {% if variant.available %}
@@ -288,32 +297,40 @@
                   <div
                     class="quick-order-list__grid-cell quick-order-list__grid-cell--price hidden--mobile"
                     role="cell"
+                    {% unless display_pricing %}
+                      hidden
+                    {% endunless %}
                   >
-                    {%- if has_discount -%}
-                      <dl class="variant-item__discounted-prices">
-                        <dt class="visually-hidden">{{ 'content.price_regular' | t }}</dt>
-                        <dd>
-                          <s class="compare-at-price">
-                            {{ compare_at_price_formatted }}
-                          </s>
-                        </dd>
-                        <dt class="visually-hidden">{{ 'content.price_sale' | t }}</dt>
-                        <dd>
-                          <span class="price">
-                            {{ display_price_formatted }}
-                          </span>
-                        </dd>
-                      </dl>
-                    {%- else -%}
-                      <span class="price">
-                        {{ display_price_per_item_formatted }}
-                      </span>
-                    {%- endif -%}
+                    {% if display_pricing %}
+                      {%- if has_discount -%}
+                        <dl class="variant-item__discounted-prices">
+                          <dt class="visually-hidden">{{ 'content.price_regular' | t }}</dt>
+                          <dd>
+                            <s class="compare-at-price">
+                              {{ compare_at_price_formatted }}
+                            </s>
+                          </dd>
+                          <dt class="visually-hidden">{{ 'content.price_sale' | t }}</dt>
+                          <dd>
+                            <span class="price">
+                              {{ display_price_formatted }}
+                            </span>
+                          </dd>
+                        </dl>
+                      {%- else -%}
+                        <span class="price">
+                          {{ display_price_per_item_formatted }}
+                        </span>
+                      {%- endif -%}
+                    {% endif %}
                   </div>
 
                   <div
                     class="quick-order-list__grid-cell quick-order-list__grid-cell--total variant-item__totals"
                     role="cell"
+                    {% unless display_pricing %}
+                      hidden
+                    {% endunless %}
                   >
                     {% liquid
                       if variant_line_item
@@ -328,7 +345,9 @@
                       data-variant-id="{{ variant.id }}"
                       value="{{ formatted_total_price | strip_html }}"
                     >
-                      {{- formatted_total_price -}}
+                      {% if display_pricing %}
+                        {{- formatted_total_price -}}
+                      {% endif %}
                     </text-component>
                   </div>
                 </div>
@@ -414,9 +433,18 @@
                 value="{{ total_price | strip_html }}"
                 ref="totalPrice"
               >
-                {{- total_price -}}
+                {% if display_pricing %}
+                  {{- total_price -}}
+                {% endif %}
               </text-component>
-              <p class="quick-order-list-total__subtotal h5">{{ 'content.product_subtotal' | t }}</p>
+              <p
+                class="quick-order-list-total__subtotal h5"
+                {% unless display_pricing %}
+                  hidden
+                {% endunless %}
+              >
+                {{ 'content.product_subtotal' | t }}
+              </p>
             </div>
             <div class="quick-order-list-total__tax-note">
               {% render 'tax-info', has_discounts_enabled: false %}

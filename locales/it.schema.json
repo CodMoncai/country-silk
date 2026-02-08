@@ -1085,7 +1085,8 @@
     "hover_effects": "Si applica alle schede di prodotto e di collezione",
     "hide_logo_on_home_page_help": "Il logo rimarrà visibile quando l'header permanente è attivo",
     "media_type_info": "Le funzionalità vengono popolate dai link del menu",
-    "logo_height": "Influisce solo sul logo dell'header"
+    "logo_height": "Influisce solo sul logo dell'header",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "product_list": "Collezione in evidenza",

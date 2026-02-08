@@ -1085,7 +1085,8 @@
     "hover_effects": "Aplica-se a cartões de produto e de coleção",
     "hide_logo_on_home_page_help": "O logo permanecerá visível quando o cabeçalho fixo estiver ativo",
     "media_type_info": "Os recursos são preenchidos a partir dos links do seu menu",
-    "logo_height": "Afeta apenas o logo do cabeçalho"
+    "logo_height": "Afeta apenas o logo do cabeçalho",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "Básico",

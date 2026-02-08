@@ -1085,7 +1085,8 @@
     "pills_usage": "Używane w przypadku zastosowanych filtrów, kodów rabatowych i sugestii wyszukiwania",
     "hide_logo_on_home_page_help": "Logo pozostanie widoczne, gdy aktywny jest lepki nagłówek",
     "media_type_info": "Funkcje są wypełniane na podstawie linków w menu",
-    "logo_height": "Dotyczy tylko logo w nagłówku"
+    "logo_height": "Dotyczy tylko logo w nagłówku",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "product_list": "Polecana kolekcja",

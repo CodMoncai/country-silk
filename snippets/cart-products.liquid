@@ -11,6 +11,15 @@
 
 {% liquid
   assign block_settings = block.settings
+  assign show_cart_pricing = true
+
+  for item in cart.items
+    assign item_display_pricing = item.product.metafields.custom.display_pricing.value | default: true, allow_false: true
+    if item_display_pricing == false
+      assign show_cart_pricing = false
+      break
+    endif
+  endfor
 %}
 
 <script
@@ -78,7 +87,9 @@
             role="caption"
           >
             {{ 'content.cart_total' | t }}
-            <span>{{ cart.total_price | money_with_currency }}</span>
+            {% if show_cart_pricing %}
+              <span>{{ cart.total_price | money_with_currency }}</span>
+            {% endif %}
           </caption>
 
           <thead
@@ -122,6 +133,7 @@
 
           <tbody role="rowgroup">
             {% for item in cart.items %}
+              {% assign item_display_pricing = item.product.metafields.custom.display_pricing.value | default: true, allow_false: true %}
               <tr
                 role="row"
                 class="cart-items__table-row{% if item.parent_relationship.parent != null %} cart-items__nested-line{% endif %}"
@@ -245,33 +257,35 @@
                     </ul>
                   {% endif %}
 
-                  <div>
-                    {% if item.original_price != item.final_price %}
-                      <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-                      <span>{{ item.final_price | money }}</span>
-                      <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
-                      <s class="compare-at-price">
-                        {% if item.variant.compare_at_price > item.original_price %}
-                          {{ item.variant.compare_at_price | money }}
-                        {% else %}
-                          {{ item.original_price | money }}
-                        {% endif %}
-                      </s>
-                    {% else %}
-                      {% if item.variant.compare_at_price > item.original_price %}
+                  {% if item_display_pricing %}
+                    <div>
+                      {% if item.original_price != item.final_price %}
                         <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-                      {% else %}
-                        <span class="visually-hidden">{{ 'content.price' | t }}</span>
-                      {% endif %}
-
-                      <span>{{ item.original_price | money }}</span>
-
-                      {% if item.variant.compare_at_price > item.original_price %}
+                        <span>{{ item.final_price | money }}</span>
                         <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
-                        <s class="compare-at-price">{{ item.variant.compare_at_price | money }}</s>
+                        <s class="compare-at-price">
+                          {% if item.variant.compare_at_price > item.original_price %}
+                            {{ item.variant.compare_at_price | money }}
+                          {% else %}
+                            {{ item.original_price | money }}
+                          {% endif %}
+                        </s>
+                      {% else %}
+                        {% if item.variant.compare_at_price > item.original_price %}
+                          <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
+                        {% else %}
+                          <span class="visually-hidden">{{ 'content.price' | t }}</span>
+                        {% endif %}
+
+                        <span>{{ item.original_price | money }}</span>
+
+                        {% if item.variant.compare_at_price > item.original_price %}
+                          <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
+                          <s class="compare-at-price">{{ item.variant.compare_at_price | money }}</s>
+                        {% endif %}
                       {% endif %}
-                    {% endif %}
-                  </div>
+                    </div>
+                  {% endif %}
                 </td>
                 <td
                   class="cart-items__quantity"
@@ -337,21 +351,23 @@
                   role="cell"
                   headers="productTotal"
                 >
-                  {%- liquid
-                    if settings.currency_code_enabled_cart_items
-                      assign price = item.final_line_price | money_with_currency
-                      assign unit_price = item.unit_price | money_with_currency
-                    else
-                      assign price = item.final_line_price | money
-                      assign unit_price = item.unit_price | money
-                    endif
-                  -%}
-                  <text-component value="{{ price | strip_html }}">{{ price }}</text-component>
-                  {%- if item.unit_price_measurement -%}
-                    <div class="cart-items__price-unit cart-secondary-typography">
-                      {% render 'unit-price', price: unit_price, measurement: item.unit_price_measurement %}
-                    </div>
-                  {%- endif -%}
+                  {% if item_display_pricing %}
+                    {%- liquid
+                      if settings.currency_code_enabled_cart_items
+                        assign price = item.final_line_price | money_with_currency
+                        assign unit_price = item.unit_price | money_with_currency
+                      else
+                        assign price = item.final_line_price | money
+                        assign unit_price = item.unit_price | money
+                      endif
+                    -%}
+                    <text-component value="{{ price | strip_html }}">{{ price }}</text-component>
+                    {%- if item.unit_price_measurement -%}
+                      <div class="cart-items__price-unit cart-secondary-typography">
+                        {% render 'unit-price', price: unit_price, measurement: item.unit_price_measurement %}
+                      </div>
+                    {%- endif -%}
+                  {% endif %}
                 </td>
               </tr>
             {% endfor %}

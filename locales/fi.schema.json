@@ -1085,7 +1085,8 @@
     "hover_effects": "Koskee tuote- ja kokoelmakortteja",
     "hide_logo_on_home_page_help": "Logo pysyy näkyvissä, kun kiinteä ylätunniste on aktiivinen",
     "media_type_info": "Ominaisuudet täytetään valikkolinkkiesi perusteella",
-    "logo_height": "Vaikuttaa vain ylätunnisteen logoon"
+    "logo_height": "Vaikuttaa vain ylätunnisteen logoon",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "Perusosat",

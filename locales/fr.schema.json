@@ -1085,7 +1085,8 @@
     "hover_effects": "S’applique aux cartes de produit et de collection",
     "hide_logo_on_home_page_help": "Le logo restera visible lorsque l’en-tête fixe est actif",
     "media_type_info": "Les fonctionnalités sont remplies à partir des liens de votre menu",
-    "logo_height": "Affecte uniquement le logo de l’en-tête"
+    "logo_height": "Affecte uniquement le logo de l’en-tête",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "De base",

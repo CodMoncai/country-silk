@@ -1085,7 +1085,8 @@
     "hover_effects": "Gäller produkt- och produktseriekort",
     "hide_logo_on_home_page_help": "Logotypen förblir synlig när klistrigt sidhuvud är aktivt",
     "media_type_info": "Funktioner fylls i från dina menylänkar",
-    "logo_height": "Påverkar endast logotypen i sidhuvudet"
+    "logo_height": "Påverkar endast logotypen i sidhuvudet",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "Grundläggande",

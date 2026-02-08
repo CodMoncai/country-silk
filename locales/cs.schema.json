@@ -1085,7 +1085,8 @@
     "pills_usage": "Používá se pro aktivní filtry, slevové kódy a návrhy vyhledávání",
     "hide_logo_on_home_page_help": "Logo zůstane viditelné, když je aktivní přilepené záhlaví",
     "media_type_info": "Funkce se plní z odkazů v nabídce",
-    "logo_height": "Ovlivňuje pouze logo v záhlaví"
+    "logo_height": "Ovlivňuje pouze logo v záhlaví",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "product_list": "Propagovaná kolekce",

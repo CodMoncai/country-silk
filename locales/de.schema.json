@@ -1085,7 +1085,8 @@
     "pills_usage": "Wird für angewendete Filter, Rabattcodes und Suchvorschläge verwendet",
     "hide_logo_on_home_page_help": "Das Logo bleibt sichtbar, wenn der fixierte Header aktiv ist",
     "media_type_info": "Funktionen werden aus deinen Menü-Links übernommen",
-    "logo_height": "Betrifft nur das Header-Logo"
+    "logo_height": "Betrifft nur das Header-Logo",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "product_list": "Vorgestellte Kollektion",

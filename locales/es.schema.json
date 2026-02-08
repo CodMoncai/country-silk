@@ -1085,7 +1085,8 @@
     "pills_usage": "Se usa para filtros aplicados, códigos de descuento y sugerencias de búsqueda",
     "hide_logo_on_home_page_help": "El logo seguirá visible cuando el encabezado fijo esté activo",
     "media_type_info": "Las funciones se completan a partir de los enlaces del menú",
-    "logo_height": "Solo afecta al logo del encabezado"
+    "logo_height": "Solo afecta al logo del encabezado",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "Básico",

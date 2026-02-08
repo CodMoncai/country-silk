@@ -1085,7 +1085,8 @@
     "pills_usage": "Uygulanan filtreler, indirim kodları ve arama önerileri için kullanılır",
     "hide_logo_on_home_page_help": "Yapışkan üstbilgi etkinken logo görünür kalır",
     "media_type_info": "Özellikler, menü bağlantılarınızdan doldurulur",
-    "logo_height": "Yalnızca üstbilgi logosunu etkiler"
+    "logo_height": "Yalnızca üstbilgi logosunu etkiler",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "product_list": "Öne çıkan koleksiyon",

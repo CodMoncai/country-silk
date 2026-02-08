@@ -1085,7 +1085,8 @@
     "hover_effects": "ใช้กับการ์ดสินค้าและคอลเลกชัน",
     "hide_logo_on_home_page_help": "โลโก้จะยังคงแสดงอยู่เมื่อส่วนหัวแบบติดหนึบทำงาน",
     "media_type_info": "ฟีเจอร์จะถูกเติมข้อมูลจากลิงก์เมนูของคุณ",
-    "logo_height": "มีผลกับโลโก้ส่วนหัวเท่านั้น"
+    "logo_height": "มีผลกับโลโก้ส่วนหัวเท่านั้น",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "พื้นฐาน",

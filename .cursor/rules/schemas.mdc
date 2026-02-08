@@ -10,6 +10,10 @@ Every section and block must include a `{% schema %}` tag with valid JSON struct
 
 We write our schemas in the schemas folder and then run `npm run build:schemas` to push them to the `.liquid` files. This allows us to take advantage of Typescript for validation and reuse parts of schemas to avoid re-writing them many times.
 
+## Temporary Exception
+
+If this repo does not include a `schemas/` folder or build tooling, record that gap in this document and update the `{% schema %}` block directly in the `.liquid` file as a temporary measure. Prefer to add schema sources + build tooling later to return to the standard workflow.
+
 ## Schema Structure
 
 ```json

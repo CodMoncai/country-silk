@@ -1085,7 +1085,8 @@
     "hover_effects": "適用於產品卡片與商品系列卡片",
     "hide_logo_on_home_page_help": "啟用固定頁首時，標誌仍會顯示",
     "media_type_info": "功能會依您的選單連結自動填入",
-    "logo_height": "僅影響頁首標誌"
+    "logo_height": "僅影響頁首標誌",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "基本",

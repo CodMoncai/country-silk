@@ -11,6 +11,7 @@
   assign show_unit_price = show_unit_price | default: false
   assign show_sale_price_first = show_sale_price_first | default: false
   assign selected_variant = product_resource.selected_or_first_available_variant
+  assign display_pricing = product_resource.metafields.custom.display_pricing.value | default: true, allow_false: true
   assign price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
 
@@ -72,55 +73,57 @@
   endif
 -%}
 
-<div ref="priceContainer">
-  {% if has_volume_pricing %}
-    {% comment %} Volume pricing display {% endcomment %}
-    {% if show_compare_price %}
+<div ref="priceContainer"{% unless display_pricing %} hidden{% endunless %}>
+  {% if display_pricing %}
+    {% if has_volume_pricing %}
+      {% comment %} Volume pricing display {% endcomment %}
+      {% if show_compare_price %}
+        <span role="group">
+          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+          <span class="compare-at-price">{{- compare_at_price -}}</span>
+        </span>
+      {% endif %}
       <span role="group">
-        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-        <span class="compare-at-price">{{- compare_at_price -}}</span>
-      </span>
-    {% endif %}
-    <span role="group">
-      <span class="visually-hidden">{{ 'content.price_range' | t }}&nbsp;</span>
-      <span class="price">{{ price_min }} - {{ price_max }}</span>
-    </span>
-  {% else %}
-    {% comment %} Standard pricing display {% endcomment %}
-    {% if show_sale_price_first == false and show_compare_price %}
-      <span role="group">
-        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-        <span class="compare-at-price">{{- compare_at_price -}}</span>
-      </span>
-    {% endif %}
-
-    {% if show_compare_price %}
-      <span role="group">
-        <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
-        <span class="price">{{ price | default: '&nbsp;' }}</span>
+        <span class="visually-hidden">{{ 'content.price_range' | t }}&nbsp;</span>
+        <span class="price">{{ price_min }} - {{ price_max }}</span>
       </span>
     {% else %}
-      <span class="price">{{ price | default: '&nbsp;' }}</span>
-    {% endif %}
+      {% comment %} Standard pricing display {% endcomment %}
+      {% if show_sale_price_first == false and show_compare_price %}
+        <span role="group">
+          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+          <span class="compare-at-price">{{- compare_at_price -}}</span>
+        </span>
+      {% endif %}
 
-    {% if show_sale_price_first == true and show_compare_price %}
-      <span role="group">
-        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-        <span class="compare-at-price">{{- compare_at_price -}}</span>
-      </span>
+      {% if show_compare_price %}
+        <span role="group">
+          <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
+          <span class="price">{{ price | default: '&nbsp;' }}</span>
+        </span>
+      {% else %}
+        <span class="price">{{ price | default: '&nbsp;' }}</span>
+      {% endif %}
+
+      {% if show_sale_price_first == true and show_compare_price %}
+        <span role="group">
+          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+          <span class="compare-at-price">{{- compare_at_price -}}</span>
+        </span>
+      {% endif %}
     {% endif %}
+    {%- if selected_variant.unit_price and show_unit_price %}
+      {%- liquid
+        if use_currency
+          assign unit_price = selected_variant.unit_price | money_with_currency
+        else
+          assign unit_price = selected_variant.unit_price | money
+        endif
+      -%}
+      {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
+    {%- endif -%}
   {% endif %}
-  {%- if selected_variant.unit_price and show_unit_price %}
-    {%- liquid
-      if use_currency
-        assign unit_price = selected_variant.unit_price | money_with_currency
-      else
-        assign unit_price = selected_variant.unit_price | money
-      endif
-    -%}
-    {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
-  {%- endif -%}
 </div>
-{%- if has_volume_pricing -%}
+{%- if has_volume_pricing and display_pricing -%}
   <small class="volume-pricing-note">{{ 'content.volume_pricing_available' | t }}</small>
 {%- endif -%}

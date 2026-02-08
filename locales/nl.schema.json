@@ -1085,7 +1085,8 @@
     "hover_effects": "Van toepassing op product- en collectiekaarten",
     "hide_logo_on_home_page_help": "Logo blijft zichtbaar wanneer de vaste koptekst actief is",
     "media_type_info": "Functies worden gevuld vanuit je menulinks",
-    "logo_height": "Heeft alleen invloed op het logo in de koptekst"
+    "logo_height": "Heeft alleen invloed op het logo in de koptekst",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "product_list": "Uitgelichte collectie",

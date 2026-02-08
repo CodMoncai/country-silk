@@ -16,6 +16,10 @@ Schemas are generated from source files in the `schemas/` folder. To make schema
 2. Edit the JavaScript source file
 3. Run `npm run build:schemas` to regenerate the `.liquid` files
 
+### Exception: Missing schema sources
+
+If the `schemas/` folder or build pipeline is not present in the repo, document the gap in `schemas.mdc` and **then** edit the `{% schema %}` block directly as a temporary measure. Prefer to add the schema source and build tooling when feasible.
+
 See [@schemas](mdc:.cursor/rules/schemas.mdc) for more details.
 
 ---

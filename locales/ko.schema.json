@@ -1085,7 +1085,8 @@
     "pills_usage": "적용된 필터, 할인 코드, 검색 제안에 사용됩니다",
     "hide_logo_on_home_page_help": "고정 머리글이 활성화되면 로고가 계속 표시됩니다",
     "media_type_info": "기능은 메뉴 링크에서 채워집니다",
-    "logo_height": "머리글 로고에만 영향을 줍니다"
+    "logo_height": "머리글 로고에만 영향을 줍니다",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "기본",

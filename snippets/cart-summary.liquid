@@ -5,10 +5,22 @@
   @param {string} [section_id] - The section ID for cart discount component.
 {%- enddoc -%}
 
+{%- liquid
+  assign show_cart_pricing = true
+
+  for item in cart.items
+    assign item_display_pricing = item.product.metafields.custom.display_pricing.value | default: true, allow_false: true
+    if item_display_pricing == false
+      assign show_cart_pricing = false
+      break
+    endif
+  endfor
+-%}
+
 <div class="cart__summary-totals">
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart__original-total-container cart-primary-typography">
-    {%- if cart.cart_level_discount_applications.size > 0 -%}
+    {%- if cart.cart_level_discount_applications.size > 0 and show_cart_pricing -%}
       <span class="cart__summary-item cart__original-total">
         <span class="cart__original-total-label">{{ 'content.cart_subtotal' | t }}</span>
         <span class="cart__original-total-value cart-secondary-typography">
@@ -27,8 +39,10 @@
                 {{- 'icon-discount.svg' | inline_asset_content -}}
                 {{ discount.title | escape }}
               </span>
-              <span class="cart__discount-value cart-secondary-typography"
-                >-{{ discount.total_allocated_amount | money -}}
+              <span class="cart__discount-value cart-secondary-typography">
+                {% if show_cart_pricing %}
+                  -{{ discount.total_allocated_amount | money -}}
+                {% endif %}
               </span>
             </li>
           {%- endfor -%}
@@ -234,8 +248,13 @@
         class="cart__total-value cart-secondary-typography"
         {% comment %} Used by payment_terms web component {% endcomment %}
         data-cart-subtotal
+        {% unless show_cart_pricing %}
+          hidden
+        {% endunless %}
       >
-        {{ total_price }}
+        {% if show_cart_pricing %}
+          {{ total_price }}
+        {% endif %}
       </text-component>
     </span>
     {% if settings.show_installments %}

@@ -231,7 +231,8 @@
     "video_autoplay": "Videos will be muted by default",
     "video_external": "Use a YouTube or Vimeo URL",
     "pills_usage": "Used for applied filters, discount codes, and search suggestions",
-    "media_type_info": "Features are populated from your menu links"
+    "media_type_info": "Features are populated from your menu links",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "names": {
     "column": "Column",

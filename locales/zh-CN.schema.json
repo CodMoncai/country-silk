@@ -1085,7 +1085,8 @@
     "applies_on_image_only": "仅适用于图片",
     "hide_logo_on_home_page_help": "当粘性标头处于活动状态时，logo 将保持可见",
     "media_type_info": "功能从您的菜单链接填充",
-    "logo_height": "仅影响标头 logo"
+    "logo_height": "仅影响标头 logo",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "基本",

@@ -1085,7 +1085,8 @@
     "hover_effects": "Gjelder for produkt- og samlingskort",
     "hide_logo_on_home_page_help": "Logoen forblir synlig når klebrig topptekst er aktiv",
     "media_type_info": "Funksjoner fylles ut fra menylenker",
-    "logo_height": "Påvirker bare logoen i toppteksten"
+    "logo_height": "Påvirker bare logoen i toppteksten",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "product_list": "Utvalgt samling",

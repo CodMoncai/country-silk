@@ -1085,7 +1085,8 @@
     "hover_effects": "Gælder for produkt- og kollektionskort",
     "hide_logo_on_home_page_help": "Logoet vil forblive synligt, når fastgjort sidehoved er aktivt",
     "media_type_info": "Funktioner udfyldes fra dine menulinks",
-    "logo_height": "Påvirker kun logoet i sidehovedet"
+    "logo_height": "Påvirker kun logoet i sidehovedet",
+    "add_video_files": "Add videos in [Content > Files](/admin/content/files)."
   },
   "categories": {
     "basic": "Grundlæggende",

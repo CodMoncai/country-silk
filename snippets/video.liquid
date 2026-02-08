@@ -5,6 +5,7 @@
 
   @param {boolean} [video_autoplay] - Whether the video should autoplay
   @param {boolean} [video_loop] - Whether the video should loop
+  @param {boolean} [video_muted] - Whether the video should be muted (URL videos)
   @param {string} [video_class] - Additional classes for the video element
   @param {string} [video_style] - Additional inline styles
   @param {object} [video_preview_image] - Preview image to show before video plays
@@ -34,6 +35,7 @@
   assign video_preview_image = video_preview_image | default: video.preview_image
   assign video_autoplay = video_autoplay | default: block_settings.video_autoplay
   assign video_loop = video_loop | default: block_settings.video_loop
+  assign video_muted = video_muted | default: false
   assign media_width_desktop = 100 | divided_by: 2 | append: 'vw'
   assign media_width_mobile = '100vw'
   assign sizes = '(min-width: 750px) ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
@@ -56,6 +58,9 @@
       if video_loop
         assign video_src = video_src | append: '&playlist=' | append: video | append: '&loop=1'
       endif
+      if video_muted
+        assign video_src = video_src | append: '&mute=1'
+      endif
       if disable_controls
         assign video_src = video_src | append: '&controls=0'
         assign video_src = video_src | append: '&enablejsapi=1'
@@ -73,6 +78,9 @@
       endif
       if video_loop
         assign video_src = video_src | append: '&loop=1'
+      endif
+      if video_muted
+        assign video_src = video_src | append: '&muted=1'
       endif
       if disable_controls
         assign video_src = video_src | append: '&controls=0'

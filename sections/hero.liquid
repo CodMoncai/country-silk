@@ -17,17 +17,27 @@
     assign media_1 = 'image'
     assign media_count = media_count | plus: 1
   endif
-  if section.settings.video_1 != blank and section.settings.media_type_1 == 'video'
-    assign media_1 = 'video'
-    assign media_count = media_count | plus: 1
+  if section.settings.media_type_1 == 'video'
+    if section.settings.video_source_1 == 'uploaded' and section.settings.video_1 != blank
+      assign media_1 = 'video'
+      assign media_count = media_count | plus: 1
+    elsif section.settings.video_source_1 == 'url' and section.settings.video_url_1 != blank
+      assign media_1 = 'video'
+      assign media_count = media_count | plus: 1
+    endif
   endif
   if section.settings.image_2 != blank and section.settings.media_type_2 == 'image'
     assign media_2 = 'image'
     assign media_count = media_count | plus: 1
   endif
-  if section.settings.video_2 != blank and section.settings.media_type_2 == 'video'
-    assign media_2 = 'video'
-    assign media_count = media_count | plus: 1
+  if section.settings.media_type_2 == 'video'
+    if section.settings.video_source_2 == 'uploaded' and section.settings.video_2 != blank
+      assign media_2 = 'video'
+      assign media_count = media_count | plus: 1
+    elsif section.settings.video_source_2 == 'url' and section.settings.video_url_2 != blank
+      assign media_2 = 'video'
+      assign media_count = media_count | plus: 1
+    endif
   endif
 
   if section.settings.custom_mobile_media
@@ -37,17 +47,27 @@
       assign media_1_mobile = 'image'
       assign media_count_mobile = media_count_mobile | plus: 1
     endif
-    if section.settings.video_1_mobile != blank and section.settings.media_type_1_mobile == 'video'
-      assign media_1_mobile = 'video'
-      assign media_count_mobile = media_count_mobile | plus: 1
+    if section.settings.media_type_1_mobile == 'video'
+      if section.settings.video_source_1_mobile == 'uploaded' and section.settings.video_1_mobile != blank
+        assign media_1_mobile = 'video'
+        assign media_count_mobile = media_count_mobile | plus: 1
+      elsif section.settings.video_source_1_mobile == 'url' and section.settings.video_url_1_mobile != blank
+        assign media_1_mobile = 'video'
+        assign media_count_mobile = media_count_mobile | plus: 1
+      endif
     endif
     if section.settings.image_2_mobile != blank and section.settings.media_type_2_mobile == 'image'
       assign media_2_mobile = 'image'
       assign media_count_mobile = media_count_mobile | plus: 1
     endif
-    if section.settings.video_2_mobile != blank and section.settings.media_type_2_mobile == 'video'
-      assign media_2_mobile = 'video'
-      assign media_count_mobile = media_count_mobile | plus: 1
+    if section.settings.media_type_2_mobile == 'video'
+      if section.settings.video_source_2_mobile == 'uploaded' and section.settings.video_2_mobile != blank
+        assign media_2_mobile = 'video'
+        assign media_count_mobile = media_count_mobile | plus: 1
+      elsif section.settings.video_source_2_mobile == 'url' and section.settings.video_url_2_mobile != blank
+        assign media_2_mobile = 'video'
+        assign media_count_mobile = media_count_mobile | plus: 1
+      endif
     endif
   endif
   if media_count > 0 and media_1 != 'image' and media_2 != 'image'
@@ -164,17 +184,32 @@
 
   {%- if media_1 == 'video' -%}
     <div class="{{ media_wrapper_desktop_class }}">
-      {{
-        section.settings.video_1
-        | video_tag:
-          poster: nil,
-          autoplay: true,
-          loop: true,
-          controls: false,
-          muted: true,
-          class: 'hero__media',
-          data-testid: 'hero-desktop-video-1'
-      }}
+      {%- if section.settings.video_source_1 == 'url' and section.settings.video_url_1 != blank -%}
+        {% render 'video',
+          video_from_url: true,
+          video: section.settings.video_url_1.id,
+          video_type: section.settings.video_url_1.type,
+          video_autoplay: true,
+          video_loop: true,
+          disable_controls: true,
+          video_class: 'hero__media',
+          video_alt: section.settings.video_alt_1,
+          additional_attributes: 'data-testid="hero-desktop-video-1"',
+          section_id: section.id
+        %}
+      {%- else -%}
+        {{
+          section.settings.video_1
+          | video_tag:
+            poster: nil,
+            autoplay: true,
+            loop: true,
+            controls: false,
+            muted: true,
+            class: 'hero__media',
+            data-testid: 'hero-desktop-video-1'
+        }}
+      {%- endif -%}
     </div>
   {%- endif -%}
 
@@ -200,17 +235,32 @@
 
     {%- if media_1_mobile == 'video' -%}
       <div class="{{ media_wrapper_mobile_class }}">
-        {{
-          section.settings.video_1_mobile
-          | video_tag:
-            poster: nil,
-            autoplay: true,
-            loop: true,
-            controls: false,
-            muted: true,
-            class: 'hero__media',
-            data-testid: 'hero-mobile-video-1'
-        }}
+        {%- if section.settings.video_source_1_mobile == 'url' and section.settings.video_url_1_mobile != blank -%}
+          {% render 'video',
+            video_from_url: true,
+            video: section.settings.video_url_1_mobile.id,
+            video_type: section.settings.video_url_1_mobile.type,
+            video_autoplay: true,
+            video_loop: true,
+            disable_controls: true,
+            video_class: 'hero__media',
+            video_alt: section.settings.video_alt_1_mobile,
+            additional_attributes: 'data-testid="hero-mobile-video-1"',
+            section_id: section.id
+          %}
+        {%- else -%}
+          {{
+            section.settings.video_1_mobile
+            | video_tag:
+              poster: nil,
+              autoplay: true,
+              loop: true,
+              controls: false,
+              muted: true,
+              class: 'hero__media',
+              data-testid: 'hero-mobile-video-1'
+          }}
+        {%- endif -%}
       </div>
     {%- endif -%}
   {%- endif -%}
@@ -268,17 +318,32 @@
 
   {%- if media_2 == 'video' -%}
     <div class="{{ media_wrapper_desktop_class }}">
-      {{
-        section.settings.video_2
-        | video_tag:
-          poster: nil,
-          autoplay: true,
-          loop: true,
-          controls: false,
-          muted: true,
-          class: 'hero__media',
-          data-testid: 'hero-desktop-video-2'
-      }}
+      {%- if section.settings.video_source_2 == 'url' and section.settings.video_url_2 != blank -%}
+        {% render 'video',
+          video_from_url: true,
+          video: section.settings.video_url_2.id,
+          video_type: section.settings.video_url_2.type,
+          video_autoplay: true,
+          video_loop: true,
+          disable_controls: true,
+          video_class: 'hero__media',
+          video_alt: section.settings.video_alt_2,
+          additional_attributes: 'data-testid="hero-desktop-video-2"',
+          section_id: section.id
+        %}
+      {%- else -%}
+        {{
+          section.settings.video_2
+          | video_tag:
+            poster: nil,
+            autoplay: true,
+            loop: true,
+            controls: false,
+            muted: true,
+            class: 'hero__media',
+            data-testid: 'hero-desktop-video-2'
+        }}
+      {%- endif -%}
     </div>
   {%- endif -%}
 
@@ -304,17 +369,32 @@
 
     {%- if media_2_mobile == 'video' -%}
       <div class="{{ media_wrapper_mobile_class }}">
-        {{
-          section.settings.video_2_mobile
-          | video_tag:
-            poster: nil,
-            autoplay: true,
-            loop: true,
-            controls: false,
-            muted: true,
-            class: 'hero__media',
-            data-testid: 'hero-mobile-video-2'
-        }}
+        {%- if section.settings.video_source_2_mobile == 'url' and section.settings.video_url_2_mobile != blank -%}
+          {% render 'video',
+            video_from_url: true,
+            video: section.settings.video_url_2_mobile.id,
+            video_type: section.settings.video_url_2_mobile.type,
+            video_autoplay: true,
+            video_loop: true,
+            disable_controls: true,
+            video_class: 'hero__media',
+            video_alt: section.settings.video_alt_2_mobile,
+            additional_attributes: 'data-testid="hero-mobile-video-2"',
+            section_id: section.id
+          %}
+        {%- else -%}
+          {{
+            section.settings.video_2_mobile
+            | video_tag:
+              poster: nil,
+              autoplay: true,
+              loop: true,
+              controls: false,
+              muted: true,
+              class: 'hero__media',
+              data-testid: 'hero-mobile-video-2'
+          }}
+        {%- endif -%}
       </div>
     {%- endif -%}
   {%- endif -%}
@@ -800,6 +880,23 @@
       "default": "image"
     },
     {
+      "type": "select",
+      "id": "video_source_1",
+      "label": "t:settings.video_source",
+      "options": [
+        {
+          "value": "uploaded",
+          "label": "t:options.video_uploaded"
+        },
+        {
+          "value": "url",
+          "label": "t:options.video_external_url"
+        }
+      ],
+      "default": "uploaded",
+      "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
+    },
+    {
       "type": "image_picker",
       "id": "image_1",
       "label": "t:settings.image",
@@ -810,7 +907,22 @@
       "id": "video_1",
       "label": "t:settings.video",
       "info": "t:info.add_video_files",
-      "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
+      "visible_if": "{{ section.settings.media_type_1 == 'video' and section.settings.video_source_1 == 'uploaded' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url_1",
+      "label": "t:settings.video_external_url",
+      "info": "t:info.video_external",
+      "accept": ["youtube", "vimeo"],
+      "visible_if": "{{ section.settings.media_type_1 == 'video' and section.settings.video_source_1 == 'url' }}"
+    },
+    {
+      "type": "text",
+      "id": "video_alt_1",
+      "label": "t:settings.video_alt_text",
+      "info": "t:info.video_alt_text",
+      "visible_if": "{{ section.settings.media_type_1 == 'video' and section.settings.video_source_1 == 'url' }}"
     },
     {
       "type": "header",
@@ -833,6 +945,23 @@
       "default": "image"
     },
     {
+      "type": "select",
+      "id": "video_source_2",
+      "label": "t:settings.video_source",
+      "options": [
+        {
+          "value": "uploaded",
+          "label": "t:options.video_uploaded"
+        },
+        {
+          "value": "url",
+          "label": "t:options.video_external_url"
+        }
+      ],
+      "default": "uploaded",
+      "visible_if": "{{ section.settings.media_type_2 == 'video' }}"
+    },
+    {
       "type": "image_picker",
       "id": "image_2",
       "label": "t:settings.image",
@@ -843,7 +972,22 @@
       "id": "video_2",
       "label": "t:settings.video",
       "info": "t:info.add_video_files",
-      "visible_if": "{{ section.settings.media_type_2 == 'video' }}"
+      "visible_if": "{{ section.settings.media_type_2 == 'video' and section.settings.video_source_2 == 'uploaded' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url_2",
+      "label": "t:settings.video_external_url",
+      "info": "t:info.video_external",
+      "accept": ["youtube", "vimeo"],
+      "visible_if": "{{ section.settings.media_type_2 == 'video' and section.settings.video_source_2 == 'url' }}"
+    },
+    {
+      "type": "text",
+      "id": "video_alt_2",
+      "label": "t:settings.video_alt_text",
+      "info": "t:info.video_alt_text",
+      "visible_if": "{{ section.settings.media_type_2 == 'video' and section.settings.video_source_2 == 'url' }}"
     },
     {
       "type": "header",
@@ -884,6 +1028,23 @@
       "visible_if": "{{ section.settings.custom_mobile_media }}"
     },
     {
+      "type": "select",
+      "id": "video_source_1_mobile",
+      "label": "t:settings.video_source",
+      "options": [
+        {
+          "value": "uploaded",
+          "label": "t:options.video_uploaded"
+        },
+        {
+          "value": "url",
+          "label": "t:options.video_external_url"
+        }
+      ],
+      "default": "uploaded",
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
+    },
+    {
       "type": "image_picker",
       "id": "image_1_mobile",
       "label": "t:settings.image",
@@ -894,7 +1055,22 @@
       "id": "video_1_mobile",
       "label": "t:settings.video",
       "info": "t:info.add_video_files",
-      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' and section.settings.video_source_1_mobile == 'uploaded' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url_1_mobile",
+      "label": "t:settings.video_external_url",
+      "info": "t:info.video_external",
+      "accept": ["youtube", "vimeo"],
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' and section.settings.video_source_1_mobile == 'url' }}"
+    },
+    {
+      "type": "text",
+      "id": "video_alt_1_mobile",
+      "label": "t:settings.video_alt_text",
+      "info": "t:info.video_alt_text",
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' and section.settings.video_source_1_mobile == 'url' }}"
     },
     {
       "type": "header",
@@ -919,6 +1095,23 @@
       "visible_if": "{{ section.settings.custom_mobile_media }}"
     },
     {
+      "type": "select",
+      "id": "video_source_2_mobile",
+      "label": "t:settings.video_source",
+      "options": [
+        {
+          "value": "uploaded",
+          "label": "t:options.video_uploaded"
+        },
+        {
+          "value": "url",
+          "label": "t:options.video_external_url"
+        }
+      ],
+      "default": "uploaded",
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' }}"
+    },
+    {
       "type": "image_picker",
       "id": "image_2_mobile",
       "label": "t:settings.image",
@@ -929,7 +1122,22 @@
       "id": "video_2_mobile",
       "label": "t:settings.video",
       "info": "t:info.add_video_files",
-      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' }}"
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' and section.settings.video_source_2_mobile == 'uploaded' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url_2_mobile",
+      "label": "t:settings.video_external_url",
+      "info": "t:info.video_external",
+      "accept": ["youtube", "vimeo"],
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' and section.settings.video_source_2_mobile == 'url' }}"
+    },
+    {
+      "type": "text",
+      "id": "video_alt_2_mobile",
+      "label": "t:settings.video_alt_text",
+      "info": "t:info.video_alt_text",
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' and section.settings.video_source_2_mobile == 'url' }}"
     },
     {
       "type": "header",

@@ -60,7 +60,7 @@
       ],
       "name": "t:names.hero",
       "settings": {
-        "media_type_1": "video",
+        "media_type_1": "image",
         "video_source_1": "url",
         "video_url_1": "https://vimeo.com/982250397",
         "video_alt_1": "Country SIlk Overview",

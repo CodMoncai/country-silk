@@ -242,32 +242,17 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "video_Tjwb8M": {
-              "type": "video",
-              "name": "t:names.video",
+            "custom_liquid_iyt6k9": {
+              "type": "custom-liquid",
+              "name": "t:names.custom_liquid",
               "settings": {
-                "source": "uploaded",
-                "video": "{{ closest.collection.metafields.custom.theme_video.value }}",
-                "video_autoplay": false,
-                "video_loop": true,
-                "alt": "",
-                "custom_width": 100,
-                "custom_width_mobile": 100,
-                "aspect_ratio": "auto",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
+                "custom_liquid": "{% if collection.metafields.custom.theme-video %}\n  <div class=\"vimeo-embed\">\n    <iframe src=\"{{ collection.metafields.custom.vimeo_url | replace: 'vimeo.com/', 'player.vimeo.com/video/' }}\" \n            width=\"100%\" height=\"400\" frameborder=\"0\" allowfullscreen></iframe>\n  </div>\n{% endif %}"
               },
               "blocks": {}
             }
           },
           "block_order": [
-            "video_Tjwb8M"
+            "custom_liquid_iyt6k9"
           ]
         }
       },

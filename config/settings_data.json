@@ -675,8 +675,6 @@
     }
   },
   "platform_customizations": {
-    "custom_css": [
-      ".header,section,.section,.section > div.gradient,section > div.gradient {background: none !important;}"
-    ]
+    "custom_css": []
   }
 }

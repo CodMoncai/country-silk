@@ -302,6 +302,7 @@
     "video_cover_image": "カバー画像",
     "video_external_url": "URL",
     "video_source": "ソース",
+    "video_metafield": "Video metafield",
     "background_color": "背景色",
     "first_row_media_position": "最初の行のメディアの位置",
     "hide_padding": "余白を非表示にする",

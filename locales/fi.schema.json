@@ -302,6 +302,7 @@
     "video_cover_image": "Kansikuva",
     "video_external_url": "URL-osoite",
     "video_source": "Lähde",
+    "video_metafield": "Video metafield",
     "first_row_media_position": "Ensimmäisen rivin median sijainti",
     "accordion": "Haitari",
     "aspect_ratio": "Kuvasuhde",

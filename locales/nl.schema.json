@@ -302,6 +302,7 @@
     "video_cover_image": "Omslagafbeelding",
     "video_external_url": "URL",
     "video_source": "Bron",
+    "video_metafield": "Video metafield",
     "first_row_media_position": "Positie media eerste rij",
     "hide_padding": "Padding verbergen",
     "background_color": "Achtergrondkleur",

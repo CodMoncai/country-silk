@@ -1,13 +1,52 @@
 {% assign block_settings = block.settings %}
+{% liquid
+  assign metafield_video = block_settings.video_metafield
+  assign metafield_video_value = metafield_video.value | default: blank
+  assign metafield_video_url_id = metafield_video_value.id | default: blank
+  assign metafield_video_url_type = metafield_video_value.type | default: blank
+  assign metafield_video_is_url = false
+  assign metafield_video_is_file = false
+
+  if metafield_video_value != blank and metafield_video_url_id != blank and metafield_video_url_type != blank
+    assign metafield_video_is_url = true
+  elsif metafield_video_value != blank
+    assign metafield_video_is_file = true
+  endif
+%}
 
 {% capture video_style %}
   {%  render 'spacing-style', settings: block_settings %}
   {% render 'border-override', settings: block_settings %}
    --size-style-width: {{ block_settings.custom_width }}%; --size-style-width-mobile: {{ block_settings.custom_width_mobile }}%;
-   --size-style-aspect-ratio: {% if block_settings.source == 'uploaded' %}{{ block_settings.video.aspect_ratio | default: 'auto' }}{% elsif block_settings.cover_image == blank %}{{ block_settings.aspect_ratio }}{% else %}auto{% endif %};
+   --size-style-aspect-ratio: {% if metafield_video_is_file %}{{ metafield_video_value.aspect_ratio | default: 'auto' }}{% elsif block_settings.source == 'uploaded' %}{{ block_settings.video.aspect_ratio | default: 'auto' }}{% elsif block_settings.cover_image == blank %}{{ block_settings.aspect_ratio }}{% else %}auto{% endif %};
 {% endcapture %}
 
-{% if block_settings.source == 'uploaded' %}
+{% if metafield_video_is_url %}
+  {% render 'video',
+    video_from_url: true,
+    video: metafield_video_url_id,
+    video_type: metafield_video_url_type,
+    video_class: 'spacing-style size-style border-style',
+    video_style: video_style,
+    video_alt: block_settings.alt,
+    video_preview_image: block_settings.cover_image,
+    additional_attributes: block.shopify_attributes,
+    section_id: section.id,
+    video_autoplay: block_settings.video_autoplay,
+    video_loop: block_settings.video_loop
+  %}
+{% elsif metafield_video_is_file %}
+  {% render 'video',
+    video: metafield_video_value,
+    video_class: 'spacing-style size-style border-style',
+    video_loop: block_settings.video_loop,
+    video_style: video_style,
+    video_preview_image: metafield_video_value.preview_image,
+    additional_attributes: block.shopify_attributes,
+    section_id: section.id,
+    video_autoplay: block_settings.video_autoplay
+  %}
+{% elsif block_settings.source == 'uploaded' %}
   {% render 'video',
     video: block_settings.video,
     video_class: 'spacing-style size-style border-style',
@@ -59,6 +98,16 @@
       "default": "uploaded"
     },
     {
+      "type": "header",
+      "content": "t:content.advanced"
+    },
+    {
+      "type": "metafield",
+      "id": "video_metafield",
+      "label": "t:settings.video_metafield",
+      "accept": ["video", "file_reference", "video_url"]
+    },
+    {
       "type": "video",
       "id": "video",
       "label": "t:settings.video",
@@ -89,14 +138,14 @@
       "type": "image_picker",
       "id": "cover_image",
       "label": "t:settings.cover_image",
-      "visible_if": "{{ block.settings.source == 'url' and block.settings.video_autoplay == false }}"
+      "visible_if": "{{ block.settings.video_autoplay == false and (block.settings.source == 'url' or block.settings.video_metafield != blank) }}"
     },
     {
       "type": "text",
       "id": "alt",
       "label": "t:settings.video_alt_text",
       "info": "t:info.video_alt_text",
-      "visible_if": "{{ block.settings.source == 'url' }}"
+      "visible_if": "{{ block.settings.source == 'url' or block.settings.video_metafield != blank }}"
     },
     {
       "type": "header",
@@ -126,7 +175,7 @@
       "type": "select",
       "id": "aspect_ratio",
       "label": "t:settings.aspect_ratio",
-      "visible_if": "{{ block.settings.source == 'url' and block.settings.cover_image == blank }}",
+      "visible_if": "{{ (block.settings.source == 'url' or block.settings.video_metafield != blank) and block.settings.cover_image == blank }}",
       "options": [
         {
           "value": "auto",

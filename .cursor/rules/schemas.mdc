@@ -58,6 +58,8 @@ If this repo does not include a `schemas/` folder or build tooling, record that 
               "image_picker",
               "font_picker",
               "video",
+              "video_url",
+              "metafield",
               "richtext"
             ]
           },

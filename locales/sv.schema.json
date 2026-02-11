@@ -302,6 +302,7 @@
     "video_cover_image": "Omslagsbild",
     "video_external_url": "URL",
     "video_source": "Källa",
+    "video_metafield": "Video metafield",
     "shadow_opacity": "Skuggopacitet",
     "show_filter_label": "Textetiketter för tillämpade filter",
     "show_swatch_label": "Textetiketter för provkartor",

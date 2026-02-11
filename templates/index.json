@@ -793,7 +793,7 @@
                   "type": "text",
                   "name": "t:names.subheading",
                   "settings": {
-                    "text": "<p>Discover the best of both worlds</p>",
+                    "text": "<p>We create the most exciting holiday themes each year with your customers in mind.</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",

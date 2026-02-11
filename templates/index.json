@@ -907,6 +907,8 @@
           "type": "comparison-slider",
           "name": "t:names.comparison_slider",
           "settings": {
+            "before_image": "shopify://shop_images/CANDY_ROOM_FOR_SLIDER.png",
+            "after_image": "shopify://shop_images/CANDY_SLIDER_COLORS.png",
             "slider_style": "horizontal",
             "show_text": false,
             "before_text": "",

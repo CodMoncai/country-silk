@@ -673,5 +673,10 @@
         }
       }
     }
+  },
+  "platform_customizations": {
+    "custom_css": [
+      "section, .section, .section > div.gradient, section > div.gradient {background: none !important;}"
+    ]
   }
 }

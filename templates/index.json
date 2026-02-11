@@ -42,7 +42,7 @@
           "type": "button",
           "name": "t:names.button",
           "settings": {
-            "label": "Shop all",
+            "label": "Shop All",
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
             "style_class": "button-secondary",
@@ -915,7 +915,7 @@
             "text_position_horizontal": "start",
             "text_position_vertical": "start",
             "text_background": false,
-            "text_background_color": "#FFFFFF",
+            "text_background_color": "#ffffff",
             "text_corner_radius": 0,
             "image_ratio": "landscape",
             "width": "custom",

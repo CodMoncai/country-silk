@@ -138,7 +138,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Intentional design</h2>",
+                "text": "<h2>Country Silk</h2>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",
@@ -164,7 +164,7 @@
               "type": "text",
               "name": "t:names.description",
               "settings": {
-                "text": "<p>We create with intention. Our products solve real problems with clean design and honest materials.</p>",
+                "text": "<p>Bringing the Holidays to Life Since 1990. We're one of the largest U.S. suppliers of holiday decor. </p><p><strong>Innovation. Style. Value. Quality.</strong></p><p>Our products are featured in in North America's most recognized retailers.</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",

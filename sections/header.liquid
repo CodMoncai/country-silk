@@ -12,6 +12,8 @@
     assign search_style = 'modal'
   endif
 
+  assign transparent = 'always'
+
   if section.settings.enable_transparent_header_home and template.name == 'index'
     assign transparent = 'always'
     assign transparent_color_scheme = section.settings.home_color_scheme

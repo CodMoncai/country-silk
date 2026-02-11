@@ -4037,10 +4037,3 @@ text-component {
     font-size: max(1rem, 100%);
   }
 }
-
-.header-wrapper {
-  position: absolute;
-  width: 100%;
-  background: transparent;
-  z-index: 10;
-}

@@ -1,6 +1,196 @@
+{% doc %}
+  @prompt
+    Add an iframe where i can put in a dynamic variable custom.theme_video for a vimeo link to play a video
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-vimeo-video-container-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-vimeo-video-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ block.settings.aspect_ratio }}%;
+    height: 0;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-vimeo-video-iframe-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .ai-vimeo-video-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+    color: #666;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .ai-vimeo-video-placeholder-{{ ai_gen_id }} svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  .ai-vimeo-video-placeholder-text-{{ ai_gen_id }} {
+    font-size: 14px;
+    max-width: 300px;
+  }
+{% endstyle %}
+
+<vimeo-video-{{ ai_gen_id }}
+  class="ai-vimeo-video-container-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-vimeo-video-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.vimeo_url != blank %}
+      <iframe
+        class="ai-vimeo-video-iframe-{{ ai_gen_id }}"
+        src="{{ block.settings.vimeo_url }}"
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen
+        title="{{ block.settings.video_title }}"
+      ></iframe>
+    {% else %}
+      <div class="ai-vimeo-video-placeholder-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <div class="ai-vimeo-video-placeholder-text-{{ ai_gen_id }}">
+          Add your Vimeo video URL to display the video
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</vimeo-video-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VimeoVideo{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupVideo();
+      }
+
+      setupVideo() {
+        const iframe = this.querySelector('.ai-vimeo-video-iframe-{{ ai_gen_id }}');
+        if (iframe) {
+          iframe.addEventListener('load', function() {
+            console.log('Vimeo video loaded successfully');
+          });
+        }
+      }
+    }
+
+    customElements.define('vimeo-video-{{ ai_gen_id }}', VimeoVideo{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Vimeo video",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "text",
+      "id": "vimeo_url",
+      "label": "Vimeo embed URL",
+      "info": "Enter the full Vimeo embed URL (e.g., https://player.vimeo.com/video/123456789)"
+    },
+    {
+      "type": "text",
+      "id": "video_title",
+      "label": "Video title",
+      "default": "Vimeo video"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        {
+          "value": "56.25",
+          "label": "16:9"
+        },
+        {
+          "value": "75",
+          "label": "4:3"
+        },
+        {
+          "value": "100",
+          "label": "1:1"
+        },
+        {
+          "value": "177.78",
+          "label": "9:16"
+        }
+      ],
+      "default": "56.25"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vimeo video"
+    }
+  ]
+}
 {% endschema %}

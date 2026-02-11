@@ -246,7 +246,7 @@
               "type": "ai_gen_block_558493d",
               "settings": {
                 "vimeo_url": "",
-                "video_title": "Vimeo video",
+                "video_title": "Vimeo video{{ closest.collection.title }}",
                 "desktop_width_percent": 100,
                 "autoplay": false,
                 "loop": false,

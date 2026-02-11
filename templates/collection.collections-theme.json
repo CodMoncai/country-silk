@@ -242,17 +242,24 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "custom_liquid_iyt6k9": {
-              "type": "custom-liquid",
-              "name": "t:names.custom_liquid",
+            "ai_gen_block_558493d_YQyPhz": {
+              "type": "ai_gen_block_558493d",
               "settings": {
-                "custom_liquid": "{% if collection.metafields.custom.theme_video %}\n{% render 'video',\n    video: collection.metafields.custom.theme_video,\n    video_class: 'spacing-style size-style border-style',\n    video_style: 'landscape',\n  %}\n{% endif %}"
+                "vimeo_url": "",
+                "video_title": "Vimeo video",
+                "desktop_width_percent": 100,
+                "autoplay": false,
+                "loop": false,
+                "muted": false,
+                "show_controls": true,
+                "background_color": "#000000",
+                "border_radius": 0
               },
               "blocks": {}
             }
           },
           "block_order": [
-            "custom_liquid_iyt6k9"
+            "ai_gen_block_558493d_YQyPhz"
           ]
         }
       },

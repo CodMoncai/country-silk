@@ -246,7 +246,7 @@
               "type": "custom-liquid",
               "name": "t:names.custom_liquid",
               "settings": {
-                "custom_liquid": "{% if collection.metafields.custom.theme_video %}\n<div style=\"width: 100%; max-width: 100%; margin: 20px 0;\">\n    <iframe src=\"{{ collection.metafields.custom.theme_video | replace: 'vimeo.com/', 'player.vimeo.com/video/' }}\" \n style=\"width: 100%; aspect-ratio: 16 / 9; border: none; display: block;\"\n      allow=\"autoplay; fullscreen; picture-in-picture\" \n      allowfullscreen></iframe>\n  </div>\n{% endif %}"
+                "custom_liquid": "{% if collection.metafields.custom.theme_video %}\n<div class=\"deferred-media\">\n    <iframe src=\"{{ collection.metafields.custom.theme_video | replace: 'vimeo.com/', 'player.vimeo.com/video/' }}\" \n style=\"width: 100%; aspect-ratio: 16 / 9; border: none; display: block;\"\n      allow=\"autoplay; fullscreen; picture-in-picture\" \n      allowfullscreen></iframe>\n  </div>\n{% endif %}"
               },
               "blocks": {}
             }

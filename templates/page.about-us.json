@@ -15,7 +15,7 @@
         "text_VaDYni": {
           "type": "text",
           "settings": {
-            "text": "<h1>New arrivals</h1>",
+            "text": "",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "left",
@@ -44,7 +44,7 @@
       "name": "t:names.hero",
       "settings": {
         "media_type_1": "video",
-        "video_1": "shopify://files/videos/HOME PAGE TOP 2-10-2026.mp4",
+        "video_1": "shopify://files/videos/SANTA NORTH POLE.mp4",
         "media_type_2": "image",
         "stack_media_on_mobile": true,
         "custom_mobile_media": false,
@@ -121,7 +121,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Intentional design</h2>",
+                "text": "<h2>An Extraordinary Company</h2>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",

@@ -465,6 +465,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "image": "shopify://shop_images/ARCTIC_BLUE_TREE_2-10-2026.png",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -574,6 +575,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "image": "shopify://shop_images/CA-CANDY-HOME.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",

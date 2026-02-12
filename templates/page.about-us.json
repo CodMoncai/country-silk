@@ -44,7 +44,7 @@
       "name": "t:names.hero",
       "settings": {
         "media_type_1": "video",
-        "video_1": "shopify://files/videos/SANTA NORTH POLE.mp4",
+        "video_1": "shopify://files/videos/SANTA NORTH POLE 1920 x 600.mp4",
         "media_type_2": "image",
         "stack_media_on_mobile": true,
         "custom_mobile_media": false,

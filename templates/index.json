@@ -904,7 +904,7 @@
             "text_background": false,
             "text_background_color": "#ffffff",
             "text_corner_radius": 0,
-            "image_ratio": "square",
+            "image_ratio": "landscape",
             "width": "custom",
             "custom_width": 65,
             "width_mobile": "fill",

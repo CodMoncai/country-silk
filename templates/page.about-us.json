@@ -685,6 +685,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
+                    "image": "shopify://shop_images/Collection_of_Ornaments_in_the_Snow.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",

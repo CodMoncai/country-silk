@@ -475,7 +475,7 @@
       "custom_css": [],
       "name": "t:names.divider_section",
       "settings": {
-        "color_scheme": "scheme-58084d4c-a86e-4d0a-855e-a0966e5043f7",
+        "color_scheme": "scheme-d6230e4b-4201-4b27-ab20-e71a5ae8807d",
         "section_width": "full-width",
         "thickness": 2.5,
         "corner_radius": "rounded",
@@ -675,9 +675,24 @@
         "icons_shape": "circle",
         "section_width": "full-width",
         "gap": 12,
-        "color_scheme": "",
+        "color_scheme": "scheme-abc92be0-8516-44d9-bcd1-feae2168ea52",
         "padding-block-start": 48,
         "padding-block-end": 48
+      }
+    },
+    "divider_YhqHgL": {
+      "type": "divider",
+      "custom_css": [],
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-58084d4c-a86e-4d0a-855e-a0966e5043f7",
+        "section_width": "full-width",
+        "thickness": 2.5,
+        "corner_radius": "rounded",
+        "width_percent": 70,
+        "alignment_horizontal": "center",
+        "padding-block-start": 16,
+        "padding-block-end": 16
       }
     },
     "section_fypGkk": {
@@ -979,6 +994,7 @@
     "collection_list_HbLUX7",
     "divider_4dtKqB",
     "collection_list_3eaaWn",
+    "divider_YhqHgL",
     "section_fypGkk"
   ]
 }

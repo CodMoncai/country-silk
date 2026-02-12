@@ -278,7 +278,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "color_scheme": "",
+        "color_scheme": "scheme-abc92be0-8516-44d9-bcd1-feae2168ea52",
         "background_media": "none",
         "video_position": "cover",
         "background_image_position": "cover",
@@ -465,7 +465,7 @@
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 12,
-        "color_scheme": "",
+        "color_scheme": "scheme-abc92be0-8516-44d9-bcd1-feae2168ea52",
         "padding-block-start": 24,
         "padding-block-end": 24
       }

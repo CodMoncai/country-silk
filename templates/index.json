@@ -142,7 +142,7 @@
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",
-                "type_preset": "h4",
+                "type_preset": "h2",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
@@ -164,7 +164,7 @@
               "type": "text",
               "name": "t:names.description",
               "settings": {
-                "text": "<p>Bringing the Holidays to Life Since 1990. We're one of the largest U.S. suppliers of holiday decor. </p><p><strong>Innovation. Style. Value. Quality.</strong></p><p>Our products are featured in in North America's most recognized retailers.</p>",
+                "text": "<h5>Bringing the Holidays to Life Since 1990. We're one of the largest U.S. suppliers of holiday decor. </h5><h5><strong>Innovation. Style. Value. Quality.</strong></h5><h5>Our products are featured in in North America's most recognized retailers.</h5>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",

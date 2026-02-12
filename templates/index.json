@@ -892,8 +892,8 @@
           "type": "comparison-slider",
           "name": "t:names.comparison_slider",
           "settings": {
-            "before_image": "shopify://shop_images/CANDY_ROOM_FOR_SLIDER.png",
-            "after_image": "shopify://shop_images/CANDY_SLIDER_COLORS.png",
+            "before_image": "shopify://shop_images/1024_x_768_CANDY_SLIDER_PALETTE_HOME.jpg",
+            "after_image": "shopify://shop_images/1024_x_768_CANDY_SLIDER_PALETTE_2.jpg",
             "slider_style": "horizontal",
             "show_text": false,
             "before_text": "",

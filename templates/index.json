@@ -374,7 +374,7 @@
           "static": true,
           "settings": {
             "placement": "on_image",
-            "horizontal_alignment": "flex-start",
+            "horizontal_alignment": "center",
             "vertical_alignment": "flex-end",
             "collection_card_gap": 8,
             "inherit_color_scheme": true,
@@ -439,18 +439,15 @@
       "name": "t:names.collections_bento",
       "settings": {
         "collection_list": [
-          "black-red-white-theme",
-          "blue-silver-theme",
-          "candyland-theme",
-          "emerald-gold-white-theme",
-          "gold-theme",
-          "gold-white-navy-theme",
-          "gold-white-theme",
-          "pink-gold-white-theme",
-          "red-gold-green-theme",
-          "red-red-theme",
-          "red-white-theme",
-          "silver-white-theme"
+          "arctic-blue",
+          "candyland",
+          "candyland-2-0",
+          "golden-emerald-city",
+          "peppermint",
+          "pink-gold",
+          "red-red-wine",
+          "traditional",
+          "closeout"
         ],
         "layout_type": "bento",
         "carousel_on_mobile": false,

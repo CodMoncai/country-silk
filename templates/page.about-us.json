@@ -818,7 +818,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h2>Quality you can feel</h2>",
+                    "text": "<h2>Decorations  as good as a holiday hug! </h2>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -954,7 +954,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>Expert construction and an impeccable finish</p>",
+                    "text": "<p>Your customers make an impression with style from Country Silk.</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",

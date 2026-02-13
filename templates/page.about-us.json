@@ -1235,7 +1235,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/FAMILY_FRONT_DOOR_BROWN.jpg",
+                    "image": "shopify://shop_images/Traditional_NYC.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -1258,7 +1258,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h2>Quality you can feel</h2>",
+                    "text": "<h2>Big City, Big Celebration</h2>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1284,7 +1284,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>Authentic materials, no compromises </p>",
+                    "text": "<p>A warm decor for any space.</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",

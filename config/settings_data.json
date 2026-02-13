@@ -434,10 +434,10 @@
       },
       "scheme-67a206f1-b3c0-4b78-a8ea-7f7d6d3dc651": {
         "settings": {
-          "background": "#bdbdbd",
+          "background": "#eeeeee",
           "foreground_heading": "#000000",
           "foreground": "#ffffff",
-          "primary": "#000000cf",
+          "primary": "#f2f2f2",
           "primary_hover": "#000000",
           "border": "#0000000f",
           "shadow": "#000000",

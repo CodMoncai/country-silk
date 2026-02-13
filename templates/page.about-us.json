@@ -543,7 +543,7 @@
                 "text_w8QHfe"
               ]
             },
-            "card_NjddPG": {
+            "card_9Q7npJ": {
               "type": "_card",
               "name": "t:names.card",
               "settings": {
@@ -571,11 +571,11 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "image_LhAPbQ": {
+                "image_FaGC89": {
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/CA-CANDY-HOME.jpg",
+                    "image": "shopify://shop_images/EMERALD_AND_GOLD.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -594,11 +594,11 @@
                   },
                   "blocks": {}
                 },
-                "text_m33btx": {
+                "text_6BXYyJ": {
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<p>Uncompromising standards </p>",
+                    "text": "<h2>Quality you can feel</h2>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -620,11 +620,11 @@
                   },
                   "blocks": {}
                 },
-                "text_7rUxrB": {
+                "text_d6aVGH": {
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>Expert construction and an impeccable finish</p>",
+                    "text": "<p>Authentic materials, no compromises </p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -648,9 +648,9 @@
                 }
               },
               "block_order": [
-                "image_LhAPbQ",
-                "text_m33btx",
-                "text_7rUxrB"
+                "image_FaGC89",
+                "text_6BXYyJ",
+                "text_d6aVGH"
               ]
             },
             "card_aTXpr3": {
@@ -873,7 +873,7 @@
                 "text_JNDxgV"
               ]
             },
-            "card_9Q7npJ": {
+            "card_NjddPG": {
               "type": "_card",
               "name": "t:names.card",
               "settings": {
@@ -901,11 +901,11 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "image_FaGC89": {
+                "image_LhAPbQ": {
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/EMERALD_AND_GOLD.jpg",
+                    "image": "shopify://shop_images/CA-CANDY-HOME.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -924,11 +924,11 @@
                   },
                   "blocks": {}
                 },
-                "text_6BXYyJ": {
+                "text_m33btx": {
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h2>Quality you can feel</h2>",
+                    "text": "<p>Uncompromising standards </p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -950,11 +950,11 @@
                   },
                   "blocks": {}
                 },
-                "text_d6aVGH": {
+                "text_7rUxrB": {
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>Authentic materials, no compromises </p>",
+                    "text": "<p>Expert construction and an impeccable finish</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -978,9 +978,9 @@
                 }
               },
               "block_order": [
-                "image_FaGC89",
-                "text_6BXYyJ",
-                "text_d6aVGH"
+                "image_LhAPbQ",
+                "text_m33btx",
+                "text_7rUxrB"
               ]
             },
             "card_Bgmm8U": {
@@ -1316,10 +1316,10 @@
           },
           "block_order": [
             "card_8BMEHN",
-            "card_NjddPG",
+            "card_9Q7npJ",
             "card_aTXpr3",
             "card_knjNY6",
-            "card_9Q7npJ",
+            "card_NjddPG",
             "card_Bgmm8U",
             "card_Enj9T9",
             "card_pbLaCb"

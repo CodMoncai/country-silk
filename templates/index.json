@@ -447,7 +447,10 @@
           "pink-gold",
           "red-red-wine",
           "traditional",
-          "closeout"
+          "closeout",
+          "blue-brown",
+          "gold",
+          "black-red"
         ],
         "layout_type": "bento",
         "carousel_on_mobile": false,

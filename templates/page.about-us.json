@@ -221,7 +221,7 @@
               "settings": {
                 "source": "url",
                 "video_url": "https://vimeo.com/982250397",
-                "video_autoplay": false,
+                "video_autoplay": true,
                 "video_loop": false,
                 "alt": "",
                 "custom_width": 100,

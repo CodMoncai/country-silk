@@ -510,7 +510,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3>Shop By Products</h3>",
+                "text": "<h3>Shop By Categories</h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

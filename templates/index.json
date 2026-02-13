@@ -615,14 +615,12 @@
       "name": "t:names.collections_carousel",
       "settings": {
         "collection_list": [
-          "90mm-balls",
           "ball-garland",
           "balls-in-tube",
           "beaded-garland",
           "bells",
           "bows",
           "cluster",
-          "commodoties",
           "flower-bushes",
           "flower-garland",
           "flower-picks",
@@ -645,7 +643,10 @@
           "tree-toppers",
           "trees-and-pine",
           "wine-bags",
-          "window-clings-plaques"
+          "window-clings-plaques",
+          "90mm-balls-v2",
+          "commodities",
+          "gift-boxes"
         ],
         "layout_type": "carousel",
         "carousel_on_mobile": false,

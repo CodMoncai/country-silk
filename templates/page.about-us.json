@@ -387,7 +387,7 @@
               "type": "text",
               "name": "t:names.header",
               "settings": {
-                "text": "<p>Discover elevated design </p>",
+                "text": "<p>Decorations Designed to Sell</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

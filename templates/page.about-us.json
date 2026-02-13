@@ -575,7 +575,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/EMERALD_AND_GOLD.jpg",
+                    "image": "shopify://shop_images/COOKIES.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -685,7 +685,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/Collection_of_Ornaments_in_the_Snow.jpg",
+                    "image": "shopify://shop_images/Collection_of_Ornaments_in_the_Snow_6c53b1f5-3416-41c5-989e-60442071175e.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -795,7 +795,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/FAMILY_FRONT_DOOR_BROWN.jpg",
+                    "image": "shopify://shop_images/Front_DOOR.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -1015,7 +1015,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/FAMILY_FRONT_DOOR_BROWN.jpg",
+                    "image": "shopify://shop_images/Carolers.jpg",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -1038,7 +1038,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h2>Quality you can feel</h2>",
+                    "text": "<h2>Wreathes, Santas, Hats</h2>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1064,7 +1064,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>Authentic materials, no compromises </p>",
+                    "text": "<p>The very best items in every category.</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",

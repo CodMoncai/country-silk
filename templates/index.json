@@ -891,7 +891,7 @@
           "name": "t:names.comparison_slider",
           "settings": {
             "before_image": "shopify://shop_images/1600-x-900-CANDY-SLIDER-HOME.jpg",
-            "after_image": "shopify://shop_images/1600-x-900-CANDY-SLIDER-PALETTE.jpg",
+            "after_image": "shopify://shop_images/CANDY_COLOR_CHIP_2-12-2026.jpg",
             "slider_style": "horizontal",
             "show_text": false,
             "before_text": "",

@@ -514,7 +514,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>Bold style that's recognizable anywhere</p>",
+                    "text": "<p>Sublime elegance, uncompromising quality.</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -624,7 +624,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p>Authentic materials, no compromises </p>",
+                    "text": "<p>Emerald and Gold never looked so good!</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",

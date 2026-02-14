@@ -231,6 +231,7 @@
     "video_alt_text": "Describe the video for assistive tech users",
     "video_autoplay": "Videos will be muted by default",
     "video_external": "Use a YouTube or Vimeo URL",
+    "video_metafield": "Enter Liquid that outputs a YouTube or Vimeo URL, e.g. {{ product.metafields.custom.video_url.value }} or {{ collection.metafields.custom.theme_video.value }}",
     "pills_usage": "Used for applied filters, discount codes, and search suggestions",
     "media_type_info": "Features are populated from your menu links",
     "quote_request_email": "Email address that receives quote requests"
@@ -738,6 +739,7 @@
     "vertical": "Vertical",
     "video": "Video",
     "video_external_url": "External URL",
+    "video_metafield": "Metafield URL",
     "video_uploaded": "Uploaded",
     "vimeo": "Vimeo",
     // Icon option for washing machine or laundry symbol
@@ -1148,6 +1150,7 @@
     "video_autoplay": "Autoplay",
     "video_cover_image": "Cover image",
     "video_external_url": "URL",
+    "video_metafield_url": "Metafield URL",
     "video_loop": "Loop video",
     "video_position": "Video position",
     "video_source": "Source",

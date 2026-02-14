@@ -17,6 +17,61 @@
     additional_attributes: block.shopify_attributes,
     section_id: section.id
   %}
+{% elsif block_settings.source == 'metafield' %}
+  {% liquid
+    capture metafield_url
+      echo block_settings.metafield_video_url
+    endcapture
+    assign metafield_url = metafield_url | strip
+
+    assign video_id = ''
+    assign video_type = ''
+
+    if metafield_url != blank
+      if metafield_url contains 'youtu.be'
+        assign video_id = metafield_url | split: '/' | last | split: '?' | first
+        assign video_type = 'youtube'
+      elsif metafield_url contains 'youtube.com/embed/'
+        assign video_id = metafield_url | split: 'embed/' | last | split: '?' | first | split: '&' | first
+        assign video_type = 'youtube'
+      elsif metafield_url contains 'youtube.com'
+        assign video_id = metafield_url | split: 'v=' | last | split: '&' | first
+        assign video_type = 'youtube'
+      elsif metafield_url contains 'vimeo.com'
+        assign video_id = metafield_url | split: '/' | last | split: '?' | first
+        assign video_type = 'vimeo'
+      endif
+    endif
+  %}
+  {% if video_id != blank and video_type != blank %}
+    {% render 'video',
+      video_from_url: true,
+      video: video_id,
+      video_class: 'spacing-style size-style border-style',
+      video_type: video_type,
+      video_style: video_style,
+      video_alt: block_settings.alt,
+      video_preview_image: block_settings.cover_image,
+      additional_attributes: block.shopify_attributes,
+      section_id: section.id
+    %}
+  {% else %}
+    <div
+      {{ block.shopify_attributes }}
+      class="spacing-style size-style border-style video-placeholder-wrapper"
+      style="{{ video_style }}"
+    >
+      {% if block_settings.cover_image != blank and block_settings.video_autoplay == false %}
+        {{ block_settings.cover_image | image_url: width: 3840 | image_tag: loading: 'lazy' }}
+      {% else %}
+        {{ 'hero-apparel-3' | placeholder_svg_tag }}
+      {% endif %}
+      <span class="video-placeholder-wrapper__poster-icon icon-play">
+        <span class="visually-hidden">{{ 'accessibility.play_video' | t }}</span>
+        {{- 'icon-play.svg' | inline_asset_content -}}
+      </span>
+    </div>
+  {% endif %}
 {% else %}
   {% render 'video',
     video_from_url: true,
@@ -54,6 +109,10 @@
         {
           "value": "url",
           "label": "t:options.video_external_url"
+        },
+        {
+          "value": "metafield",
+          "label": "t:options.video_metafield"
         }
       ],
       "default": "uploaded"
@@ -73,6 +132,13 @@
       "visible_if": "{{ block.settings.source == 'url' }}"
     },
     {
+      "type": "liquid",
+      "id": "metafield_video_url",
+      "label": "t:settings.video_metafield_url",
+      "info": "t:info.video_metafield",
+      "visible_if": "{{ block.settings.source == 'metafield' }}"
+    },
+    {
       "type": "checkbox",
       "id": "video_autoplay",
       "label": "t:settings.video_autoplay",
@@ -89,14 +155,14 @@
       "type": "image_picker",
       "id": "cover_image",
       "label": "t:settings.cover_image",
-      "visible_if": "{{ block.settings.source == 'url' and block.settings.video_autoplay == false }}"
+      "visible_if": "{{ (block.settings.source == 'url' or block.settings.source == 'metafield') and block.settings.video_autoplay == false }}"
     },
     {
       "type": "text",
       "id": "alt",
       "label": "t:settings.video_alt_text",
       "info": "t:info.video_alt_text",
-      "visible_if": "{{ block.settings.source == 'url' }}"
+      "visible_if": "{{ block.settings.source == 'url' or block.settings.source == 'metafield' }}"
     },
     {
       "type": "header",
@@ -126,7 +192,7 @@
       "type": "select",
       "id": "aspect_ratio",
       "label": "t:settings.aspect_ratio",
-      "visible_if": "{{ block.settings.source == 'url' and block.settings.cover_image == blank }}",
+      "visible_if": "{{ (block.settings.source == 'url' or block.settings.source == 'metafield') and block.settings.cover_image == blank }}",
       "options": [
         {
           "value": "auto",

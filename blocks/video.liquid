@@ -17,7 +17,7 @@
     additional_attributes: block.shopify_attributes,
     section_id: section.id
   %}
-{% elsif block_settings.source == 'metafield' %}
+{% elsif block_settings.source == 'url' and block_settings.external_url_source == 'metafield' %}
   {% liquid
     capture metafield_url
       echo block_settings.metafield_video_url
@@ -72,7 +72,7 @@
       </span>
     </div>
   {% endif %}
-{% else %}
+{% elsif block_settings.source == 'url' %}
   {% render 'video',
     video_from_url: true,
     video: block_settings.video_url.id,
@@ -109,10 +109,6 @@
         {
           "value": "url",
           "label": "t:options.video_external_url"
-        },
-        {
-          "value": "metafield",
-          "label": "t:options.video_metafield"
         }
       ],
       "default": "uploaded"
@@ -124,19 +120,36 @@
       "visible_if": "{{ block.settings.source == 'uploaded' }}"
     },
     {
+      "type": "select",
+      "id": "external_url_source",
+      "label": "t:settings.video_url_source",
+      "options": [
+        {
+          "value": "manual",
+          "label": "t:options.video_url_manual"
+        },
+        {
+          "value": "metafield",
+          "label": "t:options.video_metafield"
+        }
+      ],
+      "default": "manual",
+      "visible_if": "{{ block.settings.source == 'url' }}"
+    },
+    {
       "type": "video_url",
       "id": "video_url",
       "label": "t:settings.video_external_url",
       "info": "t:info.video_external",
       "accept": ["youtube", "vimeo"],
-      "visible_if": "{{ block.settings.source == 'url' }}"
+      "visible_if": "{{ block.settings.source == 'url' and block.settings.external_url_source == 'manual' }}"
     },
     {
       "type": "liquid",
       "id": "metafield_video_url",
       "label": "t:settings.video_metafield_url",
       "info": "t:info.video_metafield",
-      "visible_if": "{{ block.settings.source == 'metafield' }}"
+      "visible_if": "{{ block.settings.source == 'url' and block.settings.external_url_source == 'metafield' }}"
     },
     {
       "type": "checkbox",
@@ -155,14 +168,14 @@
       "type": "image_picker",
       "id": "cover_image",
       "label": "t:settings.cover_image",
-      "visible_if": "{{ (block.settings.source == 'url' or block.settings.source == 'metafield') and block.settings.video_autoplay == false }}"
+      "visible_if": "{{ block.settings.source == 'url' and block.settings.video_autoplay == false }}"
     },
     {
       "type": "text",
       "id": "alt",
       "label": "t:settings.video_alt_text",
       "info": "t:info.video_alt_text",
-      "visible_if": "{{ block.settings.source == 'url' or block.settings.source == 'metafield' }}"
+      "visible_if": "{{ block.settings.source == 'url' }}"
     },
     {
       "type": "header",
@@ -192,7 +205,7 @@
       "type": "select",
       "id": "aspect_ratio",
       "label": "t:settings.aspect_ratio",
-      "visible_if": "{{ (block.settings.source == 'url' or block.settings.source == 'metafield') and block.settings.cover_image == blank }}",
+      "visible_if": "{{ block.settings.source == 'url' and block.settings.cover_image == blank }}",
       "options": [
         {
           "value": "auto",

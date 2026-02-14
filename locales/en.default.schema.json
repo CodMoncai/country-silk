@@ -739,7 +739,8 @@
     "vertical": "Vertical",
     "video": "Video",
     "video_external_url": "External URL",
-    "video_metafield": "Metafield URL",
+    "video_metafield": "Metafield",
+    "video_url_manual": "Enter URL",
     "video_uploaded": "Uploaded",
     "vimeo": "Vimeo",
     // Icon option for washing machine or laundry symbol
@@ -1151,6 +1152,7 @@
     "video_cover_image": "Cover image",
     "video_external_url": "URL",
     "video_metafield_url": "Metafield URL",
+    "video_url_source": "URL source",
     "video_loop": "Loop video",
     "video_position": "Video position",
     "video_source": "Source",

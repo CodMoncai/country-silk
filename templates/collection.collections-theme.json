@@ -247,7 +247,9 @@
               "name": "t:names.video",
               "settings": {
                 "source": "url",
+                "external_url_source": "metafield",
                 "video_url": "",
+                "metafield_video_url": "{{ collection.metafields.custom.theme_video.value }}",
                 "video_autoplay": false,
                 "video_loop": true,
                 "alt": "",

@@ -247,6 +247,8 @@
               "name": "t:names.video",
               "settings": {
                 "source": "uploaded",
+                "video": "{{ closest.collection.metafields.custom.theme_video.value }}",
+                "video_url": "",
                 "video_autoplay": false,
                 "video_loop": true,
                 "alt": "",

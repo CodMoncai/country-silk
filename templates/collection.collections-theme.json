@@ -251,7 +251,7 @@
                 "video_url": "",
                 "metafield_video_url": "{{ collection.metafields.custom.theme_video.value }}",
                 "video_autoplay": true,
-                "video_loop": true,
+                "video_loop": false,
                 "alt": "",
                 "custom_width": 100,
                 "custom_width_mobile": 100,

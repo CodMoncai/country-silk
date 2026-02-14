@@ -255,7 +255,7 @@
                 "alt": "",
                 "custom_width": 100,
                 "custom_width_mobile": 100,
-                "aspect_ratio": "auto",
+                "aspect_ratio": "16/9",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,

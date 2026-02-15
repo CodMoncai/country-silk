@@ -147,7 +147,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Quality first</h2>",
+                "text": "<h2></h2>{{ closest.collection.metafields.custom.video_section_heading | metafield_tag }}",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",

@@ -173,7 +173,7 @@
               "type": "text",
               "name": "t:names.description",
               "settings": {
-                "text": "<p>We obsess over the details and strive to deliver the best products at the best prices, every time.</p>",
+                "text": "<p></p>{{ closest.collection.description }}",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",

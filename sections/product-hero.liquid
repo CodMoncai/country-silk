@@ -1,0 +1,401 @@
+{%- comment -%}
+  Product Hero: Displays a hero slider using the product's parent collection image(s).
+  On product pages, builds slides from product.collections that have an image set.
+  Falls back to product.featured_image if no collection has an image.
+{%- endcomment -%}
+
+{% assign hero_slides = '' %}
+{% assign slide_count = 0 %}
+
+{% if product != blank %}
+  {% for collection_item in product.collections %}
+    {% if collection_item.image != blank %}
+      {% assign slide_count = slide_count | plus: 1 %}
+      {% assign slide_index = slide_count | minus: 1 %}
+      {% assign slide_image = collection_item.image %}
+      {% assign slide_alt = collection_item.image.alt | default: collection_item.title | escape %}
+
+      {% assign height = slide_image.width | divided_by: slide_image.aspect_ratio | round %}
+      {% assign sizes = '(min-width: 750px) 100vw, 100vw' %}
+      {% assign widths = '832, 1200, 1600, 1920, 2560, 3840' %}
+      {% if slide_index == 0 %}
+        {% assign loading = 'eager' %}
+        {% assign fetchpriority = 'high' %}
+      {% else %}
+        {% assign loading = 'lazy' %}
+        {% assign fetchpriority = 'low' %}
+      {% endif %}
+
+      {% capture slide_children %}
+        <div class="product-hero__image-container">
+          {{
+            slide_image
+            | image_url: width: 3840
+            | image_tag:
+              height: height,
+              sizes: sizes,
+              widths: widths,
+              class: 'product-hero__image',
+              loading: loading,
+              fetchpriority: fetchpriority,
+              alt: slide_alt
+          }}
+        </div>
+      {% endcapture %}
+
+      {% capture slide_markup %}
+        {% render 'slideshow-slide',
+          index: slide_index,
+          children: slide_children,
+          slide_size: section.settings.slide_height,
+          navigate_to_slide: true
+        %}
+      {% endcapture %}
+      {% assign hero_slides = hero_slides | append: slide_markup %}
+    {% endif %}
+  {% endfor %}
+
+  {% if slide_count == 0 and product.featured_image != blank %}
+    {% assign slide_count = 1 %}
+    {% assign slide_image = product.featured_image %}
+    {% assign slide_alt = product.featured_image.alt | default: product.title | escape %}
+
+    {% assign height = slide_image.width | divided_by: slide_image.aspect_ratio | round %}
+    {% assign sizes = '(min-width: 750px) 100vw, 100vw' %}
+    {% assign widths = '832, 1200, 1600, 1920, 2560, 3840' %}
+
+    {% capture slide_children %}
+      <div class="product-hero__image-container">
+        {{
+          slide_image
+          | image_url: width: 3840
+          | image_tag:
+            height: height,
+            sizes: sizes,
+            widths: widths,
+            class: 'product-hero__image',
+            loading: 'eager',
+            fetchpriority: 'high',
+            alt: slide_alt
+        }}
+      </div>
+    {% endcapture %}
+
+    {% capture slide_markup %}
+      {% render 'slideshow-slide',
+        index: 0,
+        children: slide_children,
+        slide_size: section.settings.slide_height,
+        navigate_to_slide: true
+      %}
+    {% endcapture %}
+    {% assign hero_slides = hero_slides | append: slide_markup %}
+  {% endif %}
+{% endif %}
+
+{% if product != blank and slide_count > 0 %}
+  {% liquid
+    assign autoplay = false
+    assign show_arrows = false
+    if slide_count > 1
+      assign autoplay = section.settings.autoplay
+      assign show_arrows = true
+    endif
+  %}
+
+  {% assign controls = '' %}
+  {% if slide_count > 1 and section.settings.show_controls %}
+    {% capture controls %}
+      {%- render 'slideshow-controls',
+        style: section.settings.slideshow_controls_style,
+        autoplay: autoplay,
+        item_count: slide_count,
+        show_arrows: false,
+        arrows_on_media: true,
+        controls_on_media: true,
+        pagination_position: 'center',
+        icon_style: section.settings.icons_style
+      -%}
+    {% endcapture %}
+  {% endif %}
+
+  {% liquid
+    assign section_width_class = 'section--' | append: section.settings.section_width
+    assign slideshow_class = 'product-hero__slideshow slideshow--content-below-media'
+    if slide_count == 1
+      assign slideshow_class = slideshow_class | append: ' slideshow--single-media'
+    endif
+    assign rounded_slide_corners = false
+    if section.settings.section_width == 'page-width' and section.settings.corner_radius > 0
+      assign rounded_slide_corners = true
+    endif
+  %}
+
+  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+  <div
+    class="product-hero spacing-style section {{ section_width_class }} color-{{ section.settings.color_scheme }} disable-section-top-offset"
+    style="{% render 'spacing-padding', settings: section.settings %}; --slideshow-gap: {{ section.settings.slideshow_gap }}px;{% if rounded_slide_corners %} --corner-radius: {{ section.settings.corner_radius }}px;{% endif %}"
+  >
+    {% render 'slideshow',
+      class: slideshow_class,
+      controls: controls,
+      show_arrows: show_arrows,
+      icon_style: section.settings.icons_style,
+      icon_shape: section.settings.icons_shape,
+      autoplay: autoplay,
+      autoplay_speed: section.settings.autoplay_speed,
+      slides: hero_slides,
+      slide_count: slide_count,
+      slide_size: section.settings.slide_height
+    %}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-hero__image-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    inset: 0;
+  }
+
+  .product-hero__image-container .product-hero__image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  .product-hero slideshow-slide > .product-hero__image-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.product_hero",
+  "tag": "section",
+  "class": "product-hero-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "select",
+      "id": "slide_height",
+      "label": "t:settings.media_height",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.large"
+        },
+        {
+          "value": "adapt_image",
+          "label": "t:options.auto"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "range",
+      "id": "slideshow_gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "label": "t:settings.corner_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:content.navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show slideshow controls",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "slideshow_controls_style",
+      "label": "t:settings.pagination",
+      "options": [
+        {
+          "value": "counter",
+          "label": "t:options.counter"
+        },
+        {
+          "value": "dots",
+          "label": "t:options.dots"
+        },
+        {
+          "value": "none",
+          "label": "t:options.none"
+        }
+      ],
+      "default": "counter",
+      "visible_if": "{{ section.settings.show_controls }}"
+    },
+    {
+      "type": "select",
+      "id": "icons_style",
+      "label": "t:settings.icons",
+      "options": [
+        {
+          "value": "arrow",
+          "label": "t:options.arrows"
+        },
+        {
+          "value": "chevron",
+          "label": "t:options.chevrons"
+        },
+        {
+          "value": "arrows_large",
+          "label": "t:options.large_arrows"
+        },
+        {
+          "value": "none",
+          "label": "t:options.none"
+        }
+      ],
+      "default": "arrow"
+    },
+    {
+      "type": "select",
+      "id": "icons_shape",
+      "label": "t:settings.icon_background",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "circle",
+          "label": "t:options.circle"
+        },
+        {
+          "value": "square",
+          "label": "t:options.square"
+        }
+      ],
+      "default": "none",
+      "visible_if": "{{ section.settings.icons_style != 'none' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "t:settings.auto_rotate_slides",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "t:settings.speed",
+      "min": 3,
+      "max": 9,
+      "step": 1,
+      "unit": "s",
+      "default": 5,
+      "visible_if": "{{ section.settings.autoplay }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_hero",
+      "settings": {
+        "section_width": "full-width",
+        "slide_height": "medium",
+        "show_controls": true,
+        "autoplay": false
+      }
+    }
+  ]
+}
+{% endschema %}

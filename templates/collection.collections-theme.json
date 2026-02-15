@@ -614,7 +614,7 @@
             "text_background_color": "#FFFFFF",
             "text_corner_radius": 0,
             "image_ratio": "landscape",
-            "width": "custom",
+            "width": "fill",
             "custom_width": 65,
             "width_mobile": "fill",
             "custom_width_mobile": 100,

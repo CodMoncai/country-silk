@@ -237,7 +237,9 @@
               "name": "t:names.video",
               "settings": {
                 "source": "url",
+                "external_url_source": "manual",
                 "video_url": "https://vimeo.com/982250397",
+                "metafield_video_url": "",
                 "video_autoplay": true,
                 "video_loop": false,
                 "alt": "",
@@ -431,7 +433,7 @@
               "name": "t:names.collection_card_image",
               "static": true,
               "settings": {
-                "image_ratio": "adapt",
+                "image_ratio": "square",
                 "toggle_overlay": false,
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",

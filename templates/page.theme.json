@@ -469,6 +469,7 @@
         },
         "slide_amT6F4": {
           "type": "_slide",
+          "name": "Traditional",
           "settings": {
             "media_type_1": "image",
             "content_direction": "column",

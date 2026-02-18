@@ -693,7 +693,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Bestsellers</h2>",
+                "text": "<h2>Red Red Wine</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -744,7 +744,7 @@
               "type": "button",
               "settings": {
                 "label": "Shop now",
-                "link": "shopify://collections/all",
+                "link": "shopify://collections/red-red-wine",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",

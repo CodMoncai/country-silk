@@ -374,7 +374,7 @@
         "slide_height": "medium",
         "content_position": "on-media",
         "color_scheme": "",
-        "icons_style": "arrows_large",
+        "icons_style": "none",
         "icons_shape": "none",
         "slideshow_controls_style": "dots",
         "pagination_position": "top_right",

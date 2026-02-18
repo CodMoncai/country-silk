@@ -3400,6 +3400,34 @@ slideshow-slides[gutters*='end'] {
   padding-inline-end: var(--gutter-slide-width, 0);
 }
 
+/* Vertical scroll (top to bottom) when scroll direction is vertical */
+slideshow-component.slideshow--scroll-vertical slideshow-slides {
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  height: var(--slide-min-height);
+}
+
+slideshow-component.slideshow--scroll-vertical slideshow-slide {
+  width: 100%;
+  view-timeline-axis: block;
+  flex: 0 0 auto;
+  height: var(--slide-min-height);
+  min-height: var(--slide-min-height);
+}
+
+@media screen and (min-width: 750px) {
+  slideshow-component.slideshow--scroll-vertical slideshow-slides {
+    height: var(--slide-min-height-desktop);
+  }
+
+  slideshow-component.slideshow--scroll-vertical slideshow-slide {
+    height: var(--slide-min-height-desktop);
+    min-height: var(--slide-min-height-desktop);
+  }
+}
+
 slideshow-component[dragging] {
   --cursor: grabbing;
 

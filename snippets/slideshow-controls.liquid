@@ -9,10 +9,13 @@
   @param {boolean} [controls_on_media] - Whether the controls will display as floating controls on the media
   @param {media[]} [thumbnails] - Array of media to be displayed as thumbnails, sorted.
   @param {string} [pagination_position] - { 'left' | 'center' | 'right' } Sets the pagination position, defaults to 'center' if none passed
+  @param {string} [pagination_vertical_position] - { 'top' | 'bottom' } Sets the vertical position of pagination (e.g. top right), defaults to 'bottom'
   @param {string} [icon_style] - The style of the icon, defaults to 'arrow'
   @param {string} [shape] - The shape of the control, defaults to 'square'
   @param {string} [aspect_ratio] - The aspect ratio of thumbnails, if applicable. defaults to 'adapt'
   @param {number} [thumbnail_radius] - The border radius for thumbnails in pixels
+  @param {number} [dots_spacing] - Spacing between dot controls in px
+  @param {string} [dots_style] - { 'default' | 'minimal' | 'pill' } Style of the dots
   @param {string} [class] - Additional classes to apply to the controls
   @param {boolean} [secondary] - Whether the controls are secondary
 
@@ -45,6 +48,10 @@
   else
     assign scroll_mode = 'horizontal'
   endif
+
+  if pagination_vertical_position == null
+    assign pagination_vertical_position = 'bottom'
+  endif
 -%}
 
 {% unless style == 'none' %}
@@ -53,6 +60,7 @@
       ref="slideshowControls"
     {% endunless %}
     pagination-position="{{ pagination_position }}"
+    pagination-vertical-position="{{ pagination_vertical_position }}"
     scroll-mode="{{ scroll_mode }}"
     {% if controls_on_media %}
       controls-on-media
@@ -63,11 +71,14 @@
     {% if style == 'thumbnails' %}
       thumbnails
     {% endif %}
+    {% if style == 'dots' and dots_style %}
+      dots-style="{{ dots_style }}"
+    {% endif %}
     {% if class %}
       class="{{ class }}"
     {% endif %}
-    {% if thumbnail_radius %}
-      style="--thumbnail-radius: {{ thumbnail_radius }}px;"
+    {% if thumbnail_radius or dots_spacing or dots_style %}
+      style="{% if thumbnail_radius %}--thumbnail-radius: {{ thumbnail_radius }}px;{% endif %}{% if dots_spacing %} --dots-spacing: {{ dots_spacing }}px;{% endif %}{% if dots_style %} --dots-style: {{ dots_style }};{% endif %}"
     {% endif %}
   >
     {% if show_arrows_separately == false and show_arrows and pagination_position != 'left' %}
@@ -304,6 +315,11 @@
       --color-foreground-rgb: var(--color-white-rgb);
     }
 
+    &[pagination-vertical-position='top'] {
+      top: 0;
+      bottom: auto;
+    }
+
     &[pagination-position='right'] {
       right: 0;
     }
@@ -359,7 +375,7 @@
   }
 
   .slideshow-controls__dots {
-    gap: 0.6rem;
+    gap: var(--dots-spacing, 0.6rem);
     padding: var(--padding-sm) var(--padding-lg);
     border-radius: 3rem;
     overflow: hidden;
@@ -403,6 +419,34 @@
           box-shadow: inset 0 0 0 1.5px hsl(0 0% 0% / 0.4);
         }
       }
+    }
+  }
+
+  slideshow-controls[dots-style='minimal'] .slideshow-controls__dots {
+    padding: var(--padding-xs) var(--padding-sm);
+    background: transparent;
+
+    button::after {
+      box-shadow: none;
+      opacity: 0.5;
+    }
+
+    button[aria-selected='true']::after {
+      opacity: 1;
+    }
+  }
+
+  slideshow-controls[dots-style='pill'] .slideshow-controls__dots button {
+    --size: 0.4rem;
+
+    &::after {
+      border-radius: calc(var(--size) / 2);
+      width: var(--size);
+      height: calc(var(--size) * 0.6);
+    }
+
+    &[aria-selected='true']::after {
+      width: calc(var(--size) * 2);
     }
   }
 

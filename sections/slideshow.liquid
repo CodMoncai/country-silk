@@ -4,6 +4,16 @@
   {% else %}
     {% assign autoplay = false %}
   {% endif %}
+  {% liquid
+    assign pagination_position_setting = section.settings.pagination_position | default: 'bottom_center'
+    if pagination_position_setting contains 'top_'
+      assign pagination_vertical_position = 'top'
+      assign pagination_position = pagination_position_setting | remove: 'top_'
+    else
+      assign pagination_vertical_position = 'bottom'
+      assign pagination_position = pagination_position_setting | remove: 'bottom_'
+    endif
+  %}
   {% capture controls %}
     {%- render 'slideshow-controls',
       style: section.settings.slideshow_controls_style,
@@ -12,8 +22,11 @@
       show_arrows: false,
       arrows_on_media: true,
       controls_on_media: true,
-      pagination_position: 'center',
-      icon_style: section.settings.icons_style
+      pagination_position: pagination_position,
+      pagination_vertical_position: pagination_vertical_position,
+      icon_style: section.settings.icons_style,
+      dots_spacing: section.settings.dots_spacing,
+      dots_style: section.settings.dots_style
     -%}
   {% endcapture %}
 {% endif %}
@@ -36,6 +49,9 @@
   assign slideshow_class = 'slideshow--content-' | append: section.settings.content_position
   if section.blocks.size == 1
     assign slideshow_class = slideshow_class | append: ' slideshow--single-media'
+  endif
+  if section.settings.scroll_direction == 'vertical' and section.settings.display_mode == 'with_hints'
+    assign slideshow_class = slideshow_class | append: ' slideshow--scroll-vertical'
   endif
   if section.settings.display_mode == 'with_hints'
     assign slideshow_class = slideshow_class | append: ' slideshow--with-hints'
@@ -161,6 +177,34 @@
         animation: none;
         opacity: 0;
         pointer-events: none;
+      }
+    }
+
+    /* Vertical scroll (top to bottom) for inset slideshow */
+    .slideshow-section slideshow-component.slideshow--scroll-vertical slideshow-slides {
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      height: var(--slide-min-height);
+    }
+
+    .slideshow-section slideshow-component.slideshow--scroll-vertical slideshow-slide {
+      width: 100%;
+      view-timeline-axis: block;
+      flex: 0 0 auto;
+      height: var(--slide-min-height);
+      min-height: var(--slide-min-height);
+    }
+
+    @media screen and (min-width: 750px) {
+      .slideshow-section slideshow-component.slideshow--scroll-vertical slideshow-slides {
+        height: var(--slide-min-height-desktop);
+      }
+
+      .slideshow-section slideshow-component.slideshow--scroll-vertical slideshow-slide {
+        height: var(--slide-min-height-desktop);
+        min-height: var(--slide-min-height-desktop);
       }
     }
   }
@@ -359,6 +403,88 @@
         }
       ],
       "default": "dots"
+    },
+    {
+      "type": "select",
+      "id": "pagination_position",
+      "label": "t:settings.pagination_position",
+      "options": [
+        {
+          "value": "bottom_center",
+          "label": "t:options.bottom_center"
+        },
+        {
+          "value": "bottom_left",
+          "label": "t:options.bottom_left"
+        },
+        {
+          "value": "bottom_right",
+          "label": "t:options.bottom_right"
+        },
+        {
+          "value": "top_left",
+          "label": "t:options.top_left"
+        },
+        {
+          "value": "top_center",
+          "label": "t:options.top_center"
+        },
+        {
+          "value": "top_right",
+          "label": "t:options.top_right"
+        }
+      ],
+      "default": "bottom_center",
+      "visible_if": "{{ section.settings.slideshow_controls_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "dots_spacing",
+      "label": "t:settings.dots_spacing",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8,
+      "visible_if": "{{ section.settings.slideshow_controls_style == 'dots' }}"
+    },
+    {
+      "type": "select",
+      "id": "dots_style",
+      "label": "t:settings.dots_style",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:options.default"
+        },
+        {
+          "value": "minimal",
+          "label": "t:options.minimal"
+        },
+        {
+          "value": "pill",
+          "label": "t:options.pill"
+        }
+      ],
+      "default": "default",
+      "visible_if": "{{ section.settings.slideshow_controls_style == 'dots' }}"
+    },
+    {
+      "type": "select",
+      "id": "scroll_direction",
+      "label": "t:settings.scroll_direction",
+      "options": [
+        {
+          "value": "horizontal",
+          "label": "t:options.horizontal"
+        },
+        {
+          "value": "vertical",
+          "label": "t:options.vertical"
+        }
+      ],
+      "default": "horizontal",
+      "visible_if": "{{ section.settings.display_mode == 'with_hints' }}"
     },
     {
       "type": "checkbox",
@@ -567,7 +693,11 @@
         "content_position": "below-media",
         "icons_style": "arrows_large",
         "icons_shape": "none",
-        "slideshow_controls_style": "none"
+        "slideshow_controls_style": "dots",
+        "pagination_position": "top_right",
+        "dots_spacing": 8,
+        "dots_style": "default",
+        "scroll_direction": "horizontal"
       }
     }
   ]

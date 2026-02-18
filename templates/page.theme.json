@@ -377,7 +377,7 @@
         "icons_style": "arrows_large",
         "icons_shape": "none",
         "slideshow_controls_style": "dots",
-        "pagination_position": "bottom_center",
+        "pagination_position": "top_right",
         "dots_spacing": 8,
         "dots_style": "minimal",
         "dots_direction": "row",

@@ -473,6 +473,7 @@
           "name": "Traditional",
           "settings": {
             "media_type_1": "image",
+            "image_1": "shopify://shop_images/Traditional_2048_x_565.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -497,7 +498,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Bestsellers</h2>",
+                "text": "<h2>Traditional</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

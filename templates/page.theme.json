@@ -596,7 +596,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<p>Golden Emerald City</p>",
+                "text": "<h2>Golden Emerald City</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

@@ -381,7 +381,7 @@
         "dots_spacing": 8,
         "dots_style": "minimal",
         "dots_direction": "row",
-        "scroll_direction": "horizontal",
+        "scroll_direction": "vertical",
         "autoplay": false,
         "autoplay_speed": 4,
         "padding-block-start": 0,

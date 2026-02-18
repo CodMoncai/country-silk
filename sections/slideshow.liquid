@@ -26,7 +26,8 @@
       pagination_vertical_position: pagination_vertical_position,
       icon_style: section.settings.icons_style,
       dots_spacing: section.settings.dots_spacing,
-      dots_style: section.settings.dots_style
+      dots_style: section.settings.dots_style,
+      dots_direction: section.settings.dots_direction
     -%}
   {% endcapture %}
 {% endif %}
@@ -50,7 +51,7 @@
   if section.blocks.size == 1
     assign slideshow_class = slideshow_class | append: ' slideshow--single-media'
   endif
-  if section.settings.scroll_direction == 'vertical' and section.settings.display_mode == 'with_hints'
+  if section.settings.scroll_direction == 'vertical'
     assign slideshow_class = slideshow_class | append: ' slideshow--scroll-vertical'
   endif
   if section.settings.display_mode == 'with_hints'
@@ -180,7 +181,7 @@
       }
     }
 
-    /* Vertical scroll (top to bottom) for inset slideshow */
+    /* Vertical scroll (top to bottom) */
     .slideshow-section slideshow-component.slideshow--scroll-vertical slideshow-slides {
       flex-direction: column;
       overflow-x: hidden;
@@ -471,6 +472,23 @@
     },
     {
       "type": "select",
+      "id": "dots_direction",
+      "label": "t:settings.dots_direction",
+      "options": [
+        {
+          "value": "row",
+          "label": "t:options.row"
+        },
+        {
+          "value": "column",
+          "label": "t:options.column"
+        }
+      ],
+      "default": "row",
+      "visible_if": "{{ section.settings.slideshow_controls_style == 'dots' }}"
+    },
+    {
+      "type": "select",
       "id": "scroll_direction",
       "label": "t:settings.scroll_direction",
       "options": [
@@ -483,8 +501,7 @@
           "label": "t:options.vertical"
         }
       ],
-      "default": "horizontal",
-      "visible_if": "{{ section.settings.display_mode == 'with_hints' }}"
+      "default": "horizontal"
     },
     {
       "type": "checkbox",

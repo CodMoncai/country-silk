@@ -998,6 +998,7 @@
     "scroll_direction": "Scroll direction",
     "dots_spacing": "Dots spacing",
     "dots_style": "Dots style",
+    "dots_direction": "Dots direction",
     "percent_height": "Percent height",
     "percent_size": "Percent size",
     "percent_size_mobile": "Percent size",

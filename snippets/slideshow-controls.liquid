@@ -16,6 +16,7 @@
   @param {number} [thumbnail_radius] - The border radius for thumbnails in pixels
   @param {number} [dots_spacing] - Spacing between dot controls in px
   @param {string} [dots_style] - { 'default' | 'minimal' | 'pill' } Style of the dots
+  @param {string} [dots_direction] - { 'row' | 'column' } Layout direction of the dots
   @param {string} [class] - Additional classes to apply to the controls
   @param {boolean} [secondary] - Whether the controls are secondary
 
@@ -73,6 +74,9 @@
     {% endif %}
     {% if style == 'dots' and dots_style %}
       dots-style="{{ dots_style }}"
+    {% endif %}
+    {% if style == 'dots' %}
+      dots-direction="{{ dots_direction | default: 'row' }}"
     {% endif %}
     {% if class %}
       class="{{ class }}"
@@ -379,6 +383,7 @@
     padding: var(--padding-sm) var(--padding-lg);
     border-radius: 3rem;
     overflow: hidden;
+    flex-direction: row;
 
     button {
       --size: 0.56rem;
@@ -448,6 +453,10 @@
     &[aria-selected='true']::after {
       width: calc(var(--size) * 2);
     }
+  }
+
+  slideshow-controls[dots-direction='column'] .slideshow-controls__dots {
+    flex-direction: column;
   }
 
   .slideshow-controls__dots,

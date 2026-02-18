@@ -375,6 +375,7 @@
           "name": "Fashion",
           "settings": {
             "media_type_1": "image",
+            "image_1": "shopify://shop_images/THEME-PAGE-TOP-CANDY-1728x498-2-12-2026.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -566,6 +567,7 @@
         },
         "slide_wLjjE7": {
           "type": "_slide",
+          "name": "Specials",
           "settings": {
             "media_type_1": "image",
             "content_direction": "column",

@@ -72,67 +72,63 @@
     {% endif %}
   >
     {%- if case_pack != blank and case_pack > 0 -%}
-      <div class="product-form-buttons quantity-selector__container quantity-selector__container--case">
-        <div class="quantity-selector__group quantity-selector__group--case">
-          <span class="quantity-selector__label quantity-selector__label--case caption-large" id="quantity-selector-case-label-{{ variant.id }}">{{ 'products.product.case_quantity_label' | t }}</span>
-          <div class="quantity-selector__input-row">
-            <button
-              class="button quantity-minus button-unstyled quantity-selector__case-minus"
-              type="button"
-              aria-label="{{ 'accessibility.decrease_quantity' | t }}"
-              on:click="/decreaseCaseQuantity"
-              ref="caseMinusButton"
-            >
-              <span class="svg-wrapper icon-plus">{{- 'icon-minus.svg' | inline_asset_content -}}</span>
-            </button>
-            <input
-              type="number"
-              class="quantity-selector__case-input quantity-selector__input-box"
-              min="1"
-              {% if max_case_quantity != nil %}max="{{ max_case_quantity }}"{% endif %}
-              value="{{ initial_case }}"
-              ref="caseQuantityInput"
-              aria-labelledby="quantity-selector-case-label-{{ variant.id }}"
-              on:blur="/setCaseQuantity"
-            >
-            <button
-              class="button quantity-plus button-unstyled quantity-selector__case-plus"
-              type="button"
-              aria-label="{{ 'accessibility.increase_quantity' | t }}"
-              on:click="/increaseCaseQuantity"
-              ref="casePlusButton"
-            >
-              <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
-            </button>
-          </div>
+      <div class="product-form-buttons quantity-selector__group quantity-selector__group--case">
+        <span class="quantity-selector__label quantity-selector__label--case caption-large" id="quantity-selector-case-label-{{ variant.id }}">{{ 'products.product.case_quantity_label' | t }}</span>
+        <div class="quantity-selector__input-row">
+          <button
+            class="button quantity-minus button-unstyled quantity-selector__case-minus"
+            type="button"
+            aria-label="{{ 'accessibility.decrease_quantity' | t }}"
+            on:click="/decreaseCaseQuantity"
+            ref="caseMinusButton"
+          >
+            <span class="svg-wrapper icon-plus">{{- 'icon-minus.svg' | inline_asset_content -}}</span>
+          </button>
+          <input
+            type="number"
+            class="quantity-selector__case-input quantity-selector__input-box"
+            min="1"
+            {% if max_case_quantity != nil %}max="{{ max_case_quantity }}"{% endif %}
+            value="{{ initial_case }}"
+            ref="caseQuantityInput"
+            aria-labelledby="quantity-selector-case-label-{{ variant.id }}"
+            on:blur="/setCaseQuantity"
+          >
+          <button
+            class="button quantity-plus button-unstyled quantity-selector__case-plus"
+            type="button"
+            aria-label="{{ 'accessibility.increase_quantity' | t }}"
+            on:click="/increaseCaseQuantity"
+            ref="casePlusButton"
+          >
+            <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+          </button>
         </div>
       </div>
-      <div class="product-form-buttons quantity-selector__container quantity-selector__container--total">
-        <div class="quantity-selector__group quantity-selector__group--total">
-          <span class="quantity-selector__label quantity-selector__label--total caption-large" id="quantity-selector-total-label-{{ variant.id }}">{{ 'products.product.total_items_label' | t }}</span>
-          <div class="quantity-selector__input-row quantity-selector__input-row--total">
-            <span class="quantity-selector__total-input-wrapper">
-              <input
-                type="number"
-                name="{% if line_index %}updates[]{% else %}quantity{% endif %}"
-                value="{{ initial_total }}"
-                data-cart-quantity="{{ cart | item_count_for_variant: variant.id }}"
-                min="{{ case_pack }}"
-                {% if max_case_quantity != nil %}max="{{ max_case_quantity | times: case_pack }}"{% endif %}
-                step="{{ case_pack }}"
-                readonly
-                ref="quantityInput"
-                aria-labelledby="quantity-selector-total-label-{{ variant.id }}"
-                class="quantity-selector__input-box quantity-selector__total-input"
-                tabindex="-1"
-                aria-readonly="true"
-              >
-            </span>
-            <span class="quantity-selector__refs-hidden" aria-hidden="true">
-              <button type="button" ref="minusButton" disabled aria-hidden="true">-</button>
-              <button type="button" ref="plusButton" disabled aria-hidden="true">+</button>
-            </span>
-          </div>
+      <div class="product-form-buttons quantity-selector__group quantity-selector__group--total">
+        <span class="quantity-selector__label quantity-selector__label--total caption-large" id="quantity-selector-total-label-{{ variant.id }}">{{ 'products.product.total_items_label' | t }}</span>
+        <div class="quantity-selector__input-row quantity-selector__input-row--total">
+          <span class="quantity-selector__total-input-wrapper">
+            <input
+              type="number"
+              name="{% if line_index %}updates[]{% else %}quantity{% endif %}"
+              value="{{ initial_total }}"
+              data-cart-quantity="{{ cart | item_count_for_variant: variant.id }}"
+              min="{{ case_pack }}"
+              {% if max_case_quantity != nil %}max="{{ max_case_quantity | times: case_pack }}"{% endif %}
+              step="{{ case_pack }}"
+              readonly
+              ref="quantityInput"
+              aria-labelledby="quantity-selector-total-label-{{ variant.id }}"
+              class="quantity-selector__input-box quantity-selector__total-input"
+              tabindex="-1"
+              aria-readonly="true"
+            >
+          </span>
+          <span class="quantity-selector__refs-hidden" aria-hidden="true">
+            <button type="button" ref="minusButton" disabled aria-hidden="true">-</button>
+            <button type="button" ref="plusButton" disabled aria-hidden="true">+</button>
+          </span>
         </div>
       </div>
     {%- else -%}

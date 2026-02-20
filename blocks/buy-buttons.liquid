@@ -96,7 +96,7 @@
           {% content_for 'block', type: 'quantity', id: 'quantity' %}
 
           {%- liquid
-            assign case_pack_quantity = variant.metafields.custom.case_pack_quantity.value | default: product.metafields.custom.case_pack_quantity.value
+            assign case_pack_quantity = variant.metafields.custom.case_pack.value | default: product.metafields.custom.case_pack.value
           -%}
           {%- if case_pack_quantity != blank and case_pack_quantity > 0 -%}
             <p class="case-pack-quantity caption-large" ref="casePackQuantity">

@@ -130,6 +130,8 @@
                     assign variant_display_name = product.title
                   endif
 
+                  assign variant_case_pack = variant.metafields.custom.case_pack.value | default: product.metafields.custom.case_pack.value
+
                   assign remove_button_aria_label = 'accessibility.remove_item' | t: title: variant.title | escape
                   assign sold_out_message = 'products.product.sold_out' | t
 
@@ -170,6 +172,9 @@
                         {% if section.settings.show_sku %}
                           <span class="variant-item__sku hidden--mobile">{{ variant.sku }}</span>
                         {% endif %}
+                        {% if variant_case_pack != blank and variant_case_pack > 0 %}
+                          <span class="variant-item__case-pack caption-large hidden--mobile">{{ 'products.product.case_pack_quantity' | t: count: variant_case_pack }}</span>
+                        {% endif %}
 
                         <div class="variant-item__mobile-info hidden--desktop">
                           <div class="variant-item__title-container">
@@ -178,6 +183,9 @@
                             </span>
                             {% if section.settings.show_sku %}
                               <span class="variant-item__sku">{{ variant.sku }}</span>
+                            {% endif %}
+                            {% if variant_case_pack != blank and variant_case_pack > 0 %}
+                              <span class="variant-item__case-pack caption-large">{{ 'products.product.case_pack_quantity' | t: count: variant_case_pack }}</span>
                             {% endif %}
                           </div>
                           <div class="variant-item__mobile-price-container">
@@ -627,6 +635,13 @@
   .variant-item__sku {
     font-size: var(--font-size--3xs);
     opacity: var(--opacity-85);
+  }
+
+  .variant-item__case-pack {
+    display: block;
+    margin-block-start: var(--gap-2xs);
+    font-size: var(--font-size--3xs);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 
   .variant-item__details {

@@ -25,6 +25,20 @@ export class QuantitySelectorComponent extends Component {
   serverDisabledPlus = false;
   initialized = false;
 
+  get casePackMode() {
+    const pack = this.dataset.casePack;
+    return pack != null && pack !== '' && parseInt(pack, 10) > 0;
+  }
+
+  get casePack() {
+    return this.casePackMode ? parseInt(this.dataset.casePack, 10) : 0;
+  }
+
+  get maxCaseQuantity() {
+    const max = this.dataset.maxCaseQuantity;
+    return max != null && max !== '' ? parseInt(max, 10) : null;
+  }
+
   connectedCallback() {
     super.connectedCallback();
 
@@ -85,7 +99,14 @@ export class QuantitySelectorComponent extends Component {
    * @param {string} value - The value to set
    */
   setValue(value) {
-    this.refs.quantityInput.value = value;
+    const total = typeof value === 'string' ? parseInt(value, 10) : value;
+    this.refs.quantityInput.value = String(isNaN(total) ? 0 : total);
+    if (this.casePackMode && this.refs.caseQuantityInput) {
+      const pack = this.casePack;
+      const caseQty = pack > 0 ? Math.max(1, Math.floor(total / pack)) : 1;
+      this.refs.caseQuantityInput.value = String(caseQty);
+    }
+    this.updateButtonStates();
   }
 
   /**
@@ -110,18 +131,25 @@ export class QuantitySelectorComponent extends Component {
     const newStep = parseIntOrDefault(step, 1);
     const effectiveMax = this.getEffectiveMax();
 
-    // Snap to valid increment if not already aligned
     let newValue = currentValue;
-    if ((currentValue - newMin) % newStep !== 0) {
-      // Snap DOWN to closest valid increment
+    if (!this.casePackMode && (currentValue - newMin) % newStep !== 0) {
       newValue = newMin + Math.floor((currentValue - newMin) / newStep) * newStep;
     }
 
-    // Ensure value is within bounds
     newValue = Math.max(newMin, Math.min(effectiveMax ?? Infinity, newValue));
 
     if (newValue !== currentValue) {
       quantityInput.value = newValue.toString();
+    }
+
+    if (this.casePackMode && this.refs.caseQuantityInput) {
+      const pack = this.casePack;
+      const caseQty = pack > 0 ? Math.max(1, Math.floor(newValue / pack)) : 1;
+      const maxCase = this.maxCaseQuantity;
+      this.refs.caseQuantityInput.value = String(maxCase != null ? Math.min(maxCase, caseQty) : caseQty);
+      if (maxCase != null) {
+        this.refs.caseQuantityInput.setAttribute('max', String(maxCase));
+      }
     }
 
     this.updateButtonStates();
@@ -150,9 +178,16 @@ export class QuantitySelectorComponent extends Component {
    * @returns {number | null} The effective max, or null if no max
    */
   getEffectiveMax() {
+    if (this.casePackMode) {
+      const maxCase = this.maxCaseQuantity;
+      if (maxCase == null) return null;
+      const pack = this.casePack;
+      const { cartQuantity, min } = this.getCurrentValues();
+      const maxTotal = maxCase * pack;
+      return Math.max(maxTotal - cartQuantity, min);
+    }
     const { max, cartQuantity, min } = this.getCurrentValues();
     if (max === null) return null;
-    // Product page: can only add what's left
     return Math.max(max - cartQuantity, min);
   }
 
@@ -161,14 +196,17 @@ export class QuantitySelectorComponent extends Component {
    */
   updateButtonStates() {
     const { minusButton, plusButton } = this.refs;
+    if (this.casePackMode && this.refs.caseMinusButton != null && this.refs.casePlusButton != null) {
+      const caseValue = parseInt(this.refs.caseQuantityInput?.value ?? '1', 10) || 1;
+      const maxCase = this.maxCaseQuantity;
+      this.refs.caseMinusButton.disabled = caseValue <= 1;
+      this.refs.casePlusButton.disabled = maxCase != null && caseValue >= maxCase;
+    }
     const { min, value } = this.getCurrentValues();
     const effectiveMax = this.getEffectiveMax();
-
-    // Only manage buttons that weren't server-disabled
     if (!this.serverDisabledMinus) {
       minusButton.disabled = value <= min;
     }
-
     if (!this.serverDisabledPlus) {
       plusButton.disabled = effectiveMax !== null && value >= effectiveMax;
     }
@@ -208,6 +246,51 @@ export class QuantitySelectorComponent extends Component {
     if (!(event.target instanceof HTMLElement)) return;
     event.preventDefault();
     this.updateQuantity(-1);
+  }
+
+  /**
+   * Case pack mode: sync total from case quantity and dispatch update
+   */
+  #syncTotalFromCase() {
+    if (!this.casePackMode || !this.refs.caseQuantityInput) return;
+    const pack = this.casePack;
+    const caseQty = parseInt(this.refs.caseQuantityInput.value, 10) || 1;
+    const maxCase = this.maxCaseQuantity;
+    const clampedCase = Math.max(1, maxCase != null ? Math.min(maxCase, caseQty) : caseQty);
+    if (clampedCase !== caseQty) {
+      this.refs.caseQuantityInput.value = String(clampedCase);
+    }
+    const total = clampedCase * pack;
+    this.refs.quantityInput.value = String(total);
+    this.onQuantityChange();
+    this.updateButtonStates();
+  }
+
+  increaseCaseQuantity(event) {
+    if (!(event.target instanceof HTMLElement)) return;
+    event.preventDefault();
+    if (!this.casePackMode || !this.refs.caseQuantityInput) return;
+    const maxCase = this.maxCaseQuantity;
+    const current = parseInt(this.refs.caseQuantityInput.value, 10) || 1;
+    const next = maxCase != null ? Math.min(maxCase, current + 1) : current + 1;
+    this.refs.caseQuantityInput.value = String(next);
+    this.#syncTotalFromCase();
+  }
+
+  decreaseCaseQuantity(event) {
+    if (!(event.target instanceof HTMLElement)) return;
+    event.preventDefault();
+    if (!this.casePackMode || !this.refs.caseQuantityInput) return;
+    const current = parseInt(this.refs.caseQuantityInput.value, 10) || 1;
+    const next = Math.max(1, current - 1);
+    this.refs.caseQuantityInput.value = String(next);
+    this.#syncTotalFromCase();
+  }
+
+  setCaseQuantity(event) {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    event.preventDefault();
+    this.#syncTotalFromCase();
   }
 
   /**

@@ -95,15 +95,6 @@
 
           {% content_for 'block', type: 'quantity', id: 'quantity' %}
 
-          {%- liquid
-            assign case_pack_quantity = variant.metafields.custom.case_pack.value | default: product.metafields.custom.case_pack.value
-          -%}
-          {%- if case_pack_quantity != blank and case_pack_quantity > 0 -%}
-            <p class="case-pack-quantity caption-large" ref="casePackQuantity">
-              {{ 'products.product.case_pack_quantity' | t: count: case_pack_quantity }}
-            </p>
-          {%- endif -%}
-
           {%- if has_quantity_rules -%}
             <div
               class="quantity-rules"
@@ -385,22 +376,14 @@
     }
   }
 
-  .product-form-buttons > *:not(.quantity-selector-wrapper, .quantity-rules, .quantity-label, .volume-pricing, .case-pack-quantity) {
+  .product-form-buttons > *:not(.quantity-selector-wrapper, .quantity-rules, .quantity-label, .volume-pricing) {
     flex: 1 1 var(--buy-button-preferred-width, 0);
     min-width: fit-content;
   }
 
   .product-form-buttons--stacked
-    > *:not(.quantity-selector-wrapper, .quantity-rules, .quantity-label, .volume-pricing, .case-pack-quantity) {
+    > *:not(.quantity-selector-wrapper, .quantity-rules, .quantity-label, .volume-pricing) {
     flex-basis: 51%;
-  }
-
-  .case-pack-quantity {
-    flex: 1 0 100%;
-    width: 100%;
-    margin-block-start: var(--gap-xs);
-    margin-block-end: 0;
-    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
   }
 
   .product-form-buttons button {

@@ -32,6 +32,8 @@
     "new_window": "Opens in a new window.",
     "open_hotspot": "Open hotspot",
     "quantity": "Quantity",
+    "case_quantity": "Case quantity",
+    "total_items": "Total items",
     "pause_video": "Pause video",
     "play_model": "Play 3D model",
     "play_video": "Play video",
@@ -353,6 +355,8 @@
       "quantity_maximum": "Maximum of {{ maximum }}",
       "in_cart": "in quote",
       "case_pack_quantity": "Case pack: {{ count }} units",
+      "case_quantity_label": "Case quantity",
+      "total_items_label": "Total items",
       "default_title": "Default Title",
       "sticky_add_to_cart": "Quick add to quote bar"
     }

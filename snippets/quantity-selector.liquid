@@ -72,44 +72,73 @@
     {% endif %}
   >
     {%- if case_pack != blank and case_pack > 0 -%}
-      <span class="quantity-selector__label quantity-selector__label--case caption-large">{{ 'products.product.case_quantity_label' | t }}</span>
-      <button
-        class="button quantity-minus button-unstyled quantity-selector__case-minus"
-        type="button"
-        aria-label="{{ 'accessibility.decrease_quantity' | t }}"
-        on:click="/decreaseCaseQuantity"
-        ref="caseMinusButton"
-      >
-        <span class="svg-wrapper icon-plus">{{- 'icon-minus.svg' | inline_asset_content -}}</span>
-      </button>
-      <input
-        type="number"
-        class="quantity-selector__case-input"
-        min="1"
-        {% if max_case_quantity != nil %}max="{{ max_case_quantity }}"{% endif %}
-        value="{{ initial_case }}"
-        ref="caseQuantityInput"
-        aria-label="{{ 'accessibility.case_quantity' | t }}"
-        on:blur="/setCaseQuantity"
-      >
-      <button
-        class="button quantity-plus button-unstyled quantity-selector__case-plus"
-        type="button"
-        aria-label="{{ 'accessibility.increase_quantity' | t }}"
-        on:click="/increaseCaseQuantity"
-        ref="casePlusButton"
-      >
-        <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
-      </button>
-    {%- endif -%}
-
+      <div class="quantity-selector__group quantity-selector__group--case">
+        <span class="quantity-selector__label quantity-selector__label--case caption-large" id="quantity-selector-case-label-{{ variant.id }}">{{ 'products.product.case_quantity_label' | t }}</span>
+        <div class="quantity-selector__input-row">
+          <button
+            class="button quantity-minus button-unstyled quantity-selector__case-minus"
+            type="button"
+            aria-label="{{ 'accessibility.decrease_quantity' | t }}"
+            on:click="/decreaseCaseQuantity"
+            ref="caseMinusButton"
+          >
+            <span class="svg-wrapper icon-plus">{{- 'icon-minus.svg' | inline_asset_content -}}</span>
+          </button>
+          <input
+            type="number"
+            class="quantity-selector__case-input quantity-selector__input-box"
+            min="1"
+            {% if max_case_quantity != nil %}max="{{ max_case_quantity }}"{% endif %}
+            value="{{ initial_case }}"
+            ref="caseQuantityInput"
+            aria-labelledby="quantity-selector-case-label-{{ variant.id }}"
+            on:blur="/setCaseQuantity"
+          >
+          <button
+            class="button quantity-plus button-unstyled quantity-selector__case-plus"
+            type="button"
+            aria-label="{{ 'accessibility.increase_quantity' | t }}"
+            on:click="/increaseCaseQuantity"
+            ref="casePlusButton"
+          >
+            <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+          </button>
+        </div>
+      </div>
+      <div class="quantity-selector__group quantity-selector__group--total">
+        <span class="quantity-selector__label quantity-selector__label--total caption-large" id="quantity-selector-total-label-{{ variant.id }}">{{ 'products.product.total_items_label' | t }}</span>
+        <div class="quantity-selector__input-row quantity-selector__input-row--total">
+          <span class="quantity-selector__total-input-wrapper">
+            <input
+              type="number"
+              name="{% if line_index %}updates[]{% else %}quantity{% endif %}"
+              value="{{ initial_total }}"
+              data-cart-quantity="{{ cart | item_count_for_variant: variant.id }}"
+              min="{{ case_pack }}"
+              {% if max_case_quantity != nil %}max="{{ max_case_quantity | times: case_pack }}"{% endif %}
+              step="{{ case_pack }}"
+              readonly
+              ref="quantityInput"
+              aria-labelledby="quantity-selector-total-label-{{ variant.id }}"
+              class="quantity-selector__input-box quantity-selector__total-input"
+              tabindex="-1"
+              aria-readonly="true"
+            >
+          </span>
+          <span class="quantity-selector__refs-hidden" aria-hidden="true">
+            <button type="button" ref="minusButton" disabled aria-hidden="true">-</button>
+            <button type="button" ref="plusButton" disabled aria-hidden="true">+</button>
+          </span>
+        </div>
+      </div>
+    {%- else -%}
     <button
-      class="button quantity-minus button-unstyled{% if case_pack != blank and case_pack > 0 %} visually-hidden{% endif %}"
+      class="button quantity-minus button-unstyled"
       type="button"
       name="minus"
       on:click="/decreaseQuantity"
       ref="minusButton"
-      {% if case_pack != blank and case_pack > 0 %}disabled aria-hidden="true"{% elsif can_update_quantity == false %}disabled{% endif %}
+      {% if can_update_quantity == false %}disabled{% endif %}
     >
       <span class="visually-hidden">{{ 'accessibility.decrease_quantity' | t }}</span
       ><span class="svg-wrapper icon-plus">
@@ -119,41 +148,38 @@
     <input
       type="number"
       name="{% if line_index %}updates[]{% else %}quantity{% endif %}"
-      value="{% if case_pack != blank and case_pack > 0 %}{{ initial_total }}{% else %}{{ in_cart_quantity | default: variant.quantity_rule.min | default: 1 }}{% endif %}"
+      value="{{ in_cart_quantity | default: variant.quantity_rule.min | default: 1 }}"
       data-cart-quantity="{{ cart | item_count_for_variant: variant.id }}"
-      min="{% if case_pack != blank and case_pack > 0 %}{{ case_pack }}{% else %}{{ min_quantity }}{% endif %}"
+      min="{{ min_quantity }}"
       data-min="{{ variant.quantity_rule.min | default: 1 }}"
-      {% if case_pack != blank and case_pack > 0 and max_case_quantity != nil %}max="{{ max_case_quantity | times: case_pack }}"{% elsif variant.quantity_rule.max %}max="{{ variant.quantity_rule.max }}"{% endif %}
-      {% if case_pack != blank and case_pack > 0 %}readonly{% else %}on:blur="/setQuantity"
-      on:focus="/selectInputValue"{% endif %}
+      on:blur="/setQuantity"
+      on:focus="/selectInputValue"
       ref="quantityInput"
-      aria-label="{% if case_pack != blank and case_pack > 0 %}{{ 'accessibility.total_items' | t }}{% else %}{{ 'accessibility.quantity' | t }}{% endif %}"
+      aria-label="{{ 'accessibility.quantity' | t }}"
       {% if line_index %}
         data-cart-line="{{ line_index | plus: 1 }}"
       {% endif %}
       {% if variant.quantity_rule.max %}
         max="{{ variant.quantity_rule.max }}"
       {% endif %}
-      step="{% if case_pack != blank and case_pack > 0 %}{{ case_pack }}{% else %}{{ variant.quantity_rule.increment | default: 1 }}{% endif %}"
+      step="{{ variant.quantity_rule.increment | default: 1 }}"
       {% if can_update_quantity == false or variant.available == false %}
         disabled
       {% endif %}
     >
     <button
-      class="button quantity-plus button-unstyled{% if case_pack != blank and case_pack > 0 %} visually-hidden{% endif %}"
+      class="button quantity-plus button-unstyled"
       type="button"
       name="plus"
       on:click="/increaseQuantity"
       ref="plusButton"
-      {% if case_pack != blank and case_pack > 0 %}disabled aria-hidden="true"{% elsif can_update_quantity == false %}disabled{% endif %}
+      {% if can_update_quantity == false %}disabled{% endif %}
     >
       <span class="visually-hidden">{{ 'accessibility.increase_quantity' | t }}</span
       ><span class="svg-wrapper icon-plus">
         {{- 'icon-plus.svg' | inline_asset_content -}}
       </span>
     </button>
-    {%- if case_pack != blank and case_pack > 0 -%}
-      <span class="quantity-selector__label quantity-selector__label--total caption-large">{{ 'products.product.total_items_label' | t }}</span>
     {%- endif -%}
   </{{ component_name }}>
 
@@ -233,35 +259,104 @@
     }
   }
 
+  /* Case pack: two separate groups in one row */
   .quantity-selector--case-pack {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: calc(var(--gap-sm) / 2);
+    flex-direction: row;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    gap: var(--gap-md);
+    width: 100%;
+  }
 
-    @media screen and (min-width: 750px) {
-      gap: var(--gap-sm);
-    }
+  .quantity-selector__group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gap-2xs);
+    min-width: 0;
+  }
+
+  .quantity-selector__group--case {
+    flex: 0 0 auto;
+  }
+
+  .quantity-selector__group--total {
+    flex: 0 1 auto;
+    min-width: 0;
   }
 
   .quantity-selector__label {
     flex: 0 0 auto;
     color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    white-space: nowrap;
   }
 
-  .quantity-selector__case-input {
+  .quantity-selector__input-row {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    border: var(--style-border-width) solid var(--color-border);
+    border-radius: var(--style-border-radius);
+    background: rgb(var(--color-background));
+    min-height: var(--height-buy-buttons, 4.4rem);
+  }
+
+  /* Hide ref-only buttons so they don't take space or cover inputs */
+  .quantity-selector__refs-hidden {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    pointer-events: none;
+  }
+
+  .quantity-selector__input-box {
+    display: block;
     width: 3.5rem;
+    min-width: 3.5rem;
+    padding: var(--padding-sm) var(--padding-2xs);
     text-align: center;
+    font: inherit;
     -moz-appearance: textfield;
+    border: none;
+    background: transparent;
   }
 
-  .quantity-selector__case-input::-webkit-outer-spin-button,
-  .quantity-selector__case-input::-webkit-inner-spin-button {
+  .quantity-selector__case-input.quantity-selector__input-box {
+    border-inline: none;
+  }
+
+  .quantity-selector__input-box::-webkit-outer-spin-button,
+  .quantity-selector__input-box::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
 
-  .quantity-selector--case-pack .quantity-selector__label--total {
-    margin-inline-start: var(--gap-sm);
+  .quantity-selector__total-input-wrapper {
+    display: flex;
+    align-items: center;
+    min-height: 100%;
+  }
+
+  .quantity-selector__total-input.quantity-selector__input-box {
+    width: 4rem;
+    min-width: 4rem;
+    cursor: default;
+  }
+
+  .quantity-selector__input-row--total {
+    padding-inline: var(--padding-sm);
+  }
+
+  .quantity-selector__input-row--total .quantity-selector__total-input-wrapper {
+    flex: 1 1 auto;
   }
 {% endstylesheet %}

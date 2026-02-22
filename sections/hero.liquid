@@ -906,8 +906,7 @@
       "type": "url",
       "id": "video_1_external_url",
       "label": "t:settings.video_external_url",
-      "info": "Optional. Use a direct link to a video file (e.g. .mp4). Overrides uploaded video when set.",
-      "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
+      "info": "When Type is Video: optional direct link to a video file (e.g. .mp4). Used instead of uploaded video when set."
     },
     {
       "type": "header",
@@ -945,8 +944,7 @@
       "type": "url",
       "id": "video_2_external_url",
       "label": "t:settings.video_external_url",
-      "info": "Optional. Use a direct link to a video file (e.g. .mp4). Overrides uploaded video when set.",
-      "visible_if": "{{ section.settings.media_type_2 == 'video' }}"
+      "info": "When Type is Video: optional direct link to a video file (e.g. .mp4). Used instead of uploaded video when set."
     },
     {
       "type": "header",
@@ -1002,8 +1000,8 @@
       "type": "url",
       "id": "video_1_mobile_external_url",
       "label": "t:settings.video_external_url",
-      "info": "Optional. Use a direct link to a video file (e.g. .mp4). Overrides uploaded video when set.",
-      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
+      "info": "When Type is Video: optional direct link to a video file (e.g. .mp4). Used instead of uploaded video when set.",
+      "visible_if": "{{ section.settings.custom_mobile_media }}"
     },
     {
       "type": "header",
@@ -1043,8 +1041,8 @@
       "type": "url",
       "id": "video_2_mobile_external_url",
       "label": "t:settings.video_external_url",
-      "info": "Optional. Use a direct link to a video file (e.g. .mp4). Overrides uploaded video when set.",
-      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' }}"
+      "info": "When Type is Video: optional direct link to a video file (e.g. .mp4). Used instead of uploaded video when set.",
+      "visible_if": "{{ section.settings.custom_mobile_media }}"
     },
     {
       "type": "header",

@@ -46,7 +46,7 @@
     assign media_1 = 'image'
     assign media_count = media_count | plus: 1
   endif
-  if section.settings.video_1 != blank and section.settings.media_type_1 == 'video'
+  if section.settings.media_type_1 == 'video' and (section.settings.video_1 != blank or section.settings.video_1_external_url != blank)
     assign media_1 = 'video'
     assign media_count = media_count | plus: 1
   endif
@@ -54,7 +54,7 @@
     assign media_2 = 'image'
     assign media_count = media_count | plus: 1
   endif
-  if section.settings.video_2 != blank and section.settings.media_type_2 == 'video'
+  if section.settings.media_type_2 == 'video' and (section.settings.video_2 != blank or section.settings.video_2_external_url != blank)
     assign media_2 = 'video'
     assign media_count = media_count | plus: 1
   endif
@@ -66,7 +66,7 @@
       assign media_1_mobile = 'image'
       assign media_count_mobile = media_count_mobile | plus: 1
     endif
-    if section.settings.video_1_mobile != blank and section.settings.media_type_1_mobile == 'video'
+    if section.settings.media_type_1_mobile == 'video' and (section.settings.video_1_mobile != blank or section.settings.video_1_mobile_external_url != blank)
       assign media_1_mobile = 'video'
       assign media_count_mobile = media_count_mobile | plus: 1
     endif
@@ -74,7 +74,7 @@
       assign media_2_mobile = 'image'
       assign media_count_mobile = media_count_mobile | plus: 1
     endif
-    if section.settings.video_2_mobile != blank and section.settings.media_type_2_mobile == 'video'
+    if section.settings.media_type_2_mobile == 'video' and (section.settings.video_2_mobile != blank or section.settings.video_2_mobile_external_url != blank)
       assign media_2_mobile = 'video'
       assign media_count_mobile = media_count_mobile | plus: 1
     endif
@@ -195,17 +195,30 @@
 
   {%- if media_1 == 'video' -%}
     <div class="{{ video_wrapper_desktop_class }}">
-      {{
-        section.settings.video_1
-        | video_tag:
-          poster: nil,
-          autoplay: true,
-          loop: true,
-          controls: false,
-          muted: true,
-          class: media_video_desktop_class,
-          data-testid: 'hero-desktop-video-1'
-      }}
+      {%- if section.settings.video_1_external_url != blank -%}
+        <video
+          autoplay
+          loop
+          muted
+          playsinline
+          class="{{ media_video_desktop_class }}"
+          data-testid="hero-desktop-video-1"
+        >
+          <source src="{{ section.settings.video_1_external_url }}">
+        </video>
+      {%- else -%}
+        {{
+          section.settings.video_1
+          | video_tag:
+            poster: nil,
+            autoplay: true,
+            loop: true,
+            controls: false,
+            muted: true,
+            class: media_video_desktop_class,
+            data-testid: 'hero-desktop-video-1'
+        }}
+      {%- endif -%}
     </div>
   {%- endif -%}
 
@@ -229,17 +242,30 @@
 
     {%- if media_1_mobile == 'video' -%}
       <div class="hero__video-wrapper hero__video-wrapper--mobile">
-        {{
-          section.settings.video_1_mobile
-          | video_tag:
-            poster: nil,
-            autoplay: true,
-            loop: true,
-            controls: false,
-            muted: true,
-            class: 'hero__video hero__video--mobile',
-            data-testid: 'hero-mobile-video-1'
-        }}
+        {%- if section.settings.video_1_mobile_external_url != blank -%}
+          <video
+            autoplay
+            loop
+            muted
+            playsinline
+            class="hero__video hero__video--mobile"
+            data-testid="hero-mobile-video-1"
+          >
+            <source src="{{ section.settings.video_1_mobile_external_url }}">
+          </video>
+        {%- else -%}
+          {{
+            section.settings.video_1_mobile
+            | video_tag:
+              poster: nil,
+              autoplay: true,
+              loop: true,
+              controls: false,
+              muted: true,
+              class: 'hero__video hero__video--mobile',
+              data-testid: 'hero-mobile-video-1'
+          }}
+        {%- endif -%}
       </div>
     {%- endif -%}
   {%- endif -%}
@@ -295,17 +321,30 @@
 
   {%- if media_2 == 'video' -%}
     <div class="{{ video_wrapper_desktop_class }}">
-      {{
-        section.settings.video_2
-        | video_tag:
-          poster: nil,
-          autoplay: true,
-          loop: true,
-          controls: false,
-          muted: true,
-          class: media_video_desktop_class,
-          data-testid: 'hero-desktop-video-2'
-      }}
+      {%- if section.settings.video_2_external_url != blank -%}
+        <video
+          autoplay
+          loop
+          muted
+          playsinline
+          class="{{ media_video_desktop_class }}"
+          data-testid="hero-desktop-video-2"
+        >
+          <source src="{{ section.settings.video_2_external_url }}">
+        </video>
+      {%- else -%}
+        {{
+          section.settings.video_2
+          | video_tag:
+            poster: nil,
+            autoplay: true,
+            loop: true,
+            controls: false,
+            muted: true,
+            class: media_video_desktop_class,
+            data-testid: 'hero-desktop-video-2'
+        }}
+      {%- endif -%}
     </div>
   {%- endif -%}
 
@@ -329,17 +368,30 @@
 
     {%- if media_2_mobile == 'video' -%}
       <div class="hero__video-wrapper hero__video-wrapper--mobile">
-        {{
-          section.settings.video_2_mobile
-          | video_tag:
-            poster: nil,
-            autoplay: true,
-            loop: true,
-            controls: false,
-            muted: true,
-            class: 'hero__video hero__video--mobile',
-            data-testid: 'hero-mobile-video-2'
-        }}
+        {%- if section.settings.video_2_mobile_external_url != blank -%}
+          <video
+            autoplay
+            loop
+            muted
+            playsinline
+            class="hero__video hero__video--mobile"
+            data-testid="hero-mobile-video-2"
+          >
+            <source src="{{ section.settings.video_2_mobile_external_url }}">
+          </video>
+        {%- else -%}
+          {{
+            section.settings.video_2_mobile
+            | video_tag:
+              poster: nil,
+              autoplay: true,
+              loop: true,
+              controls: false,
+              muted: true,
+              class: 'hero__video hero__video--mobile',
+              data-testid: 'hero-mobile-video-2'
+          }}
+        {%- endif -%}
       </div>
     {%- endif -%}
   {%- endif -%}
@@ -851,6 +903,13 @@
       "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
     },
     {
+      "type": "url",
+      "id": "video_1_external_url",
+      "label": "t:settings.video_external_url",
+      "info": "Optional. Use a direct link to a video file (e.g. .mp4). Overrides uploaded video when set.",
+      "visible_if": "{{ section.settings.media_type_1 == 'video' }}"
+    },
+    {
       "type": "header",
       "content": "t:content.media_2"
     },
@@ -880,6 +939,13 @@
       "type": "video",
       "id": "video_2",
       "label": "t:settings.video",
+      "visible_if": "{{ section.settings.media_type_2 == 'video' }}"
+    },
+    {
+      "type": "url",
+      "id": "video_2_external_url",
+      "label": "t:settings.video_external_url",
+      "info": "Optional. Use a direct link to a video file (e.g. .mp4). Overrides uploaded video when set.",
       "visible_if": "{{ section.settings.media_type_2 == 'video' }}"
     },
     {
@@ -933,6 +999,13 @@
       "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
     },
     {
+      "type": "url",
+      "id": "video_1_mobile_external_url",
+      "label": "t:settings.video_external_url",
+      "info": "Optional. Use a direct link to a video file (e.g. .mp4). Overrides uploaded video when set.",
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
+    },
+    {
       "type": "header",
       "content": "t:content.mobile_media_2",
       "visible_if": "{{ section.settings.custom_mobile_media }}"
@@ -964,6 +1037,13 @@
       "type": "video",
       "id": "video_2_mobile",
       "label": "t:settings.video",
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' }}"
+    },
+    {
+      "type": "url",
+      "id": "video_2_mobile_external_url",
+      "label": "t:settings.video_external_url",
+      "info": "Optional. Use a direct link to a video file (e.g. .mp4). Overrides uploaded video when set.",
       "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' }}"
     },
     {

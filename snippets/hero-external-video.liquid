@@ -1,0 +1,70 @@
+{%- comment -%}
+  Renders hero video from an external URL. Supports:
+  - Direct video files (.mp4, etc.) via native <video>
+  - Vimeo URLs via iframe embed (autoplay, loop, muted)
+  - YouTube URLs via iframe embed (autoplay, loop, muted)
+
+  @param external_url {string} - The external video URL (Vimeo, YouTube, or direct file)
+  @param video_class {string} - CSS class for the video/iframe element
+  @param data_testid {string} - Optional data-testid value
+{%- endcomment -%}
+
+{% liquid
+  assign external_url = external_url | strip
+  assign video_class = video_class | default: 'hero__video'
+  assign data_testid = data_testid | default: ''
+
+  assign video_id = ''
+  assign video_type = ''
+
+  if external_url != blank
+    if external_url contains 'youtu.be'
+      assign video_id = external_url | split: '/' | last | split: '?' | first
+      assign video_type = 'youtube'
+    elsif external_url contains 'youtube.com/embed/'
+      assign video_id = external_url | split: 'embed/' | last | split: '?' | first | split: '&' | first
+      assign video_type = 'youtube'
+    elsif external_url contains 'youtube.com'
+      assign video_id = external_url | split: 'v=' | last | split: '&' | first
+      assign video_type = 'youtube'
+    elsif external_url contains 'vimeo.com'
+      assign video_id = external_url | split: '/' | last | split: '?' | first
+      assign video_type = 'vimeo'
+    endif
+  endif
+%}
+
+{% if video_type == 'vimeo' and video_id != blank %}
+  <div class="hero__video-iframe-wrapper {{ video_class }}">
+    <iframe
+      src="https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1"
+      class="hero__video-iframe {{ video_class }}"
+      allow="autoplay; fullscreen; picture-in-picture"
+      allowfullscreen
+      title="Hero background video"
+      {% if data_testid != blank %}data-testid="{{ data_testid }}"{% endif %}
+    ></iframe>
+  </div>
+{% elsif video_type == 'youtube' and video_id != blank %}
+  <div class="hero__video-iframe-wrapper {{ video_class }}">
+    <iframe
+      src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0"
+      class="hero__video-iframe {{ video_class }}"
+      allow="autoplay; encrypted-media"
+      allowfullscreen
+      title="Hero background video"
+      {% if data_testid != blank %}data-testid="{{ data_testid }}"{% endif %}
+    ></iframe>
+  </div>
+{% else %}
+  <video
+    autoplay
+    loop
+    muted
+    playsinline
+    class="{{ video_class }}"
+    {% if data_testid != blank %}data-testid="{{ data_testid }}"{% endif %}
+  >
+    <source src="{{ external_url }}">
+  </video>
+{% endif %}

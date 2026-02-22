@@ -37,7 +37,7 @@
 {% if video_type == 'vimeo' and video_id != blank %}
   <div class="hero__video-iframe-wrapper {{ video_class }}">
     <iframe
-      src="https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1"
+      src="https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0"
       class="hero__video-iframe {{ video_class }}"
       allow="autoplay; fullscreen; picture-in-picture"
       allowfullscreen
@@ -48,9 +48,9 @@
 {% elsif video_type == 'youtube' and video_id != blank %}
   <div class="hero__video-iframe-wrapper {{ video_class }}">
     <iframe
-      src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0"
+      src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0&playsinline=1"
       class="hero__video-iframe {{ video_class }}"
-      allow="autoplay; encrypted-media"
+      allow="autoplay; encrypted-media; fullscreen"
       allowfullscreen
       title="Hero background video"
       {% if data_testid != blank %}data-testid="{{ data_testid }}"{% endif %}

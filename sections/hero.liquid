@@ -602,6 +602,25 @@
   </div>
 </div>
 
+<script>
+  (function () {
+    var hero = document.getElementById('Hero-{{ section.id }}');
+    if (!hero) return;
+    var videos = hero.querySelectorAll('video');
+    function tryPlay(video) {
+      if (video.paused) {
+        video.muted = true;
+        video.play().catch(function () {});
+      }
+    }
+    videos.forEach(function (video) {
+      tryPlay(video);
+      video.addEventListener('loadeddata', function () { tryPlay(video); });
+      video.addEventListener('canplay', function () { tryPlay(video); });
+    });
+  })();
+</script>
+
 {% stylesheet %}
   .hero-wrapper {
     --hero-height-offset: 0px;

@@ -44,11 +44,15 @@
       "name": "t:names.hero",
       "settings": {
         "media_type_1": "image",
+        "video_1_external_url": "",
         "media_type_2": "image",
+        "video_2_external_url": "",
         "stack_media_on_mobile": false,
         "custom_mobile_media": false,
         "media_type_1_mobile": "image",
+        "video_1_mobile_external_url": "",
         "media_type_2_mobile": "image",
+        "video_2_mobile_external_url": "",
         "link": "",
         "open_in_new_tab": false,
         "content_direction": "column",
@@ -275,12 +279,6 @@
                   "settings": {
                     "style_class": "button"
                   },
-                  "blocks": {}
-                },
-                "accelerated-checkout": {
-                  "type": "accelerated-checkout",
-                  "static": true,
-                  "settings": {},
                   "blocks": {}
                 }
               },

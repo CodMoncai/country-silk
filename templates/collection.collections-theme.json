@@ -220,20 +220,20 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "video_3LHVPm": {
+            "video_RH6eAw": {
               "type": "video",
               "name": "t:names.video",
               "settings": {
                 "source": "url",
-                "external_url_source": "metafield",
+                "external_url_source": "manual",
                 "video_url": "https://vimeo.com/1131084302",
-                "metafield_video_url": "{{ collection.metafields.custom.theme_video.value }}",
-                "video_autoplay": true,
-                "video_loop": false,
+                "metafield_video_url": "",
+                "video_autoplay": false,
+                "video_loop": true,
                 "alt": "",
                 "custom_width": 100,
                 "custom_width_mobile": 100,
-                "aspect_ratio": "16/9",
+                "aspect_ratio": "auto",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
@@ -247,7 +247,7 @@
             }
           },
           "block_order": [
-            "video_3LHVPm"
+            "video_RH6eAw"
           ]
         }
       },

@@ -126,7 +126,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "{{ closest.collection.metafields.custom.video_section_heading | metafield_tag }}",
+                "text": "{{ closest.collection.metafields.custom.video_section_heading | metafield_tag }}<p>this is a place holder</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",

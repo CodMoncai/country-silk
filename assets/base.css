@@ -2702,8 +2702,8 @@ product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
   } */
 }
 
-.product-form-buttons .quantity-selector__group {
-  --quantity-selector-width: 124px;
+.product-form-buttons .quantity-selector__group .quantity-selector__input-row {
+  /* --quantity-selector-width: 124px; */
 
   display: flex;
   justify-content: space-between;

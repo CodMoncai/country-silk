@@ -580,7 +580,7 @@
           "type": "comparison-slider",
           "name": "t:names.comparison_slider",
           "settings": {
-            "before_image": "{{ closest.collection.image }}",
+            "before_image": "{{ closest.collection.metafields.custom.theme_color_picture.value }}",
             "after_image": "{{ closest.collection.metafields.custom.theme_color_swatch.value }}",
             "slider_style": "horizontal",
             "show_text": false,

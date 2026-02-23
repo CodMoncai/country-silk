@@ -122,32 +122,6 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "product_description_bi6UyM": {
-              "type": "product-description",
-              "name": "t:names.product_description",
-              "settings": {
-                "text": "<p>{{ closest.product.description }}</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "paragraph",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "text_GrP4xh": {
               "type": "text",
               "name": "t:names.heading",
@@ -174,15 +148,15 @@
               },
               "blocks": {}
             },
-            "text_zg84Hj": {
-              "type": "text",
-              "name": "t:names.description",
+            "product_description_bi6UyM": {
+              "type": "product-description",
+              "name": "t:names.product_description",
               "settings": {
-                "text": "<p></p>{{ closest.collection.description }}",
-                "width": "100%",
+                "text": "{{ closest.product.description }}",
+                "width": "fit-content",
                 "max_width": "normal",
-                "alignment": "center",
-                "type_preset": "rte",
+                "alignment": "left",
+                "type_preset": "paragraph",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
@@ -202,9 +176,8 @@
             }
           },
           "block_order": [
-            "product_description_bi6UyM",
             "text_GrP4xh",
-            "text_zg84Hj"
+            "product_description_bi6UyM"
           ]
         },
         "group_pPXpRt": {

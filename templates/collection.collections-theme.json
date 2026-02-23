@@ -152,7 +152,7 @@
               "type": "product-description",
               "name": "t:names.product_description",
               "settings": {
-                "text": "{{ closest.product.description }}{{ closest.collection.metafields.custom.video_section_heading | metafield_tag }}",
+                "text": "{{ closest.collection.description }}",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

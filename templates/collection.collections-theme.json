@@ -224,7 +224,7 @@
               "type": "video",
               "name": "t:names.video",
               "settings": {
-                "source": "uploaded",
+                "source": "url",
                 "video": "shopify://files/videos/HOME PAGE TOP 2-21-2026.mp4",
                 "external_url_source": "manual",
                 "video_url": "https://vimeo.com/1131084302",

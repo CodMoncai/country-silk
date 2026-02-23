@@ -226,9 +226,9 @@
               "settings": {
                 "source": "url",
                 "video": "shopify://files/videos/HOME PAGE TOP 2-21-2026.mp4",
-                "external_url_source": "manual",
+                "external_url_source": "metafield",
                 "video_url": "https://vimeo.com/1131084302",
-                "metafield_video_url": "",
+                "metafield_video_url": "{{ collection.metafields.custom.theme_video.value }}",
                 "video_autoplay": false,
                 "video_loop": true,
                 "alt": "",

@@ -2684,6 +2684,26 @@ product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
 
 /* Quantity selector */
 .quantity-selector {
+  /* --quantity-selector-width: 124px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-input-text);
+  background-color: var(--color-input-background);
+  border: var(--style-border-width-inputs) solid var(--color-input-border);
+  border-radius: var(--style-border-radius-inputs);
+  flex: 1 1 var(--quantity-selector-width);
+  align-self: stretch;
+  transition: background-color var(--animation-speed) var(--animation-easing);
+
+  &:hover {
+    background-color: var(--color-input-hover-background);
+  } */
+}
+
+.product-form-buttons:has(.add-to-cart-button.button-secondary) .quantity-selector {
+  /* border-radius: var(--style-border-radius-buttons-secondary); */
   --quantity-selector-width: 124px;
 
   display: flex;
@@ -2700,10 +2720,6 @@ product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
   &:hover {
     background-color: var(--color-input-hover-background);
   }
-}
-
-.product-form-buttons:has(.add-to-cart-button.button-secondary) .quantity-selector {
-  border-radius: var(--style-border-radius-buttons-secondary);
 }
 
 .quantity-selector :is(.quantity-minus, .quantity-plus) {

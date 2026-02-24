@@ -673,6 +673,7 @@
           "name": "Red Red Wine",
           "settings": {
             "media_type_1": "image",
+            "image_1": "shopify://shop_images/RED-RED-WINE-THEME-BANNER-2-24-2026.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",

@@ -4096,11 +4096,11 @@ text-component {
 }
 
 /* --- Fixed/Scrolled Header State --- */
-#header-component.is-fixed {
+#header-component[data-sticky-state="active"] {
   background-color: #ffffff !important; /* Background color when scrolled */
   color: #000000 !important; /* Text color when scrolled */
 }
-#header-component.is-fixed .menu-list__link,
-#header-component.is-fixed .header__icon {
+#header-component[data-sticky-state="active"] .menu-list__link,
+#header-component[data-sticky-state="active"] .header__icon {
   color: #000000 !important; /* Menu links and icons when scrolled */
 }

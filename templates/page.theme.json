@@ -239,31 +239,6 @@
               },
               "blocks": {}
             },
-            "text_GNiyeY": {
-              "type": "text",
-              "settings": {
-                "text": "<p><strong>Introducing our latest products, made especially for the season. Shop your favorites before they're gone!</strong></p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "custom",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_xnWE4N": {
               "type": "button",
               "settings": {
@@ -281,7 +256,6 @@
           },
           "block_order": [
             "text_Cy4X7Q",
-            "text_GNiyeY",
             "button_xnWE4N"
           ]
         },
@@ -337,31 +311,6 @@
               },
               "blocks": {}
             },
-            "text_qxagdV": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Discover the bestsellers that have captured the hearts of our customers with their perfect blend of functionality and style.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_PmU3yd": {
               "type": "button",
               "settings": {
@@ -379,7 +328,6 @@
           },
           "block_order": [
             "text_hm9cB4",
-            "text_qxagdV",
             "button_PmU3yd"
           ]
         },
@@ -435,31 +383,6 @@
               },
               "blocks": {}
             },
-            "text_X7yEj3": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Discover the bestsellers that have captured the hearts of our customers with their perfect blend of functionality and style.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_FGCwFb": {
               "type": "button",
               "settings": {
@@ -477,7 +400,6 @@
           },
           "block_order": [
             "text_HPreFD",
-            "text_X7yEj3",
             "button_FGCwFb"
           ]
         },
@@ -533,31 +455,6 @@
               },
               "blocks": {}
             },
-            "text_JX4ay4": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Discover the bestsellers that have captured the hearts of our customers with their perfect blend of functionality and style.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_w84gMC": {
               "type": "button",
               "settings": {
@@ -575,7 +472,6 @@
           },
           "block_order": [
             "text_QkTTci",
-            "text_JX4ay4",
             "button_w84gMC"
           ]
         },
@@ -631,31 +527,6 @@
               },
               "blocks": {}
             },
-            "text_MNa9yt": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Discover the bestsellers that have captured the hearts of our customers with their perfect blend of functionality and style.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_RcHNqT": {
               "type": "button",
               "settings": {
@@ -673,7 +544,6 @@
           },
           "block_order": [
             "text_aF7UqC",
-            "text_MNa9yt",
             "button_RcHNqT"
           ]
         },
@@ -728,31 +598,6 @@
               },
               "blocks": {}
             },
-            "text_PhBeab": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Discover the bestsellers that have captured the hearts of our customers with their perfect blend of functionality and style.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_eCV4n6": {
               "type": "button",
               "settings": {
@@ -770,7 +615,6 @@
           },
           "block_order": [
             "text_QrfjqB",
-            "text_PhBeab",
             "button_eCV4n6"
           ]
         },
@@ -825,31 +669,6 @@
               },
               "blocks": {}
             },
-            "text_ffmKcH": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Discover the bestsellers that have captured the hearts of our customers with their perfect blend of functionality and style.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_zUyPdB": {
               "type": "button",
               "settings": {
@@ -867,7 +686,6 @@
           },
           "block_order": [
             "text_gUQVDb",
-            "text_ffmKcH",
             "button_zUyPdB"
           ]
         },
@@ -922,31 +740,6 @@
               },
               "blocks": {}
             },
-            "text_fEw9Jy": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Discover the bestsellers that have captured the hearts of our customers with their perfect blend of functionality and style.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_8diMkn": {
               "type": "button",
               "settings": {
@@ -964,7 +757,6 @@
           },
           "block_order": [
             "text_JbxeqH",
-            "text_fEw9Jy",
             "button_8diMkn"
           ]
         },
@@ -1019,31 +811,6 @@
               },
               "blocks": {}
             },
-            "text_d8ThwQ": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Discover the bestsellers that have captured the hearts of our customers with their perfect blend of functionality and style.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "button_KWVqP7": {
               "type": "button",
               "settings": {
@@ -1061,7 +828,6 @@
           },
           "block_order": [
             "text_TYFw8X",
-            "text_d8ThwQ",
             "button_KWVqP7"
           ]
         }

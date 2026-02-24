@@ -98,6 +98,7 @@
     position: relative;
     width: 100%;
     min-width: 0;
+    min-height: 12.5rem; /* Prevents collapse when aspect-ratio is auto (e.g. metafield URL) */
     align-self: stretch;
     aspect-ratio: var(--size-style-aspect-ratio, 16 / 9);
   }

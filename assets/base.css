@@ -4088,11 +4088,11 @@ text-component {
 
 /* --- Default Header State (Top of Page) --- */
 #header-component {
-  color: #ffffff !important; /* Change to your top-of-page color */
+  color: #000000 !important; /* Change to your top-of-page color */
 }
 #header-component .menu-list__link,
 #header-component .header__icon {
-  color: #ffffff !important; /* Menu links and icons */
+  color: #000000 !important; /* Menu links and icons */
 }
 
 /* --- Fixed/Scrolled Header State --- */

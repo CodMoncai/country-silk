@@ -4086,3 +4086,5 @@ text-component {
   }
 }
 
+.header__menu-item,
+.menu-drawer__menu-item  { font-weight: bold !important; }

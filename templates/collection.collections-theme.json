@@ -517,7 +517,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h2>Find your perfect fit</h2>",
+                    "text": "<h2>A perfect theme for every customer</h2>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -543,7 +543,7 @@
                   "type": "text",
                   "name": "t:names.subheading",
                   "settings": {
-                    "text": "<p>Discover the best of both worlds</p>",
+                    "text": "<p>Explore this color palette, carefully designed to sell.</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",

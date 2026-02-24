@@ -543,7 +543,7 @@
                   "type": "text",
                   "name": "t:names.subheading",
                   "settings": {
-                    "text": "<p>Explore this color palette, carefully designed to sell.</p>",
+                    "text": "<p>Explore this unique color palette.</p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",

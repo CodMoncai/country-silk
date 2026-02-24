@@ -4086,22 +4086,3 @@ text-component {
   }
 }
 
-/* --- Default Header State (Top of Page) --- */
-#header-component {
-  color: #000000 !important; /* Change to your top-of-page color */
-  background-color: rgb(0,0,0,.3) !important;
-}
-#header-component .menu-list__link,
-#header-component .header__icon {
-  color: #000000 !important; /* Menu links and icons */
-}
-
-/* --- Fixed/Scrolled Header State --- */
-#header-component[data-sticky-state="active"] {
-  background-color: #ffffff !important; /* Background color when scrolled */
-  color: #000000 !important; /* Text color when scrolled */
-}
-#header-component[data-sticky-state="active"] .menu-list__link,
-#header-component[data-sticky-state="active"] .header__icon {
-  color: #000000 !important; /* Menu links and icons when scrolled */
-}

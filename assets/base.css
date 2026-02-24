@@ -4086,5 +4086,4 @@ text-component {
   }
 }
 
-.header__menu-item,
-.menu-drawer__menu-item  { font-weight: bold !important; }
+.menu-list__link { font-weight: bold !important; }

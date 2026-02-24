@@ -4,7 +4,7 @@
   {%  render 'spacing-style', settings: block_settings %}
   {% render 'border-override', settings: block_settings %}
    --size-style-width: {{ block_settings.custom_width }}%; --size-style-width-mobile: {{ block_settings.custom_width_mobile }}%;
-   --size-style-aspect-ratio: {% if block_settings.source == 'uploaded' %}{{ block_settings.video.aspect_ratio | default: 'auto' }}{% elsif block_settings.cover_image == blank %}{{ block_settings.aspect_ratio }}{% else %}auto{% endif %};
+   --size-style-aspect-ratio: {% if block_settings.source == 'uploaded' %}{{ block_settings.video.aspect_ratio | default: 'auto' }}{% elsif block_settings.cover_image == blank %}{% if block_settings.aspect_ratio == blank or block_settings.aspect_ratio == 'auto' %}16/9{% else %}{{ block_settings.aspect_ratio }}{% endif %}{% else %}auto{% endif %};
 {% endcapture %}
 
 {% if block_settings.source == 'uploaded' %}
@@ -98,7 +98,6 @@
     position: relative;
     width: 100%;
     min-width: 0;
-    min-height: 12.5rem; /* Prevents collapse when aspect-ratio is auto (e.g. metafield URL) */
     align-self: stretch;
     aspect-ratio: var(--size-style-aspect-ratio, 16 / 9);
   }

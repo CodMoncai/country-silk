@@ -4089,6 +4089,7 @@ text-component {
 /* --- Default Header State (Top of Page) --- */
 #header-component {
   color: #000000 !important; /* Change to your top-of-page color */
+  background-color: rgb(0,0,0,.3) !important;
 }
 #header-component .menu-list__link,
 #header-component .header__icon {

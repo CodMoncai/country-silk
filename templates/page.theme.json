@@ -315,7 +315,7 @@
               "type": "button",
               "settings": {
                 "label": "Shop now",
-                "link": "shopify://collections/candyland-2-0",
+                "link": "shopify://collections/fashion",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",

@@ -477,7 +477,7 @@
         },
         "slide_wLjjE7": {
           "type": "_slide",
-          "name": "Red Red Wine",
+          "name": "Ruby Red Christmas",
           "settings": {
             "media_type_1": "image",
             "image_1": "shopify://shop_images/RED-RED-WINE-THEME-BANNER-2-24-2026.jpg",
@@ -505,7 +505,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Red Red Wine</h2>",
+                "text": "<h2>Ruby Red Christmas</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

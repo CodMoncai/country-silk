@@ -357,7 +357,7 @@
               "name": "t:names.button",
               "settings": {
                 "label": "All Themes",
-                "link": "",
+                "link": "shopify://pages/themes",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",

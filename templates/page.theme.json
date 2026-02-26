@@ -531,7 +531,7 @@
               "type": "button",
               "settings": {
                 "label": "Shop now",
-                "link": "shopify://collections/red-red-wine",
+                "link": "shopify://collections/ruby-red-christmas",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",

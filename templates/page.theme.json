@@ -261,7 +261,7 @@
         },
         "slide_nhUWUW": {
           "type": "_slide",
-          "name": "Fashion",
+          "name": "Festive Christmas",
           "settings": {
             "media_type_1": "image",
             "image_1": "shopify://shop_images/CANDYLAND_2.0_BANNER_2048_X_600.jpg",
@@ -289,7 +289,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Fashion</h2>",
+                "text": "<h2>Festive Christmas</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

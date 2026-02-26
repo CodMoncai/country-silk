@@ -691,7 +691,7 @@
         },
         "slide_4rnfRP": {
           "type": "_slide",
-          "name": "Blue Brown",
+          "name": "Cozy Christmas",
           "settings": {
             "media_type_1": "image",
             "content_direction": "column",
@@ -718,7 +718,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Blue Brown</h2>",
+                "text": "<h2>Cozy Christmas</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

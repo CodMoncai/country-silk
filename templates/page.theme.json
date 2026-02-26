@@ -549,7 +549,7 @@
         },
         "slide_6t7n98": {
           "type": "_slide",
-          "name": "Candyland",
+          "name": "Candy",
           "settings": {
             "media_type_1": "image",
             "content_direction": "column",
@@ -576,7 +576,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Candyland</h2>",
+                "text": "<h2>Candy</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

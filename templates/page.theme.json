@@ -433,7 +433,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Traditional</h2>",
+                "text": "<h2>Traditional Christmas</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",

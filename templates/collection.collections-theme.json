@@ -126,7 +126,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<p>Exclusive Colorways Designs</p>",
+                "text": "<p>An Exclusive Colorway</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",

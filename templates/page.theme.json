@@ -602,7 +602,7 @@
               "type": "button",
               "settings": {
                 "label": "Shop now",
-                "link": "shopify://collections/all",
+                "link": "shopify://collections/candy",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",
@@ -673,7 +673,7 @@
               "type": "button",
               "settings": {
                 "label": "Shop now",
-                "link": "shopify://collections/all",
+                "link": "shopify://collections/peppermint",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",
@@ -744,7 +744,7 @@
               "type": "button",
               "settings": {
                 "label": "Shop now",
-                "link": "shopify://collections/all",
+                "link": "shopify://collections/cozy-christmas",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",
@@ -815,7 +815,7 @@
               "type": "button",
               "settings": {
                 "label": "Shop now",
-                "link": "shopify://collections/all",
+                "link": "shopify://collections/closeout",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",

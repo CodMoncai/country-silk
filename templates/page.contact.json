@@ -326,7 +326,7 @@
                 "text": "<p>Phone: 123-456-7890</p><p>Email: info@countrysilk.com</p>",
                 "width": "100%",
                 "max_width": "normal",
-                "alignment": "center",
+                "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",

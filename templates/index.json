@@ -401,7 +401,7 @@
               "type": "button",
               "name": "t:names.button",
               "settings": {
-                "label": "Shop Themes",
+                "label": "All Themes",
                 "link": "shopify://pages/themes",
                 "open_in_new_tab": false,
                 "style_class": "button",

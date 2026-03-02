@@ -157,7 +157,7 @@
       "settings": {
         "layout_type": "grid",
         "carousel_on_mobile": false,
-        "columns": 3,
+        "columns": 4,
         "mobile_columns": "2",
         "columns_gap": 12,
         "bento_gap": 8,

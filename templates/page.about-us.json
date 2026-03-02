@@ -65,7 +65,7 @@
         "vertical_alignment_flex_direction_column": "center",
         "gap": 16,
         "section_width": "full-width",
-        "section_height": "full-screen",
+        "section_height": "medium",
         "section_height_custom": 54,
         "color_scheme": "scheme-1",
         "toggle_overlay": false,

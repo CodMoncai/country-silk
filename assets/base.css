@@ -4087,3 +4087,9 @@ text-component {
 }
 
 .menu-list__link { font-weight: bold !important; }
+
+.header-actions__cart-total { 
+  display: flex;
+  position: relative;
+  top: -5px;
+}

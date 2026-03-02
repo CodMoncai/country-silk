@@ -325,6 +325,7 @@
           "bows",
           "cluster",
           "commodities",
+          "florals",
           "gift-boxes",
           "hats",
           "jumbo-balls",
@@ -341,8 +342,7 @@
           "tree-skirts-table-runners",
           "tree-toppers",
           "trees-and-pine",
-          "window-clings-plaques",
-          "florals"
+          "window-clings-plaques"
         ],
         "layout_type": "grid",
         "carousel_on_mobile": false,

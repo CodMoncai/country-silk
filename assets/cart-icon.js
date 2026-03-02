@@ -9,6 +9,7 @@ import { ThemeEvents, CartUpdateEvent } from '@theme/events';
  * @property {HTMLElement} cartBubble - The cart bubble element.
  * @property {HTMLElement} cartBubbleText - The cart bubble text element.
  * @property {HTMLElement} cartBubbleCount - The cart bubble count element.
+ * @property {HTMLElement} [cartTotal] - The cart total element.
  *
  * @extends {Component<Refs>}
  */
@@ -30,6 +31,7 @@ class CartIcon extends Component {
     document.addEventListener(ThemeEvents.cartUpdate, this.onCartUpdate);
     window.addEventListener('pageshow', this.onPageShow);
     this.ensureCartBubbleIsCorrect();
+    this.#updateCartTotalFromDataset();
   }
 
   disconnectedCallback() {
@@ -58,6 +60,7 @@ class CartIcon extends Component {
     const comingFromProductForm = event.detail.data?.source === 'product-form-component';
 
     this.renderCartBubble(itemCount, comingFromProductForm);
+    await this.#updateCartTotal(event.detail.resource);
   };
 
   /**
@@ -127,6 +130,77 @@ class CartIcon extends Component {
       // no-op
     }
   };
+
+  #updateCartTotalFromDataset() {
+    if (!this.refs.cartTotal) return;
+    const storedTotal = this.refs.cartTotal.dataset.cartTotal;
+    if (!storedTotal) return;
+
+    const total = Number(storedTotal);
+    if (Number.isNaN(total)) return;
+
+    this.#setCartTotal(total);
+  }
+
+  /**
+   * @param {Object} resource
+   */
+  #updateCartTotal = async (resource) => {
+    if (!this.refs.cartTotal) return;
+
+    if (resource && typeof resource.total_price === 'number') {
+      this.#setCartTotal(resource.total_price);
+      return;
+    }
+
+    try {
+      const response = await fetch('/cart.js', {
+        headers: { Accept: 'application/json' },
+      });
+
+      if (!response.ok) return;
+
+      const cart = await response.json();
+      if (typeof cart.total_price !== 'number') return;
+
+      this.#setCartTotal(cart.total_price);
+    } catch (_) {
+      // no-op
+    }
+  };
+
+  /**
+   * @param {number} total
+   */
+  #setCartTotal(total) {
+    if (!this.refs.cartTotal) return;
+
+    this.refs.cartTotal.dataset.cartTotal = String(total);
+    this.refs.cartTotal.textContent = this.#formatCurrency(total);
+    this.refs.cartTotal.hidden = total === 0;
+  }
+
+  /**
+   * @param {number} cents
+   * @returns {string}
+   */
+  #formatCurrency(cents) {
+    const currency = this.dataset.currency || this.refs.cartTotal?.dataset.currency || '';
+    const value = cents / 100;
+
+    if (currency) {
+      try {
+        return new Intl.NumberFormat(undefined, {
+          style: 'currency',
+          currency,
+        }).format(value);
+      } catch (_) {
+        // no-op
+      }
+    }
+
+    return value.toFixed(2);
+  }
 }
 
 if (!customElements.get('cart-icon')) {

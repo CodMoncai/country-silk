@@ -11,6 +11,7 @@
       {% unless cart == empty %} header-actions__cart-icon--has-cart{% endunless %}
     "
     data-testid="cart-icon"
+    data-currency="{{ cart.currency.iso_code }}"
   >
     <span
       class="svg-wrapper"
@@ -20,6 +21,17 @@
     </span>
 
     {% render 'cart-bubble', limit: 100, live_region: true, test_id: test_id %}
+    <span
+      class="header-actions__cart-total"
+      ref="cartTotal"
+      data-cart-total="{{ cart.total_price }}"
+      data-currency="{{ cart.currency.iso_code }}"
+      {% if cart.total_price == 0 %}
+        hidden
+      {% endif %}
+    >
+      {{ cart.total_price | money }}
+    </span>
   </cart-icon>
 {% endcapture %}
 
@@ -579,6 +591,7 @@
     cursor: pointer;
     display: flex;
     justify-content: center;
+    align-items: center;
   }
 
   .header-actions__action .svg-wrapper {
@@ -597,6 +610,17 @@
     --cart-bubble-right: 2.5px;
 
     position: relative;
+  }
+
+  .header-actions__cart-total {
+    margin-inline-start: var(--gap-2xs);
+    color: var(--color-foreground);
+    font-size: var(--font-size--2xs);
+    white-space: nowrap;
+
+    @media screen and (max-width: 749px) {
+      display: none;
+    }
   }
 
   .header-actions__cart-icon .cart-bubble {

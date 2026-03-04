@@ -38,6 +38,8 @@
   class="text-block {{ text_block_classes }} text-{{ block_settings.alignment }} {{ block_settings.type_preset | default: 'paragraph' }} spacing-style"
   data-block-id="{{ block.id }}"
   data-product-id="{{ product_resource.id }}"
+  data-variant-price="{{ selected_variant.price }}"
+  data-currency="{{ cart.currency.iso_code }}"
   style="
     {% render 'typography-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
@@ -45,11 +47,28 @@
   "
   {{ block.shopify_attributes }}
 >
-  {% render 'price',
-    show_unit_price: true,
-    product_resource: product_resource,
-    show_sale_price_first: block_settings.show_sale_price_first
-  %}
+  <div class="product-price__row">
+    <div class="product-price__column product-price__column--price">
+      <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>
+      <div class="product-price__price-cell">
+        {% render 'price',
+          show_unit_price: true,
+          product_resource: product_resource,
+          show_sale_price_first: block_settings.show_sale_price_first
+        %}
+      </div>
+    </div>
+    <div class="product-price__column product-price__column--total">
+      <span class="product-price__label caption-large">{{ 'content.total' | t }}</span>
+      <div class="product-price__total-cell" ref="totalPriceContainer">
+        <span class="price" ref="totalPrice">
+          {%- if selected_variant != blank -%}
+            {{ selected_variant.price | money }}
+          {%- endif -%}
+        </span>
+      </div>
+    </div>
+  </div>
 
   {% if block_settings.show_tax_info %}
     <div class="tax-note">
@@ -97,6 +116,41 @@
 
   .installments:not(:has(shopify-payment-terms)) {
     display: none;
+  }
+
+  /* Two-column price row: Price (left) and Total (right) */
+  .product-price__row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--gap-md);
+    width: 100%;
+  }
+
+  .product-price__column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-2xs);
+    min-width: 0;
+  }
+
+  .product-price__column--price {
+    flex: 1 1 auto;
+  }
+
+  .product-price__column--total {
+    flex: 0 0 auto;
+    text-align: end;
+  }
+
+  .product-price__label {
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .product-price__price-cell,
+  .product-price__total-cell {
+    min-height: 1.5em;
   }
 
   /* Volume pricing note should match unit-price styling (small, grey text) */

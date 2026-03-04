@@ -217,6 +217,7 @@
     "pickup_ready_in": "{{ pickup_time }}",
     "powered_by": "This shop will be powered by",
     "price": "Price",
+    "total": "Total",
     "price_compare_at": "Compare at price",
     "price_from": "From {{ price }}",
     "price_regular": "Regular price",

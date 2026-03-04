@@ -262,7 +262,9 @@ class CartItemsComponent extends Component {
 
     for (const item of updatedCart.items) {
       const variantId = item.variant_id.toString();
-      const selectors = document.querySelectorAll(`quantity-selector-component[data-variant-id="${variantId}"]`);
+      const selectors = document.querySelectorAll(
+        `quantity-selector-component[data-variant-id="${variantId}"], cart-quantity-selector-component[data-variant-id="${variantId}"]`
+      );
 
       for (const selector of selectors) {
         const input = selector.querySelector('input[data-cart-quantity]');

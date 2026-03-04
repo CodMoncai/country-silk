@@ -66,6 +66,9 @@ export class QuantitySelectorComponent extends Component {
    */
   setCartQuantity(cartQty) {
     this.refs.quantityInput.setAttribute('data-cart-quantity', cartQty.toString());
+    if (this.refs.quantityInput.dataset.cartLine) {
+      this.setValue(cartQty.toString());
+    }
     this.updateCartQuantity();
   }
 

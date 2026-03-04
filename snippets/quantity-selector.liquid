@@ -32,23 +32,33 @@
   assign max_case_quantity = nil
   assign initial_case = 1
   assign initial_total = min_quantity
-  if line_index == null
-    assign case_pack = variant.metafields.custom.case_pack.value | default: product.metafields.custom.case_pack.value
-    if case_pack != blank and case_pack > 0
+  assign case_pack = variant.metafields.custom.case_pack.value | default: product.metafields.custom.case_pack.value
+  if case_pack != blank and case_pack > 0
+    if line_index == null
       assign min_total = variant.quantity_rule.min | default: 1
       assign initial_case = min_total | plus: case_pack | minus: 1 | divided_by: case_pack
       if initial_case < 1
         assign initial_case = 1
       endif
       assign initial_total = initial_case | times: case_pack
-      if variant.inventory_management == 'shopify' and variant.inventory_quantity > 0
-        assign max_case_quantity = variant.inventory_quantity | divided_by: case_pack
-      elsif variant.quantity_rule.max != null
-        assign max_case_quantity = variant.quantity_rule.max | divided_by: case_pack
+    else
+      assign initial_total = in_cart_quantity | default: 0
+      if initial_total < 1
+        assign initial_total = case_pack
       endif
-      if max_case_quantity != null and max_case_quantity < 1
-        assign max_case_quantity = 1
+      assign initial_case = initial_total | divided_by: case_pack
+      if initial_case < 1
+        assign initial_case = 1
+        assign initial_total = case_pack
       endif
+    endif
+    if variant.inventory_management == 'shopify' and variant.inventory_quantity > 0
+      assign max_case_quantity = variant.inventory_quantity | divided_by: case_pack
+    elsif variant.quantity_rule.max != null
+      assign max_case_quantity = variant.quantity_rule.max | divided_by: case_pack
+    endif
+    if max_case_quantity != null and max_case_quantity < 1
+      assign max_case_quantity = 1
     endif
   endif
 %}
@@ -114,6 +124,7 @@
               name="{% if line_index %}updates[]{% else %}quantity{% endif %}"
               value="{{ initial_total }}"
               data-cart-quantity="{{ cart | item_count_for_variant: variant.id }}"
+              {% if line_index %}data-cart-line="{{ line_index | plus: 1 }}"{% endif %}
               min="{{ case_pack }}"
               {% if max_case_quantity != nil %}max="{{ max_case_quantity | times: case_pack }}"{% endif %}
               step="{{ case_pack }}"

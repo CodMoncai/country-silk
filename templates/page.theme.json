@@ -768,6 +768,7 @@
           "name": "Specials",
           "settings": {
             "media_type_1": "image",
+            "image_1": "shopify://shop_images/SPECIALS_THEME.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",

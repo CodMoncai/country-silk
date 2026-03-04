@@ -45,6 +45,7 @@
       "name": "t:names.hero",
       "settings": {
         "media_type_1": "image",
+        "image_1": "shopify://shop_images/CATEGORIES_BANNER.jpg",
         "video_1_external_url": "",
         "media_type_2": "image",
         "video_2_external_url": "",

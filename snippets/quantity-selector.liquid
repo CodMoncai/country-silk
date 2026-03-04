@@ -270,23 +270,22 @@
     }
   }
 
-  /* Case pack: two separate groups in one row, opposite sides */
+  /* Case pack: two groups stacked vertically */
   .quantity-selector--case-pack {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: stretch;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    gap: var(--gap-md);
+    gap: var(--gap-sm);
     width: 100%;
   }
 
   .quantity-selector__group {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: var(--gap-2xs);
     min-width: 0;
+    width: 100%;
   }
 
   .quantity-selector__group--case {
@@ -294,7 +293,7 @@
   }
 
   .quantity-selector__group--total {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
     min-width: 0;
   }
 

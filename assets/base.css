@@ -4093,3 +4093,7 @@ text-component {
   position: relative;
   top: -5px;
 }
+
+.product-grid .quantity-selector-wrapper {
+  flex-direction: column;
+}

@@ -4094,6 +4094,6 @@ text-component {
   top: -5px;
 }
 
-.product-grid .quantity-selector-wrapper {
+.product-grid .quantity-selector-wrapper .quantity-selector {
   flex-direction: column;
 }

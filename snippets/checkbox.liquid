@@ -13,13 +13,17 @@
   @param {string} [inputRef] - input ref attribute for use with component framework
   @param {string} [labelRef] - label ref attribute for use with component framework
   @param {boolean} [autofocus] - whether the input should be autofocused
+  @param {string} [input_type] - input type: 'checkbox' (default) or 'radio'
 {%- enddoc -%}
+{% liquid
+  assign input_type = input_type | default: 'checkbox'
+%}
 <div
   class="checkbox{% if disabled %} checkbox--disabled{% endif %}"
   {{ events }}
 >
   <input
-    type="checkbox"
+    type="{{ input_type }}"
     name="{{ name }}"
     value="{{ value }}"
     id="{{ id }}"
@@ -50,7 +54,7 @@
     {% if labelRef != blank %}
       ref="{{ labelRef }}"
     {% endif %}
-    role="checkbox"
+    role="{{ input_type }}"
   >
     {{ 'icon-checkmark.svg' | inline_asset_content }}
     <span class="checkbox__label-text">{{- label -}}</span>

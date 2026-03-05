@@ -332,7 +332,7 @@ class FacetClearComponent extends Component {
     }
 
     const container = event.target.closest('facet-inputs-component, price-facet-component');
-    container?.querySelectorAll('[type="checkbox"]:checked, input').forEach((input) => {
+    container?.querySelectorAll('[type="checkbox"]:checked, [type="radio"]:checked, input').forEach((input) => {
       if (input instanceof HTMLInputElement) {
         input.checked = false;
         input.value = '';

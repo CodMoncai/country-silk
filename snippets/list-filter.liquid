@@ -22,6 +22,11 @@
   if filter.presentation == 'image'
     assign is_image = true
   endif
+
+  assign is_collection_filter = false
+  if filter.param_name contains 'collection'
+    assign is_collection_filter = true
+  endif
 %}
 
 <accordion-custom
@@ -252,8 +257,8 @@
                     </div>
                     <input
                       tabindex="0"
-                      type="checkbox"
-                      name="{{ value.param_name }}"
+                      type="{% if is_collection_filter %}radio{% else %}checkbox{% endif %}"
+                      name="{% if is_collection_filter %}{{ filter.param_name }}{% else %}{{ value.param_name }}{% endif %}"
                       value="{{ value.value }}"
                       aria-label="{{ value.label }}"
                       id="{{ input_id }}"
@@ -289,8 +294,8 @@
                       >
                         <input
                           tabindex="0"
-                          type="checkbox"
-                          name="{{ value.param_name }}"
+                          type="{% if is_collection_filter %}radio{% else %}checkbox{% endif %}"
+                          name="{% if is_collection_filter %}{{ filter.param_name }}{% else %}{{ value.param_name }}{% endif %}"
                           value="{{ value.value }}"
                           aria-label="{{ value.label }}"
                           id="{{ input_id }}"
@@ -331,8 +336,8 @@
                       on:keydown="#facet-inputs-component-{{ filter.param_name | escape | replace: '.', '-' }}/handleKeyDown"
                     >
                       <input
-                        type="checkbox"
-                        name="{{ value.param_name }}"
+                        type="{% if is_collection_filter %}radio{% else %}checkbox{% endif %}"
+                        name="{% if is_collection_filter %}{{ filter.param_name }}{% else %}{{ value.param_name }}{% endif %}"
                         value="{{ value.value }}"
                         id="{{ input_id }}"
                         class="facets__pill-input"
@@ -366,13 +371,23 @@
                       </label>
                     </div>
                   {% else %}
+                    {% liquid
+                      if is_collection_filter
+                        assign facet_input_name = filter.param_name
+                        assign facet_input_type = 'radio'
+                      else
+                        assign facet_input_name = value.param_name
+                        assign facet_input_type = 'checkbox'
+                      endif
+                    %}
                     {% render 'checkbox',
-                      name: value.param_name,
+                      name: facet_input_name,
                       value: value.value,
                       label: value.label,
                       checked: value.active,
                       id: input_id,
                       disabled: is_disabled,
+                      input_type: facet_input_type,
                       inputRef: 'facetInputs[]',
                       events: 'on:pointerenter="/prefetchPage" on:pointerleave="/cancelPrefetchPage"'
                     %}

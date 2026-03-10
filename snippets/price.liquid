@@ -70,10 +70,14 @@
     assign price_min = price_min | money
     assign price_max = price_max | money
   endif
+  assign show_pricing = false
+  if customer or request.design_mode
+    assign show_pricing = true
+  endif
 -%}
 
 <div ref="priceContainer">
-  {% if customer %}
+  {% if show_pricing %}
     {% if has_volume_pricing %}
       {% comment %} Volume pricing display {% endcomment %}
       {% if show_compare_price %}
@@ -123,6 +127,6 @@
     {%- endif -%}
   {% endif %}
 </div>
-{%- if customer and has_volume_pricing -%}
+{%- if show_pricing and has_volume_pricing -%}
   <small class="volume-pricing-note">{{ 'content.volume_pricing_available' | t }}</small>
 {%- endif -%}

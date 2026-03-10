@@ -33,7 +33,7 @@
   "
   {{ block.shopify_attributes }}
 >
-  {% if customer %}
+  {% if customer or request.design_mode %}
     {% if product.price_varies and has_swatches_only == false and price_min != blank %}
       <span class="price">{{ display_price }}</span>
     {% else %}

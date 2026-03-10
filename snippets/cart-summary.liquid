@@ -5,7 +5,7 @@
 <div class="cart__summary-totals">
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart__original-total-container cart-primary-typography">
-    {% if customer %}
+    {% if customer or request.design_mode %}
       {%- if cart.cart_level_discount_applications.size > 0 -%}
         <span class="cart__summary-item cart__original-total">
           <span class="cart__original-total-label">{{ 'content.cart_subtotal' | t }}</span>
@@ -220,7 +220,7 @@
     </div>
   {% endif %}
 
-  {% if customer %}
+  {% if customer or request.design_mode %}
     {%- liquid
       if settings.currency_code_enabled_cart_total
         assign total_price = cart.total_price | money_with_currency

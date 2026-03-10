@@ -21,7 +21,7 @@
     </span>
 
     {% render 'cart-bubble', limit: 100, live_region: true, test_id: test_id %}
-    {% if customer %}
+    {% if customer or request.design_mode %}
       <span
         class="header-actions__cart-total"
         ref="cartTotal"

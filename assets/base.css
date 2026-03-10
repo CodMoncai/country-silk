@@ -4098,6 +4098,6 @@ text-component {
   flex-direction: column;
 }
 
-#shippingMethod, section[aria-label="Payment"] { 
+#shippingMethod { 
   display: none !important;
 }

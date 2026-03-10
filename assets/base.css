@@ -4097,3 +4097,7 @@ text-component {
 .product-grid .quantity-selector-wrapper .quantity-selector .quantity-selector__group {
   flex-direction: column;
 }
+
+#shippingMethod, section[aria-label="Payment"] { 
+  display: none !important;
+}

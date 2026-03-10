@@ -59,6 +59,8 @@
     "auto_open_cart_drawer": false,
     "show_cart_note": false,
     "show_add_discount_code": true,
+    "quote_request_email": "ctyorders@coreforce.com",
+    "empty_cart_button_link": "shopify://collections",
     "drawer_drop_shadow": true,
     "icon_stroke": "default",
     "input_border_width": 1,

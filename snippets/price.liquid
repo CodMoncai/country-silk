@@ -73,53 +73,59 @@
 -%}
 
 <div ref="priceContainer">
-  {% if has_volume_pricing %}
-    {% comment %} Volume pricing display {% endcomment %}
-    {% if show_compare_price %}
+  {% if customer %}
+    {% if has_volume_pricing %}
+      {% comment %} Volume pricing display {% endcomment %}
+      {% if show_compare_price %}
+        <span role="group">
+          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+          <span class="compare-at-price">{{- compare_at_price -}}</span>
+        </span>
+      {% endif %}
       <span role="group">
-        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-        <span class="compare-at-price">{{- compare_at_price -}}</span>
-      </span>
-    {% endif %}
-    <span role="group">
-      <span class="visually-hidden">{{ 'content.price_range' | t }}&nbsp;</span>
-      <span class="price price-range price--large">{{ price_min }} - {{ price_max }}</span>
-    </span>
-  {% else %}
-    {% comment %} Standard pricing display {% endcomment %}
-    {% if show_sale_price_first == false and show_compare_price %}
-      <span role="group">
-        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-        <span class="compare-at-price">{{- compare_at_price -}}</span>
-      </span>
-    {% endif %}
-
-    {% if show_compare_price %}
-      <span role="group">
-        <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
-        <span class="price">{{ price | default: '&nbsp;' }}</span>
+        <span class="visually-hidden">{{ 'content.price_range' | t }}&nbsp;</span>
+        <span class="price price-range price--large">{{ price_min }} - {{ price_max }}</span>
       </span>
     {% else %}
-      <span class="price">{{ price | default: '&nbsp;' }}</span>
-    {% endif %}
+      {% comment %} Standard pricing display {% endcomment %}
+      {% if show_sale_price_first == false and show_compare_price %}
+        <span role="group">
+          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+          <span class="compare-at-price">{{- compare_at_price -}}</span>
+        </span>
+      {% endif %}
 
-    {% if show_sale_price_first == true and show_compare_price %}
-      <span role="group">
-        <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
-        <span class="compare-at-price">{{- compare_at_price -}}</span>
-      </span>
+      {% if show_compare_price %}
+        <span role="group">
+          <span class="visually-hidden">{{ 'content.price_sale' | t }}&nbsp;</span>
+          <span class="price">{{ price | default: '&nbsp;' }}</span>
+        </span>
+      {% else %}
+        <span class="price">{{ price | default: '&nbsp;' }}</span>
+      {% endif %}
+
+      {% if show_sale_price_first == true and show_compare_price %}
+        <span role="group">
+          <span class="visually-hidden">{{ 'content.price_regular' | t }}&nbsp;</span>
+          <span class="compare-at-price">{{- compare_at_price -}}</span>
+        </span>
+      {% endif %}
     {% endif %}
+    {%- if selected_variant.unit_price and show_unit_price %}
+      {%- liquid
+        if use_currency
+          assign unit_price = selected_variant.unit_price | money_with_currency
+        else
+          assign unit_price = selected_variant.unit_price | money
+        endif
+      -%}
+      {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
+    {%- endif -%}
+  {% else %}
+    <span class="price price--login-required">
+      {{ 'content.login_to_view_price' | t | default: 'Log in to view price' }}
+    </span>
   {% endif %}
-  {%- if selected_variant.unit_price and show_unit_price %}
-    {%- liquid
-      if use_currency
-        assign unit_price = selected_variant.unit_price | money_with_currency
-      else
-        assign unit_price = selected_variant.unit_price | money
-      endif
-    -%}
-    {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
-  {%- endif -%}
 </div>
 {%- if has_volume_pricing -%}
   <small class="volume-pricing-note">{{ 'content.volume_pricing_available' | t }}</small>

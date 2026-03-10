@@ -21,17 +21,19 @@
     </span>
 
     {% render 'cart-bubble', limit: 100, live_region: true, test_id: test_id %}
-    <span
-      class="header-actions__cart-total"
-      ref="cartTotal"
-      data-cart-total="{{ cart.total_price }}"
-      data-currency="{{ cart.currency.iso_code }}"
-      {% if cart.total_price == 0 %}
-        hidden
-      {% endif %}
-    >
-      {{ cart.total_price | money }}
-    </span>
+    {% if customer %}
+      <span
+        class="header-actions__cart-total"
+        ref="cartTotal"
+        data-cart-total="{{ cart.total_price }}"
+        data-currency="{{ cart.currency.iso_code }}"
+        {% if cart.total_price == 0 %}
+          hidden
+        {% endif %}
+      >
+        {{ cart.total_price | money }}
+      </span>
+    {% endif %}
   </cart-icon>
 {% endcapture %}
 

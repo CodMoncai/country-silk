@@ -48,26 +48,37 @@
   {{ block.shopify_attributes }}
 >
   <div class="product-price__row">
-    <div class="product-price__column product-price__column--price">
-      <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>
-      <div class="product-price__price-cell">
-        {% render 'price',
-          show_unit_price: true,
-          product_resource: product_resource,
-          show_sale_price_first: block_settings.show_sale_price_first
-        %}
+    {% if customer %}
+      <div class="product-price__column product-price__column--price">
+        <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>
+        <div class="product-price__price-cell">
+          {% render 'price',
+            show_unit_price: true,
+            product_resource: product_resource,
+            show_sale_price_first: block_settings.show_sale_price_first
+          %}
+        </div>
       </div>
-    </div>
-    <div class="product-price__column product-price__column--total">
-      <span class="product-price__label caption-large">{{ 'content.total' | t }}</span>
-      <div class="product-price__total-cell" ref="totalPriceContainer">
-        <span class="price" ref="totalPrice">
-          {%- if selected_variant != blank -%}
-            {{ selected_variant.price | money }}
-          {%- endif -%}
-        </span>
+      <div class="product-price__column product-price__column--total">
+        <span class="product-price__label caption-large">{{ 'content.total' | t }}</span>
+        <div class="product-price__total-cell" ref="totalPriceContainer">
+          <span class="price" ref="totalPrice">
+            {%- if selected_variant != blank -%}
+              {{ selected_variant.price | money }}
+            {%- endif -%}
+          </span>
+        </div>
       </div>
-    </div>
+    {% else %}
+      <div class="product-price__column product-price__column--price">
+        <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>
+        <div class="product-price__price-cell">
+          <span class="price price--login-required">
+            {{ 'content.login_to_view_price' | t | default: 'Log in to view price' }}
+          </span>
+        </div>
+      </div>
+    {% endif %}
   </div>
 
   {% if block_settings.show_tax_info %}

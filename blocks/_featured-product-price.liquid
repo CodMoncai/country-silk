@@ -33,14 +33,20 @@
   "
   {{ block.shopify_attributes }}
 >
-  {% if product.price_varies and has_swatches_only == false and price_min != blank %}
-    <span class="price">{{ display_price }}</span>
+  {% if customer %}
+    {% if product.price_varies and has_swatches_only == false and price_min != blank %}
+      <span class="price">{{ display_price }}</span>
+    {% else %}
+      {% render 'price',
+        show_unit_price: true,
+        show_sale_price_first: block_settings.show_sale_price_first,
+        product_resource: product
+      %}
+    {% endif %}
   {% else %}
-    {% render 'price',
-      show_unit_price: true,
-      show_sale_price_first: block_settings.show_sale_price_first,
-      product_resource: product
-    %}
+    <span class="price price--login-required">
+      {{ 'content.login_to_view_price' | t | default: 'Log in to view price' }}
+    </span>
   {% endif %}
 </product-price>
 

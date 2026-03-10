@@ -2,10 +2,12 @@
   Renders the cart summary totals.
 {%- enddoc -%}
 
+{% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
+
 <div class="cart__summary-totals">
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart__original-total-container cart-primary-typography">
-    {% if request.design_mode or customer.metafields.custom.display_pricing.value == true %}
+    {% if can_show_pricing != blank %}
       {%- if cart.cart_level_discount_applications.size > 0 -%}
         <span class="cart__summary-item cart__original-total">
           <span class="cart__original-total-label">{{ 'content.cart_subtotal' | t }}</span>
@@ -220,7 +222,7 @@
     </div>
   {% endif %}
 
-  {% if request.design_mode or customer.metafields.custom.display_pricing.value == true %}
+  {% if can_show_pricing != blank %}
     {%- liquid
       if settings.currency_code_enabled_cart_total
         assign total_price = cart.total_price | money_with_currency

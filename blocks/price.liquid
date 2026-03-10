@@ -47,7 +47,8 @@
   "
   {{ block.shopify_attributes }}
 >
-  {% if request.design_mode or customer.metafields.custom.display_pricing.value == true %}
+  {% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
+  {% if can_show_pricing != blank %}
     <div class="product-price__row">
       <div class="product-price__column product-price__column--price">
         <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>

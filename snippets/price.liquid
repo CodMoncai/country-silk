@@ -70,16 +70,11 @@
     assign price_min = price_min | money
     assign price_max = price_max | money
   endif
-  assign show_pricing = false
-  if request.design_mode
-    assign show_pricing = true
-  elsif customer and customer.metafields.custom.display_pricing.value == true
-    assign show_pricing = true
-  endif
 -%}
 
+{% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
 <div ref="priceContainer">
-  {% if show_pricing %}
+  {% if can_show_pricing != blank %}
     {% if has_volume_pricing %}
       {% comment %} Volume pricing display {% endcomment %}
       {% if show_compare_price %}
@@ -129,6 +124,6 @@
     {%- endif -%}
   {% endif %}
 </div>
-{%- if show_pricing and has_volume_pricing -%}
+{%- if can_show_pricing != blank and has_volume_pricing -%}
   <small class="volume-pricing-note">{{ 'content.volume_pricing_available' | t }}</small>
 {%- endif -%}

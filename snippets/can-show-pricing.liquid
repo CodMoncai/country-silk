@@ -1,0 +1,20 @@
+{%- comment -%}
+  Outputs "true" when pricing should be shown, otherwise nothing.
+  Show pricing when: theme editor (design_mode) OR customer has metafield custom.display_pricing set to true.
+  Handles boolean true, string "true", and "1". Customer metafield must have "Storefront access" enabled.
+{%- endcomment -%}
+{%- liquid
+  if request.design_mode
+    echo 'true'
+  elsif customer
+    assign val = customer.metafields.custom.display_pricing.value
+    if val == true or val == 'true' or val == '1'
+      echo 'true'
+    else
+      assign direct = customer.metafields.custom.display_pricing
+      if direct == true or direct == 'true' or direct == '1'
+        echo 'true'
+      endif
+    endif
+  endif
+-%}

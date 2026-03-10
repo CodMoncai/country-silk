@@ -33,7 +33,8 @@
   "
   {{ block.shopify_attributes }}
 >
-  {% if request.design_mode or customer.metafields.custom.display_pricing.value == true %}
+  {% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
+  {% if can_show_pricing != blank %}
     {% if product.price_varies and has_swatches_only == false and price_min != blank %}
       <span class="price">{{ display_price }}</span>
     {% else %}

@@ -1,7 +1,7 @@
 {%- comment -%}
   Outputs "true" when pricing should be shown, otherwise nothing.
-  Show pricing when: theme editor (design_mode) OR customer is logged in AND custom.display_pricing is not false.
-  Only hide pricing when metafield is explicitly false/"false"/"0". If metafield is missing or true, show pricing.
+  Show pricing only when: theme editor (design_mode) OR customer has custom.display_pricing set to true.
+  When metafield is false or not set, pricing is hidden. Metafield must have "Storefront access" enabled.
 {%- endcomment -%}
 {%- liquid
   if request.design_mode
@@ -10,13 +10,11 @@
     assign val = customer.metafields.custom.display_pricing.value
     assign direct = customer.metafields.custom.display_pricing
     comment
-      Only hide when explicitly false. Default to show for logged-in customers when metafield is missing or true.
+      Only show when metafield is explicitly true (boolean, "true", or "1"). False or nil = no pricing.
     endcomment
-    if val == false or val == 'false' or val == '0' or direct == false or direct == 'false' or direct == '0'
-      comment
-        Do not show pricing
-      endcomment
-    else
+    if val == true or val == 'true' or val == '1'
+      echo 'true'
+    elsif direct == true or direct == 'true' or direct == '1'
       echo 'true'
     endif
   endif

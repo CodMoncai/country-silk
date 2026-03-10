@@ -47,8 +47,8 @@
   "
   {{ block.shopify_attributes }}
 >
-  <div class="product-price__row">
-    {% if customer %}
+  {% if customer %}
+    <div class="product-price__row">
       <div class="product-price__column product-price__column--price">
         <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>
         <div class="product-price__price-cell">
@@ -69,17 +69,8 @@
           </span>
         </div>
       </div>
-    {% else %}
-      <div class="product-price__column product-price__column--price">
-        <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>
-        <div class="product-price__price-cell">
-          <span class="price price--login-required">
-            {{ 'content.login_to_view_price' | t | default: 'Log in to view price' }}
-          </span>
-        </div>
-      </div>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
 
   {% if block_settings.show_tax_info %}
     <div class="tax-note">

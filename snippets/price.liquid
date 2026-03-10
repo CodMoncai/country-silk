@@ -121,12 +121,8 @@
       -%}
       {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
     {%- endif -%}
-  {% else %}
-    <span class="price price--login-required">
-      {{ 'content.login_to_view_price' | t | default: 'Log in to view price' }}
-    </span>
   {% endif %}
 </div>
-{%- if has_volume_pricing -%}
+{%- if customer and has_volume_pricing -%}
   <small class="volume-pricing-note">{{ 'content.volume_pricing_available' | t }}</small>
 {%- endif -%}

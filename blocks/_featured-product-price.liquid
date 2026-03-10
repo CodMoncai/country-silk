@@ -43,10 +43,6 @@
         product_resource: product
       %}
     {% endif %}
-  {% else %}
-    <span class="price price--login-required">
-      {{ 'content.login_to_view_price' | t | default: 'Log in to view price' }}
-    </span>
   {% endif %}
 </product-price>
 

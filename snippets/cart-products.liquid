@@ -344,10 +344,6 @@
                         {% render 'unit-price', price: unit_price, measurement: item.unit_price_measurement %}
                       </div>
                     {%- endif -%}
-                  {% else %}
-                    <span class="cart-items__price-message">
-                      {{ 'content.login_to_view_price' | t | default: 'Log in to view prices' }}
-                    </span>
                   {% endif %}
                 </td>
               </tr>

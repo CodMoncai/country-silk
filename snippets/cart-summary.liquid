@@ -258,12 +258,6 @@
     </div>
   {% else %}
     <div class="cart__total-container">
-      <span class="cart__summary-item cart__total">
-        <span class="cart__total-label cart-primary-typography">{{ 'content.cart_estimated_total' | t }}</span>
-        <span class="cart__total-value cart-secondary-typography">
-          {{ 'content.login_to_view_price' | t | default: 'Log in to view cart total' }}
-        </span>
-      </span>
       <div class="cart__summary-item tax-note cart-primary-typography">
         {% render 'tax-info', has_discounts_enabled: settings.show_add_discount_code %}
       </div>

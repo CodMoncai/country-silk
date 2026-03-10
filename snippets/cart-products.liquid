@@ -65,7 +65,7 @@
             role="caption"
           >
             {{ 'content.cart_total' | t }}
-            {% if customer or request.design_mode %}
+            {% if request.design_mode or customer.metafields.custom.display_pricing.value == true %}
               <span>{{ cart.total_price | money_with_currency }}</span>
             {% endif %}
           </caption>
@@ -234,7 +234,7 @@
                     </ul>
                   {% endif %}
 
-                  {% if customer or request.design_mode %}
+                  {% if request.design_mode or customer.metafields.custom.display_pricing.value == true %}
                     <div>
                       {% if item.original_price != item.final_price %}
                         <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
@@ -328,7 +328,7 @@
                   role="cell"
                   headers="productTotal"
                 >
-                  {% if customer or request.design_mode %}
+                  {% if request.design_mode or customer.metafields.custom.display_pricing.value == true %}
                     {%- liquid
                       if settings.currency_code_enabled_cart_items
                         assign price = item.final_line_price | money_with_currency

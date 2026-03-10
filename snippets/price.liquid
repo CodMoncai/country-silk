@@ -71,7 +71,9 @@
     assign price_max = price_max | money
   endif
   assign show_pricing = false
-  if customer or request.design_mode
+  if request.design_mode
+    assign show_pricing = true
+  elsif customer and customer.metafields.custom.display_pricing.value == true
     assign show_pricing = true
   endif
 -%}

@@ -21,7 +21,7 @@
     </span>
 
     {% render 'cart-bubble', limit: 100, live_region: true, test_id: test_id %}
-    {% if customer or request.design_mode %}
+    {% if request.design_mode or customer.metafields.custom.display_pricing.value == true %}
       <span
         class="header-actions__cart-total"
         ref="cartTotal"

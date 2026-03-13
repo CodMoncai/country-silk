@@ -45,11 +45,15 @@
       "settings": {
         "media_type_1": "image",
         "image_1": "{{ collection.image }}",
+        "video_1_external_url": "",
         "media_type_2": "image",
+        "video_2_external_url": "",
         "stack_media_on_mobile": false,
         "custom_mobile_media": false,
         "media_type_1_mobile": "image",
+        "video_1_mobile_external_url": "",
         "media_type_2_mobile": "image",
+        "video_2_mobile_external_url": "",
         "link": "",
         "open_in_new_tab": false,
         "content_direction": "column",
@@ -82,7 +86,7 @@
           "static": true,
           "settings": {
             "enable_filtering": true,
-            "filter_style": "horizontal",
+            "filter_style": "vertical",
             "filter_width": "centered",
             "text_label_case": "default",
             "show_swatch_label": false,
@@ -192,13 +196,44 @@
                 "product_swatches_padding_right": 0
               },
               "blocks": {}
+            },
+            "buy_buttons_RDPQqn": {
+              "type": "buy-buttons",
+              "name": "t:names.product_buy_buttons",
+              "settings": {
+                "stacking": false,
+                "show_pickup_availability": true,
+                "gift_card_form": true,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "quantity": {
+                  "type": "quantity",
+                  "static": true,
+                  "settings": {},
+                  "blocks": {}
+                },
+                "add-to-cart": {
+                  "type": "add-to-cart",
+                  "static": true,
+                  "settings": {
+                    "style_class": "button-secondary"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": []
             }
           },
           "block_order": [
             "card-gallery",
             "product_title_4nY4eT",
             "price_EzJzMm",
-            "swatches"
+            "swatches",
+            "buy_buttons_RDPQqn"
           ]
         }
       },

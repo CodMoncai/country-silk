@@ -395,8 +395,8 @@
           "name": "t:names.carousel_content",
           "static": true,
           "settings": {
-            "inherit_color_scheme": true,
-            "color_scheme": "",
+            "inherit_color_scheme": false,
+            "color_scheme": "scheme-1",
             "height": "fit",
             "position": "top",
             "border": "none",

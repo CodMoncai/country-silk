@@ -443,7 +443,7 @@
                   "settings": {
                     "image": "shopify://shop_images/WALMART.jpg",
                     "link": "",
-                    "image_ratio": "adapt",
+                    "image_ratio": "landscape",
                     "width": "fill",
                     "custom_width": 100,
                     "width_mobile": "fill",
@@ -499,7 +499,7 @@
                   "settings": {
                     "image": "shopify://shop_images/BURLINGTON.jpg",
                     "link": "",
-                    "image_ratio": "adapt",
+                    "image_ratio": "landscape",
                     "width": "fill",
                     "custom_width": 100,
                     "width_mobile": "fill",
@@ -555,7 +555,7 @@
                   "settings": {
                     "image": "shopify://shop_images/ROSS.jpg",
                     "link": "",
-                    "image_ratio": "adapt",
+                    "image_ratio": "landscape",
                     "width": "fill",
                     "custom_width": 100,
                     "width_mobile": "fill",
@@ -611,7 +611,7 @@
                   "settings": {
                     "image": "shopify://shop_images/MENARDS.jpg",
                     "link": "",
-                    "image_ratio": "adapt",
+                    "image_ratio": "landscape",
                     "width": "fill",
                     "custom_width": 100,
                     "width_mobile": "fill",
@@ -1762,7 +1762,7 @@
         "color_scheme": "",
         "icons_style": "arrow",
         "icons_shape": "none",
-        "padding-block-start": 48,
+        "padding-block-start": 24,
         "padding-block-end": 48
       }
     },

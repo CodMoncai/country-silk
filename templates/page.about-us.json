@@ -935,7 +935,7 @@
         "columns_gap": 12,
         "color_scheme": "scheme-5",
         "icons_style": "arrows_large",
-        "icons_shape": "none",
+        "icons_shape": "circle",
         "padding-block-start": 0,
         "padding-block-end": 0
       }

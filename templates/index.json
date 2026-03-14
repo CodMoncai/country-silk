@@ -725,7 +725,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
-                "image": "shopify://shop_images/CANDYLAND_2.0_BANNER_2048_X_600.jpg",
+                "image": "shopify://shop_images/CANDYLAND-2.0-BANNER-1920-x-565-3-14-2026.jpg",
                 "link": "shopify://collections/festive-christmas",
                 "image_ratio": "adapt",
                 "width": "fill",
@@ -820,7 +820,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
-                "image": "shopify://shop_images/RED-RED-WINE-THEME-BANNER-2-24-2026.jpg",
+                "image": "shopify://shop_images/RED-RED-WINE-THEME-BANNER-3-14-2026.jpg",
                 "link": "shopify://collections/ruby-red-christmas",
                 "image_ratio": "adapt",
                 "width": "fill",

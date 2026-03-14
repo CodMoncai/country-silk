@@ -61,7 +61,8 @@
       "type": "hero",
       "name": "t:names.hero",
       "settings": {
-        "media_type_1": "video",
+        "media_type_1": "image",
+        "image_1": "shopify://shop_images/THEMES-PAGE-BANNER-3-14-2026.jpg",
         "video_1_external_url": "https://vimeo.com/1035223681",
         "media_type_2": "image",
         "video_2_external_url": "",

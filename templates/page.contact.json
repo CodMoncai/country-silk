@@ -226,7 +226,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Customer care</h2>",
+                "text": "<h2>Customer Care</h2>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",

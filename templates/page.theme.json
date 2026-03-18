@@ -531,7 +531,7 @@
             "button_RcHNqT": {
               "type": "button",
               "settings": {
-                "label": "Shop now",
+                "label": "Shop Now",
                 "link": "shopify://collections/ruby-red-christmas",
                 "open_in_new_tab": false,
                 "style_class": "button",

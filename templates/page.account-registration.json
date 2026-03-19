@@ -125,10 +125,22 @@
         "padding-block-start": 40,
         "padding-block-end": 40
       }
+    },
+    "custom_liquid_kF94nz": {
+      "type": "custom-liquid",
+      "name": "t:names.custom_liquid",
+      "settings": {
+        "custom_liquid": "<div class=\"adf-forms\" data-id=\"347\"></div>",
+        "color_scheme": "",
+        "section_width": "page-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
     "main",
-    "hero_JPtnhx"
+    "hero_JPtnhx",
+    "custom_liquid_kF94nz"
   ]
 }

@@ -5,22 +5,24 @@
   @param {object} [variant_image] - an alternate image when there is no swatch value
   @param {string} [mode] - one of 'unscaled', 'filter', 'pill'
   @param {string} [override_background] - CSS background value (e.g. url(...) or rgb(...)) from metafields or custom data
+  @param {boolean} [skip_image_fallbacks] - If true, do not use variant_image or swatch.image (theme metafield swatches)
 
   @example
   {% render 'swatch', swatch: swatch, variant_image: variant_image, mode: 'unscaled' %}
 {%- enddoc -%}
 
 {% liquid
+  assign skip_img = skip_image_fallbacks | default: false
   assign swatch_value = null
   assign extra_classes = ''
   if override_background != blank
     assign swatch_value = override_background
-  elsif settings.show_variant_image and variant_image
+  elsif skip_img == false and settings.show_variant_image and variant_image
     assign swatch_image_width = settings.variant_swatch_width | times: 2
     assign swatch_image_url = variant_image | image_url: width: swatch_image_width
     assign swatch_value = 'url(' | append: swatch_image_url | append: ')'
     assign extra_classes = extra_classes | append: ' swatch--variant-image'
-  elsif swatch != blank and swatch.image
+  elsif skip_img == false and swatch != blank and swatch.image
     assign swatch_image_url = swatch.image | image_url: width: 80
     assign swatch_value = 'url(' | append: swatch_image_url | append: ')'
   elsif swatch != blank and swatch.color

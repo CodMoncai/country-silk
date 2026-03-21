@@ -2,51 +2,54 @@
   Renders a variant swatch for the Themes option using a product metafield list of metaobjects.
 
   Expected product metafield: list.metaobject_reference (namespace/key from variant picker block settings).
-  Metaobject fields: theme_option_value (single line text, must match option value), swatch_color (color), swatch_image (file). Color is always preferred over the file when both are set.
+  Metaobject fields: theme_option_value (single line text), swatch_color (color) before swatch_image (file).
+
+  Variant photos and Shopify option image swatches are skipped; metaobject color/file and native option color (only) may show.
 
   @param {object} theme_entries - Metafield .value (array of metaobjects)
   @param {string} product_option_value - Option value to match
-  @param {object} [native_swatch] - Shopify option swatch for fallback (no variant product image)
-  @param {object} [variant_image] - Unused; kept for API compatibility. Theme swatches do not fall back to variant photos.
   @param {string} [mode] - Passed to swatch snippet
-
-  @example
-  {% render 'variant-theme-swatch',
-    theme_entries: product.metafields.custom.theme_swatches.value,
-    product_option_value: product_option_value,
-    native_swatch: product_option_value.swatch,
-    variant_image: featured_media,
-    mode: 'unscaled'
-  %}
 {%- enddoc -%}
 
 {% liquid
   assign override_background = ''
   assign opt_val = product_option_value | strip
   assign opt_name = product_option_value.name | default: opt_val | strip
-  if theme_entries != blank
-    for entry in theme_entries
+%}
+{% if theme_entries != blank %}
+  {% for entry in theme_entries %}
+    {% liquid
       assign label = entry.theme_option_value | default: entry.option_value | strip
+      assign label_n = label | downcase
+      assign opt_val_n = opt_val | downcase
+      assign opt_name_n = opt_name | downcase
       assign label_matches = false
-      if label == opt_val or label == opt_name
+      if label_n == opt_val_n or label_n == opt_name_n
         assign label_matches = true
       endif
-      if label_matches and override_background == blank
-        assign mo_color = entry.swatch_color
-        if mo_color != blank
-          if mo_color.rgb != blank
-            assign override_background = 'rgb(' | append: mo_color.rgb | append: ')'
-          elsif mo_color.hex != blank
-            assign override_background = mo_color.hex
-          endif
-        endif
-        if override_background == blank and entry.swatch_image != blank
+    %}
+    {% if label_matches %}
+      {% capture color_css %}
+        {% render 'metaobject-swatch-color-css', entry: entry %}
+      {% endcapture %}
+      {% assign color_css = color_css | strip %}
+      {% if color_css != blank %}
+        {% assign override_background = color_css %}
+      {% endif %}
+      {% if override_background == blank and entry.swatch_image != blank %}
+        {% liquid
           assign swatch_image_width = settings.variant_swatch_width | times: 2
           assign swatch_image_url = entry.swatch_image | image_url: width: swatch_image_width
           assign override_background = 'url(' | append: swatch_image_url | append: ')'
-        endif
-      endif
-    endfor
-  endif
+        %}
+      {% endif %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% render 'swatch',
+  swatch: product_option_value.swatch,
+  mode: mode,
+  override_background: override_background,
+  skip_image_fallbacks: true
 %}
-{% render 'swatch', swatch: native_swatch, mode: mode, override_background: override_background %}

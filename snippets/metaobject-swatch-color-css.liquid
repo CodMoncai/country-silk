@@ -1,0 +1,42 @@
+{%- doc -%}
+  Outputs a CSS background color value (rgb(...) or #hex) read from theme metaobject fields, or nothing.
+
+  Tries field keys: swatch_color, color, colour, swatch-color. Unwraps .value when the color lives on a nested object.
+
+  @param {object} entry - Metaobject from theme swatch list
+{%- enddoc -%}
+{% liquid
+  assign c_host = entry.swatch_color | default: entry.swatch_colour | default: entry.color | default: entry.colour
+  if c_host == blank
+    assign c_host = entry['swatch-color']
+  endif
+  assign c_obj = c_host
+  if c_obj != blank and c_obj.rgb == blank and c_obj.hex == blank and c_obj.value != blank
+    assign c_obj = c_obj.value
+  endif
+  if c_obj != blank and c_obj.rgb == blank and c_obj.hex == blank and c_obj.value != blank
+    assign c_obj = c_obj.value
+  endif
+  assign out = ''
+  if c_obj != blank
+    if c_obj.rgb != blank
+      assign out = 'rgb(' | append: c_obj.rgb | append: ')'
+    elsif c_obj.hex != blank
+      assign out = c_obj.hex
+    else
+      assign s = c_obj | append: '' | strip
+      if s contains '#'
+        assign out = s
+      endif
+    endif
+  endif
+%}
+{%- if out != blank -%}
+  {{- out -}}
+{%- elsif c_host != blank -%}
+  {%- capture host_rendered -%}{{- c_host -}}{%- endcapture -%}
+  {%- assign host_rendered = host_rendered | strip -%}
+  {%- if host_rendered contains '#' -%}
+    {{- host_rendered -}}
+  {%- endif -%}
+{%- endif -%}

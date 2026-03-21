@@ -1,0 +1,52 @@
+{%- doc -%}
+  If this Theme Swatch metaobject row matches the variant option value, outputs a CSS background value (rgb/#hex or url(...)). Otherwise outputs nothing.
+
+  Unwraps metaobject field wrappers (.value) for theme_option_value, swatch_color, and swatch_image.
+
+  @param {object} entry - One Theme Swatch metaobject
+  @param {string} opt_val - Variant option value string
+  @param {string} opt_name - Variant option value .name if present
+{%- enddoc -%}
+{% liquid
+  assign raw_label = entry.theme_option_value | default: entry.option_value
+  if raw_label != blank and raw_label.value != blank
+    assign raw_label = raw_label.value
+  endif
+  assign label = raw_label | strip | downcase
+  assign opt_val_n = opt_val | strip | downcase
+  assign opt_name_n = opt_name | strip | downcase
+  assign match = false
+  if label != blank and label == opt_val_n
+    assign match = true
+  endif
+  if match == false and label != blank and label == opt_name_n
+    assign match = true
+  endif
+%}
+{%- if match -%}
+  {% capture color_css %}
+    {% render 'metaobject-swatch-color-css', entry: entry %}
+  {% endcapture %}
+  {% assign color_css = color_css | strip %}
+  {% if color_css != blank %}
+    {{- color_css -}}
+  {% else %}
+    {% liquid
+      assign raw_img = entry.swatch_image | default: entry.image | default: entry['swatch_image']
+      if raw_img != blank and raw_img.value != blank
+        assign raw_img = raw_img.value
+      endif
+      if raw_img != blank and raw_img.value != blank
+        assign raw_img = raw_img.value
+      endif
+    %}
+    {% if raw_img != blank %}
+      {% liquid
+        assign swatch_image_width = settings.variant_swatch_width | times: 2
+        assign swatch_image_url = raw_img | image_url: width: swatch_image_width
+        assign img_css = 'url(' | append: swatch_image_url | append: ')'
+      %}
+      {{- img_css -}}
+    {% endif %}
+  {% endif %}
+{%- endif -%}

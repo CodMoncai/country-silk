@@ -1,11 +1,8 @@
 {%- doc -%}
-  Theme-only products have no Color variant option; swatch appearance comes only from the metaobject (color / hex text / image).
+  Theme variant swatch from product metafield: list of Theme Swatch metaobjects, OR a single metaobject reference.
 
-  Product metafield: list.metaobject_reference. Metaobject: theme_option_value (matches Theme option value), then swatch_color or hex text fields, then swatch_image.
-
-  Does not use variant photos, Shopify option swatches, or a separate Color product option.
-
-  @param {object} theme_entries - Metafield .value (array of metaobjects)
+  @param {object} theme_entries - Metafield .value (array or one metaobject)
+  @param {boolean} theme_swatches_is_list - Metafield drop .list? (false = single Theme Swatch object for this product)
   @param {string} product_option_value - Theme option value to match
   @param {string} [mode] - Passed to swatch snippet
 {%- enddoc -%}
@@ -16,34 +13,22 @@
   assign opt_name = product_option_value.name | default: opt_val | strip
 %}
 {% if theme_entries != blank %}
-  {% for entry in theme_entries %}
-    {% liquid
-      assign label = entry.theme_option_value | default: entry.option_value | strip
-      assign label_n = label | downcase
-      assign opt_val_n = opt_val | downcase
-      assign opt_name_n = opt_name | downcase
-      assign label_matches = false
-      if label_n == opt_val_n or label_n == opt_name_n
-        assign label_matches = true
-      endif
-    %}
-    {% if label_matches %}
-      {% capture color_css %}
-        {% render 'metaobject-swatch-color-css', entry: entry %}
+  {% if theme_swatches_is_list %}
+    {% for entry in theme_entries %}
+      {% capture piece %}
+        {% render 'theme-swatch-entry-override', entry: entry, opt_val: opt_val, opt_name: opt_name %}
       {% endcapture %}
-      {% assign color_css = color_css | strip %}
-      {% if color_css != blank %}
-        {% assign override_background = color_css %}
+      {% assign piece = piece | strip %}
+      {% if piece != blank %}
+        {% assign override_background = piece %}
+        {% break %}
       {% endif %}
-      {% if override_background == blank and entry.swatch_image != blank %}
-        {% liquid
-          assign swatch_image_width = settings.variant_swatch_width | times: 2
-          assign swatch_image_url = entry.swatch_image | image_url: width: swatch_image_width
-          assign override_background = 'url(' | append: swatch_image_url | append: ')'
-        %}
-      {% endif %}
-      {% break %}
-    {% endif %}
-  {% endfor %}
+    {% endfor %}
+  {% else %}
+    {% capture piece %}
+      {% render 'theme-swatch-entry-override', entry: theme_entries, opt_val: opt_val, opt_name: opt_name %}
+    {% endcapture %}
+    {% assign override_background = piece | strip %}
+  {% endif %}
 {% endif %}
 {% render 'swatch', mode: mode, override_background: override_background, skip_image_fallbacks: true %}

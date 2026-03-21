@@ -1,45 +1,69 @@
 {%- doc -%}
-  CSS color for the Theme swatch from metaobject fields only (not a product "Color" variant option).
+  CSS color from Theme Swatch metaobject: swatch_color as Shopify Color, single-line hex (#rgb or 6-digit), or other hex fields.
 
-  Tries: Color-type fields swatch_color, swatch_colour, theme_swatch_color, color (metaobject field name), swatch-color; then single-line hex fields hex, hex_code, swatch_hex, theme_hex. Unwraps .value when needed.
-
-  @param {object} entry - Metaobject from theme swatch list
+  @param {object} entry - Theme Swatch metaobject
 {%- enddoc -%}
 {% liquid
-  assign c_host = entry.swatch_color | default: entry.swatch_colour | default: entry.theme_swatch_color | default: entry.color | default: entry.colour | default: entry['swatch-color']
-  assign c_obj = c_host
-  if c_obj != blank and c_obj.rgb == blank and c_obj.hex == blank and c_obj.value != blank
-    assign c_obj = c_obj.value
+  assign mo = entry.swatch_color | default: entry['swatch_color']
+  if mo != blank and mo.value != blank and mo.rgb == blank and mo.hex == blank
+    assign mo = mo.value
   endif
-  if c_obj != blank and c_obj.rgb == blank and c_obj.hex == blank and c_obj.value != blank
-    assign c_obj = c_obj.value
+  if mo != blank and mo.value != blank and mo.rgb == blank and mo.hex == blank
+    assign mo = mo.value
   endif
   assign out = ''
-  if c_obj != blank
-    if c_obj.rgb != blank
-      assign out = 'rgb(' | append: c_obj.rgb | append: ')'
-    elsif c_obj.hex != blank
-      assign out = c_obj.hex
+  if mo != blank
+    if mo.rgb != blank
+      assign out = 'rgb(' | append: mo.rgb | append: ')'
+    elsif mo.hex != blank
+      assign out = mo.hex
     else
-      assign s = c_obj | append: '' | strip
-      if s contains '#'
-        assign out = s
+      assign str = mo | append: '' | strip
+      if str contains '#'
+        assign out = str
+      elsif str.size == 6
+        assign out = '#' | append: str
+      elsif str.size == 3
+        assign out = '#' | append: str
       endif
     endif
   endif
   if out == blank
-    assign t_hex = entry.hex | default: entry.hex_code | default: entry.swatch_hex | default: entry.theme_hex | strip
+    assign mo2 = entry.swatch_colour | default: entry.theme_swatch_color | default: entry.color | default: entry.colour | default: entry['swatch-color']
+    if mo2 != blank and mo2.value != blank and mo2.rgb == blank and mo2.hex == blank
+      assign mo2 = mo2.value
+    endif
+    if mo2 != blank and mo2.value != blank and mo2.rgb == blank and mo2.hex == blank
+      assign mo2 = mo2.value
+    endif
+    if mo2 != blank
+      if mo2.rgb != blank
+        assign out = 'rgb(' | append: mo2.rgb | append: ')'
+      elsif mo2.hex != blank
+        assign out = mo2.hex
+      else
+        assign str2 = mo2 | append: '' | strip
+        if str2 contains '#'
+          assign out = str2
+        elsif str2.size == 6
+          assign out = '#' | append: str2
+        endif
+      endif
+    endif
+  endif
+  if out == blank
+    assign t_hex = entry.hex | default: entry.hex_code | default: entry.swatch_hex | default: entry.theme_hex
+    if t_hex != blank and t_hex.value != blank
+      assign t_hex = t_hex.value
+    endif
+    assign t_hex = t_hex | strip
     if t_hex contains '#'
       assign out = t_hex
+    elsif t_hex.size == 6
+      assign out = '#' | append: t_hex
     endif
   endif
 %}
 {%- if out != blank -%}
   {{- out -}}
-{%- elsif c_host != blank -%}
-  {%- capture host_rendered -%}{{- c_host -}}{%- endcapture -%}
-  {%- assign host_rendered = host_rendered | strip -%}
-  {%- if host_rendered contains '#' -%}
-    {{- host_rendered -}}
-  {%- endif -%}
 {%- endif -%}

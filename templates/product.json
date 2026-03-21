@@ -252,8 +252,8 @@
               "settings": {
                 "variant_style": "buttons",
                 "show_swatches": true,
-                "theme_option_label": "Themes",
-                "theme_swatches_metafield_namespace": "custom",
+                "theme_option_label": "Theme",
+                "theme_swatches_metafield_namespace": "{{ closest.product.metafields.custom.theme_swatch | metafield_text: field: 'theme_option_value' }}",
                 "theme_swatches_metafield_key": "theme_swatches",
                 "alignment": "left",
                 "padding-block-start": 0,

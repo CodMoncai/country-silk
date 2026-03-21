@@ -1,15 +1,12 @@
 {%- doc -%}
-  Outputs a CSS background color value (rgb(...) or #hex) read from theme metaobject fields, or nothing.
+  CSS color for the Theme swatch from metaobject fields only (not a product "Color" variant option).
 
-  Tries field keys: swatch_color, color, colour, swatch-color. Unwraps .value when the color lives on a nested object.
+  Tries: Color-type fields swatch_color, swatch_colour, theme_swatch_color, color (metaobject field name), swatch-color; then single-line hex fields hex, hex_code, swatch_hex, theme_hex. Unwraps .value when needed.
 
   @param {object} entry - Metaobject from theme swatch list
 {%- enddoc -%}
 {% liquid
-  assign c_host = entry.swatch_color | default: entry.swatch_colour | default: entry.color | default: entry.colour
-  if c_host == blank
-    assign c_host = entry['swatch-color']
-  endif
+  assign c_host = entry.swatch_color | default: entry.swatch_colour | default: entry.theme_swatch_color | default: entry.color | default: entry.colour | default: entry['swatch-color']
   assign c_obj = c_host
   if c_obj != blank and c_obj.rgb == blank and c_obj.hex == blank and c_obj.value != blank
     assign c_obj = c_obj.value
@@ -28,6 +25,12 @@
       if s contains '#'
         assign out = s
       endif
+    endif
+  endif
+  if out == blank
+    assign t_hex = entry.hex | default: entry.hex_code | default: entry.swatch_hex | default: entry.theme_hex | strip
+    if t_hex contains '#'
+      assign out = t_hex
     endif
   endif
 %}

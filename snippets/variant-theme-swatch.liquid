@@ -1,13 +1,12 @@
 {%- doc -%}
-  Renders a variant swatch for the Themes option using a product metafield list of metaobjects.
+  Theme-only products have no Color variant option; swatch appearance comes only from the metaobject (color / hex text / image).
 
-  Expected product metafield: list.metaobject_reference (namespace/key from variant picker block settings).
-  Metaobject fields: theme_option_value (single line text), swatch_color (color) before swatch_image (file).
+  Product metafield: list.metaobject_reference. Metaobject: theme_option_value (matches Theme option value), then swatch_color or hex text fields, then swatch_image.
 
-  Variant photos and Shopify option image swatches are skipped; metaobject color/file and native option color (only) may show.
+  Does not use variant photos, Shopify option swatches, or a separate Color product option.
 
   @param {object} theme_entries - Metafield .value (array of metaobjects)
-  @param {string} product_option_value - Option value to match
+  @param {string} product_option_value - Theme option value to match
   @param {string} [mode] - Passed to swatch snippet
 {%- enddoc -%}
 
@@ -47,9 +46,4 @@
     {% endif %}
   {% endfor %}
 {% endif %}
-{% render 'swatch',
-  swatch: product_option_value.swatch,
-  mode: mode,
-  override_background: override_background,
-  skip_image_fallbacks: true
-%}
+{% render 'swatch', mode: mode, override_background: override_background, skip_image_fallbacks: true %}

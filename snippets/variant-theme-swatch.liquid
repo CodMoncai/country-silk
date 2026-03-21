@@ -2,12 +2,12 @@
   Renders a variant swatch for the Themes option using a product metafield list of metaobjects.
 
   Expected product metafield: list.metaobject_reference (namespace/key from variant picker block settings).
-  Metaobject fields: theme_option_value (single line text, must match option value), swatch_image (file), swatch_color (color).
+  Metaobject fields: theme_option_value (single line text, must match option value), swatch_color (color), swatch_image (file). Color is always preferred over the file when both are set.
 
   @param {object} theme_entries - Metafield .value (array of metaobjects)
   @param {string} product_option_value - Option value to match
-  @param {object} [native_swatch] - Shopify option swatch for fallback
-  @param {object} [variant_image] - Variant featured media for fallback
+  @param {object} [native_swatch] - Shopify option swatch for fallback (no variant product image)
+  @param {object} [variant_image] - Unused; kept for API compatibility. Theme swatches do not fall back to variant photos.
   @param {string} [mode] - Passed to swatch snippet
 
   @example
@@ -32,20 +32,21 @@
         assign label_matches = true
       endif
       if label_matches and override_background == blank
-        if entry.swatch_image != blank
+        assign mo_color = entry.swatch_color
+        if mo_color != blank
+          if mo_color.rgb != blank
+            assign override_background = 'rgb(' | append: mo_color.rgb | append: ')'
+          elsif mo_color.hex != blank
+            assign override_background = mo_color.hex
+          endif
+        endif
+        if override_background == blank and entry.swatch_image != blank
           assign swatch_image_width = settings.variant_swatch_width | times: 2
           assign swatch_image_url = entry.swatch_image | image_url: width: swatch_image_width
           assign override_background = 'url(' | append: swatch_image_url | append: ')'
-        elsif entry.swatch_color != blank and entry.swatch_color.rgb != blank
-          assign override_background = 'rgb(' | append: entry.swatch_color.rgb | append: ')'
         endif
       endif
     endfor
   endif
 %}
-{% render 'swatch',
-  swatch: native_swatch,
-  variant_image: variant_image,
-  mode: mode,
-  override_background: override_background
-%}
+{% render 'swatch', swatch: native_swatch, mode: mode, override_background: override_background %}

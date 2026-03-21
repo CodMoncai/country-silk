@@ -65,7 +65,7 @@
     "edit_price_in_theme_settings": "Edit price formatting in [theme settings](/editor?context=theme&category=currency%20code)",
     "edit_variants_in_theme_settings": "Edit variant styling in [theme settings](/editor?context=theme&category=variants)",
     "theme_theme_swatches_header": "Theme option swatches (metafield)",
-    "theme_theme_swatches_intro": "For the option name above, add a product metafield (list of metaobjects). Create a metaobject definition with: theme_option_value (single line text, must match each variant option value exactly), swatch_image (file, optional), swatch_color (color, optional). Image takes priority over color.",
+    "theme_theme_swatches_intro": "Swatches show for the option name(s) above whenever Swatches is enabled (variant images appear if the list is empty). Add a product metafield: list of metaobjects. Metaobject fields: theme_option_value (single line text, must match each variant option value exactly), swatch_image (file, optional), swatch_color (color, optional). Image takes priority over color. Default metafield: custom.theme_swatches.",
     "email_signups_create_customer_profiles": "Signups add [customer profiles](https://help.shopify.com/manual/customers)",
     "email_signup": "Email signup",
     "follow_on_shop_eligiblity": "For the button to show, the Shop channel must be installed and Shop Pay activated. [Learn more](https://help.shopify.com/en/manual/online-store/themes/customizing-themes/add-shop-buttons)",
@@ -239,7 +239,7 @@
     "media_type_info": "Features are populated from your menu links",
     "quote_request_email": "Email address that receives quote requests",
     "breadcrumb_home_label": "Leave blank to use the default “Home” label from your language file.",
-    "theme_option_label": "Must match the product option name (case-insensitive), e.g. Themes.",
+    "theme_option_label": "Comma-separated option names to treat as theme swatches (case-insensitive), e.g. Theme,Themes. Must match your product option name exactly.",
     "theme_swatches_metafield_key": "Product metafield: list of metaobjects. Namespace and key must match a definition you create in Settings → Custom data."
   },
   "names": {

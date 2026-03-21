@@ -47,17 +47,35 @@
             endif
           endif
 
-          assign theme_label = block_settings.theme_option_label | default: 'Themes' | strip
+          assign theme_label = block_settings.theme_option_label | default: 'Theme,Themes' | strip
           assign theme_ns = block_settings.theme_swatches_metafield_namespace | default: 'custom' | strip
           assign theme_key = block_settings.theme_swatches_metafield_key | default: 'theme_swatches' | strip
-          assign theme_entries = product_resource.metafields[theme_ns][theme_key].value
+          # Variable chained metafields[ns][key] is unreliable; resolve namespace then key; fall back to custom.theme_swatches.
+          assign theme_entries = nil
+          assign theme_mf_namespace = product_resource.metafields[theme_ns]
+          if theme_mf_namespace != blank
+            assign theme_mf_obj = theme_mf_namespace[theme_key]
+            if theme_mf_obj != blank
+              assign theme_entries = theme_mf_obj.value
+            endif
+          endif
+          if theme_entries == blank and theme_ns == 'custom' and theme_key == 'theme_swatches'
+            assign theme_entries = product_resource.metafields.custom.theme_swatches.value
+          endif
           assign use_theme_metafield_swatches = false
           assign theme_option_name_normalized = product_option.name | downcase
-          assign theme_label_normalized = theme_label | downcase
-          if block_settings.show_swatches and theme_entries != blank and theme_label != blank
-            if theme_option_name_normalized == theme_label_normalized
+          assign theme_option_matches = false
+          assign theme_label_candidates = theme_label | split: ','
+          for theme_label_part in theme_label_candidates
+            assign part_norm = theme_label_part | strip | downcase
+            if part_norm != blank and theme_option_name_normalized == part_norm
+              assign theme_option_matches = true
+            endif
+          endfor
+          if block_settings.show_swatches and theme_option_matches
+            assign variant_style = 'swatch'
+            if theme_entries != blank and theme_entries.size > 0
               assign use_theme_metafield_swatches = true
-              assign variant_style = 'swatch'
             endif
           endif
 

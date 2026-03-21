@@ -22,15 +22,21 @@
 
 {% liquid
   assign override_background = ''
+  assign opt_val = product_option_value | strip
+  assign opt_name = product_option_value.name | default: opt_val | strip
   if theme_entries != blank
     for entry in theme_entries
-      assign label = entry.theme_option_value | default: entry.option_value
-      if label == product_option_value and override_background == blank
+      assign label = entry.theme_option_value | default: entry.option_value | strip
+      assign label_matches = false
+      if label == opt_val or label == opt_name
+        assign label_matches = true
+      endif
+      if label_matches and override_background == blank
         if entry.swatch_image != blank
           assign swatch_image_width = settings.variant_swatch_width | times: 2
           assign swatch_image_url = entry.swatch_image | image_url: width: swatch_image_width
           assign override_background = 'url(' | append: swatch_image_url | append: ')'
-        elsif entry.swatch_color != blank
+        elsif entry.swatch_color != blank and entry.swatch_color.rgb != blank
           assign override_background = 'rgb(' | append: entry.swatch_color.rgb | append: ')'
         endif
       endif

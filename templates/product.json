@@ -61,7 +61,7 @@
             "icons_style": "arrows_large",
             "slideshow_controls_style": "thumbnails",
             "slideshow_mobile_controls_style": "thumbnails",
-            "thumbnail_position": "right",
+            "thumbnail_position": "bottom",
             "thumbnail_width": 44,
             "thumbnail_radius": 0,
             "aspect_ratio": "1",

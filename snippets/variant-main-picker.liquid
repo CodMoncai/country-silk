@@ -52,8 +52,10 @@
           assign theme_key = block_settings.theme_swatches_metafield_key | default: 'theme_swatches' | strip
           assign theme_entries = product_resource.metafields[theme_ns][theme_key].value
           assign use_theme_metafield_swatches = false
+          assign theme_option_name_normalized = product_option.name | downcase
+          assign theme_label_normalized = theme_label | downcase
           if block_settings.show_swatches and theme_entries != blank and theme_label != blank
-            if product_option.name | downcase == theme_label | downcase
+            if theme_option_name_normalized == theme_label_normalized
               assign use_theme_metafield_swatches = true
               assign variant_style = 'swatch'
             endif

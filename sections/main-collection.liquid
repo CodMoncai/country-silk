@@ -33,6 +33,14 @@
   <div
     class="collection-wrapper grid gap-style{% if section.settings.product_grid_width == 'full-width' %} collection-wrapper--grid-full-width{% endif %}"
   >
+    <div class="collection-wrapper__breadcrumb">
+      {% content_for 'block',
+        type: 'breadcrumb',
+        id: 'collection-breadcrumb',
+        closest.collection: collection
+      %}
+    </div>
+
     {% content_for 'block',
       type: 'filters',
       id: 'filters',
@@ -75,6 +83,10 @@
 </results-list>
 
 {% stylesheet %}
+  .collection-wrapper__breadcrumb {
+    grid-column: 1 / -1;
+  }
+
   .main-collection-grid {
     grid-column: var(--grid-column--mobile);
 
@@ -324,6 +336,17 @@
       "step": 1,
       "unit": "px",
       "default": 8
+    }
+  ],
+  "blocks": [
+    {
+      "type": "breadcrumb"
+    },
+    {
+      "type": "filters"
+    },
+    {
+      "type": "_product-card"
     }
   ],
   "presets": []

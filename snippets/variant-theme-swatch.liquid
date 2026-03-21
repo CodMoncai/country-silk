@@ -1,0 +1,45 @@
+{%- doc -%}
+  Renders a variant swatch for the Themes option using a product metafield list of metaobjects.
+
+  Expected product metafield: list.metaobject_reference (namespace/key from variant picker block settings).
+  Metaobject fields: theme_option_value (single line text, must match option value), swatch_image (file), swatch_color (color).
+
+  @param {object} theme_entries - Metafield .value (array of metaobjects)
+  @param {string} product_option_value - Option value to match
+  @param {object} [native_swatch] - Shopify option swatch for fallback
+  @param {object} [variant_image] - Variant featured media for fallback
+  @param {string} [mode] - Passed to swatch snippet
+
+  @example
+  {% render 'variant-theme-swatch',
+    theme_entries: product.metafields.custom.theme_swatches.value,
+    product_option_value: product_option_value,
+    native_swatch: product_option_value.swatch,
+    variant_image: featured_media,
+    mode: 'unscaled'
+  %}
+{%- enddoc -%}
+
+{% liquid
+  assign override_background = ''
+  if theme_entries != blank
+    for entry in theme_entries
+      assign label = entry.theme_option_value | default: entry.option_value
+      if label == product_option_value and override_background == blank
+        if entry.swatch_image != blank
+          assign swatch_image_width = settings.variant_swatch_width | times: 2
+          assign swatch_image_url = entry.swatch_image | image_url: width: swatch_image_width
+          assign override_background = 'url(' | append: swatch_image_url | append: ')'
+        elsif entry.swatch_color != blank
+          assign override_background = 'rgb(' | append: entry.swatch_color.rgb | append: ')'
+        endif
+      endif
+    endfor
+  endif
+%}
+{% render 'swatch',
+  swatch: native_swatch,
+  variant_image: variant_image,
+  mode: mode,
+  override_background: override_background
+%}

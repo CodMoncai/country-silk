@@ -10,6 +10,7 @@
   @param {string} media_gallery - Captured HTML for the product media gallery block
   @param {string} product_details - Captured HTML for the product details block
   @param {string} additional_blocks - Captured HTML for additional section blocks
+  @param {string} [breadcrumb_row] - Captured HTML for the breadcrumb block (product section)
 
   @example
   {% capture media_gallery %}
@@ -86,6 +87,14 @@
     {% assign product_href = '#ProductInformation-' | append: section_id %}
     {% render 'skip-to-content-link', href: product_href, text: 'accessibility.skip_to_product_info' %}
   {% endif %}
+
+  {% assign breadcrumb_trimmed = breadcrumb_row | strip %}
+  {% if breadcrumb_trimmed != blank %}
+    <div class="product-information__breadcrumb">
+      {{ breadcrumb_trimmed }}
+    </div>
+  {% endif %}
+
   <div
     class="{{ product_grid_class }}"
     data-product-grid-content
@@ -115,6 +124,10 @@
 {% stylesheet %}
   .product-information {
     gap: var(--gap) 0;
+  }
+
+  .product-information__breadcrumb {
+    grid-column: 1 / -1;
   }
 
   /* Base grid layout */

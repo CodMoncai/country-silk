@@ -18,6 +18,10 @@
   %}
 {% endcapture %}
 
+{% capture product_breadcrumb %}
+  {% content_for 'block', type: 'breadcrumb', id: 'product-breadcrumb', closest.product: closest.product %}
+{% endcapture %}
+
 {% capture additional_blocks %}
   {% content_for 'blocks' %}
 {% endcapture %}
@@ -172,7 +176,8 @@
   settings: section.settings,
   media_gallery: media_gallery,
   product_details: product_details,
-  additional_blocks: additional_blocks
+  additional_blocks: additional_blocks,
+  breadcrumb_row: product_breadcrumb
 %}
 
 {% stylesheet %}
@@ -364,6 +369,9 @@
   "blocks": [
     {
       "type": "@app"
+    },
+    {
+      "type": "breadcrumb"
     }
   ],
   "disabled_on": {

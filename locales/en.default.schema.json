@@ -64,6 +64,8 @@
     "edit_logo_in_theme_settings": "Edit logo in [theme settings](/editor?context=theme&category=logo%20and%20favicon)",
     "edit_price_in_theme_settings": "Edit price formatting in [theme settings](/editor?context=theme&category=currency%20code)",
     "edit_variants_in_theme_settings": "Edit variant styling in [theme settings](/editor?context=theme&category=variants)",
+    "theme_theme_swatches_header": "Theme option swatches (metafield)",
+    "theme_theme_swatches_intro": "For the option name above, add a product metafield (list of metaobjects). Create a metaobject definition with: theme_option_value (single line text, must match each variant option value exactly), swatch_image (file, optional), swatch_color (color, optional). Image takes priority over color.",
     "email_signups_create_customer_profiles": "Signups add [customer profiles](https://help.shopify.com/manual/customers)",
     "email_signup": "Email signup",
     "follow_on_shop_eligiblity": "For the button to show, the Shop channel must be installed and Shop Pay activated. [Learn more](https://help.shopify.com/en/manual/online-store/themes/customizing-themes/add-shop-buttons)",
@@ -111,6 +113,7 @@
     "product_media": "Product media",
     "product_page": "Product page",
     "responsive_font_sizes": "Sizes automatically scale for all screen sizes",
+    "resource_reference_breadcrumb": "Shows Home and the current collection or product. Placed automatically on collection and product templates.",
     "resource_reference_collection_card": "Displays collection from parent section",
     "resource_reference_collection_card_image": "Displays image from parent collection",
     "resource_reference_collection_title": "Displays title from parent collection",
@@ -234,7 +237,10 @@
     "video_metafield": "Enter Liquid that outputs a YouTube or Vimeo URL, e.g. {{ product.metafields.custom.video_url.value }} or {{ collection.metafields.custom.theme_video.value }}",
     "pills_usage": "Used for applied filters, discount codes, and search suggestions",
     "media_type_info": "Features are populated from your menu links",
-    "quote_request_email": "Email address that receives quote requests"
+    "quote_request_email": "Email address that receives quote requests",
+    "breadcrumb_home_label": "Leave blank to use the default “Home” label from your language file.",
+    "theme_option_label": "Must match the product option name (case-insensitive), e.g. Themes.",
+    "theme_swatches_metafield_key": "Product metafield: list of metaobjects. Namespace and key must match a definition you create in Settings → Custom data."
   },
   "names": {
     "column": "Column",
@@ -257,6 +263,7 @@
     "blog_posts_grid": "Blog posts: Grid",
     "blog_posts_carousel": "Blog posts: Carousel",
     "blog_posts_editorial": "Blog posts: Editorial",
+    "breadcrumb": "Breadcrumbs",
     "borders": "Borders",
     "button": "Button",
     "buttons": "Buttons",
@@ -786,6 +793,7 @@
     // Display type selection for popup content (modal vs drawer)
     "behavior": "Behavior",
     "blog": "Blog",
+    "breadcrumb_home_label": "Home link label",
     "blur": "Shadow blur",
     "blurred_reflection": "Blurred reflection",
     "border": "Border",
@@ -1125,6 +1133,9 @@
     "submenu_size": "Submenu size",
     "success_color": "Success",
     "swatches": "Swatches",
+    "theme_option_label": "Theme option name",
+    "theme_swatches_metafield_key": "Theme swatches metafield key",
+    "theme_swatches_metafield_namespace": "Theme swatches metafield namespace",
     "tertiary_font": "Tertiary font",
     // Generic label for text-related settings (content or color)
     "text": "Text",

@@ -35,6 +35,7 @@
     <form class="variant-picker__form">
       {%- for product_option in product_resource.options_with_values -%}
         {%- liquid
+          assign option_id_attribute = ''
           assign swatch_count = product_option.values | map: 'swatch' | compact | size
           assign variant_style = block_settings.variant_style
 
@@ -42,6 +43,18 @@
             if block_settings.variant_style == 'dropdown'
               assign variant_style = 'swatch_dropdown'
             else
+              assign variant_style = 'swatch'
+            endif
+          endif
+
+          assign theme_label = block_settings.theme_option_label | default: 'Themes' | strip
+          assign theme_ns = block_settings.theme_swatches_metafield_namespace | default: 'custom' | strip
+          assign theme_key = block_settings.theme_swatches_metafield_key | default: 'theme_swatches' | strip
+          assign theme_entries = product_resource.metafields[theme_ns][theme_key].value
+          assign use_theme_metafield_swatches = false
+          if block_settings.show_swatches and theme_entries != blank and theme_label != blank
+            if product_option.name | downcase == theme_label | downcase
+              assign use_theme_metafield_swatches = true
               assign variant_style = 'swatch'
             endif
           endif
@@ -110,11 +123,21 @@
                     endif
                   %}
 
-                  {% render 'swatch',
-                    swatch: product_option_value.swatch,
-                    variant_image: featured_media,
-                    mode: 'unscaled'
-                  %}
+                  {% if use_theme_metafield_swatches %}
+                    {% render 'variant-theme-swatch',
+                      theme_entries: theme_entries,
+                      product_option_value: product_option_value,
+                      native_swatch: product_option_value.swatch,
+                      variant_image: featured_media,
+                      mode: 'unscaled'
+                    %}
+                  {% else %}
+                    {% render 'swatch',
+                      swatch: product_option_value.swatch,
+                      variant_image: featured_media,
+                      mode: 'unscaled'
+                    %}
+                  {% endif %}
                 {% else %}
                   {% if product_option_value.available == true %}
                     <span

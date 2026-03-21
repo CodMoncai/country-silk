@@ -1,0 +1,239 @@
+{% doc %}
+  Accessible breadcrumb trail for collection and product templates.
+
+  @example
+  {% content_for 'block', type: 'breadcrumb', id: 'collection-breadcrumb', closest.collection: collection %}
+  @example
+  {% content_for 'block', type: 'breadcrumb', id: 'product-breadcrumb', closest.product: closest.product %}
+{% enddoc %}
+
+{% liquid
+  assign block_settings = block.settings
+  assign show_block = false
+  assign trail_collection = nil
+  assign trail_product = closest.product
+
+  if template.name == 'collection' and collection != blank
+    assign show_block = true
+    assign trail_collection = closest.collection | default: collection
+  elsif template.name == 'product' and trail_product != blank
+    assign show_block = true
+    if collection != blank
+      assign trail_collection = collection
+    elsif trail_product.collections.size > 0
+      assign trail_collection = trail_product.collections.first
+    endif
+  endif
+%}
+
+{% if show_block %}
+  <nav
+    class="breadcrumb-block spacing-style"
+    aria-label="{{ 'breadcrumb.navigation' | t }}"
+    style="{% render 'spacing-style', settings: block_settings %}"
+    {{ block.shopify_attributes }}
+  >
+    <ol class="breadcrumb-block__list breadcrumb-block__list--align-{{ block_settings.alignment }}">
+      <li class="breadcrumb-block__item">
+        <a
+          class="breadcrumb-block__link"
+          href="{{ routes.root_url }}"
+        >
+          {%- if block_settings.home_label != blank -%}
+            {{- block_settings.home_label | escape -}}
+          {%- else -%}
+            {{- 'breadcrumb.home' | t -}}
+          {%- endif -%}
+        </a>
+      </li>
+
+      {% if template.name == 'collection' and trail_collection != blank %}
+        <li
+          class="breadcrumb-block__item"
+          aria-current="page"
+        >
+          <span class="breadcrumb-block__current">
+            {{- trail_collection.title | escape -}}
+          </span>
+        </li>
+      {% elsif template.name == 'product' %}
+        {% if trail_collection != blank %}
+          <li class="breadcrumb-block__item">
+            <a
+              class="breadcrumb-block__link"
+              href="{{ trail_collection.url }}"
+            >
+              {{- trail_collection.title | escape -}}
+            </a>
+          </li>
+        {% endif %}
+        <li
+          class="breadcrumb-block__item"
+          aria-current="page"
+        >
+          <span class="breadcrumb-block__current">
+            {{- trail_product.title | escape -}}
+          </span>
+        </li>
+      {% endif %}
+    </ol>
+  </nav>
+{% endif %}
+
+{% stylesheet %}
+  .breadcrumb-block__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    font-size: var(--font-paragraph-small--size, 0.875rem);
+  }
+
+  .breadcrumb-block__list--align-center {
+    justify-content: center;
+  }
+
+  .breadcrumb-block__list--align-right {
+    justify-content: flex-end;
+  }
+
+  .breadcrumb-block__item {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .breadcrumb-block__item + .breadcrumb-block__item::before {
+    content: '/';
+    margin-inline: 0.5rem;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+    font-weight: normal;
+  }
+
+  .breadcrumb-block__link {
+    color: var(--color-primary);
+    text-decoration: none;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .breadcrumb-block__link:focus {
+    outline: none;
+  }
+
+  .breadcrumb-block__link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .breadcrumb-block__current {
+    color: var(--color-foreground);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.breadcrumb",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.resource_reference_breadcrumb"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "text",
+      "id": "home_label",
+      "label": "t:settings.breadcrumb_home_label",
+      "info": "t:info.breadcrumb_home_label"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "right",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.breadcrumb",
+      "category": "t:categories.collection"
+    },
+    {
+      "name": "t:names.breadcrumb",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

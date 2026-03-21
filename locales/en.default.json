@@ -383,5 +383,9 @@
     "email_invalid_error": "Enter a valid email address.",
     "email_admin_error": "Quote recipient email is not configured. Please set it in theme settings.",
     "email_opened": "Your email client is opening with your quote request."
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "navigation": "Breadcrumb"
   }
 }

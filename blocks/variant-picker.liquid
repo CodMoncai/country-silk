@@ -6,7 +6,7 @@
 -%}
 
 {% unless product_resource == blank %}
-  {% render 'variant-main-picker', product_resource: product_resource %}
+  {% render 'variant-main-picker', product_resource: product_resource, block: block %}
 {% endunless %}
 
 {% schema %}
@@ -43,6 +43,34 @@
       "id": "show_swatches",
       "label": "t:settings.swatches",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.theme_theme_swatches_header"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.theme_theme_swatches_intro"
+    },
+    {
+      "type": "text",
+      "id": "theme_option_label",
+      "label": "t:settings.theme_option_label",
+      "default": "Themes",
+      "info": "t:info.theme_option_label"
+    },
+    {
+      "type": "text",
+      "id": "theme_swatches_metafield_namespace",
+      "label": "t:settings.theme_swatches_metafield_namespace",
+      "default": "custom"
+    },
+    {
+      "type": "text",
+      "id": "theme_swatches_metafield_key",
+      "label": "t:settings.theme_swatches_metafield_key",
+      "default": "theme_swatches",
+      "info": "t:info.theme_swatches_metafield_key"
     },
     {
       "type": "text_alignment",

@@ -65,7 +65,7 @@
     "edit_price_in_theme_settings": "Edit price formatting in [theme settings](/editor?context=theme&category=currency%20code)",
     "edit_variants_in_theme_settings": "Edit variant styling in [theme settings](/editor?context=theme&category=variants)",
     "theme_theme_swatches_header": "Theme option swatches (metafield)",
-    "theme_theme_swatches_intro": "Product metafield must reference your Theme Swatch metaobject: either list.metaobject_reference (one row per theme value) or a single metaobject_reference. Fields on each entry: theme_option_value (single line, must match the Theme option value; case-insensitive), swatch_color (Shopify Color or single-line hex like #112233 or 6 digits), swatch_image (image/file). Color output is preferred over image. Namespace/key defaults: custom / theme_swatches.",
+    "theme_theme_swatches_intro": "On the product, use one metafield that holds multiple Theme Swatch entries (list.metaobject_reference)—one list item per Theme option value—or a single metaobject_reference if you only need one row. Set namespace/key below to match that metafield. Each entry: theme_option_value (matches Theme value; case-insensitive), swatch_color (Color or hex text), swatch_image (optional). Defaults: custom / theme_swatches.",
     "email_signups_create_customer_profiles": "Signups add [customer profiles](https://help.shopify.com/manual/customers)",
     "email_signup": "Email signup",
     "follow_on_shop_eligiblity": "For the button to show, the Shop channel must be installed and Shop Pay activated. [Learn more](https://help.shopify.com/en/manual/online-store/themes/customizing-themes/add-shop-buttons)",

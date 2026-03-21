@@ -50,9 +50,9 @@
           assign theme_label = block_settings.theme_option_label | default: 'Theme,Themes' | strip
           assign theme_ns = block_settings.theme_swatches_metafield_namespace | default: 'custom' | strip
           assign theme_key = block_settings.theme_swatches_metafield_key | default: 'theme_swatches' | strip
-          # Resolve metafield drop once: .list? distinguishes list.metaobject_reference vs single metaobject_reference.
+          # Product metafield is often list.metaobject_reference (multiple Theme Swatch rows). Use list? and metafield.type as fallbacks—list? alone can be wrong in some contexts.
           assign theme_entries = nil
-          assign theme_swatches_is_list = true
+          assign theme_swatches_is_list = false
           assign theme_mf_obj = nil
           assign theme_mf_namespace = product_resource.metafields[theme_ns]
           if theme_mf_namespace != blank
@@ -62,8 +62,16 @@
             assign theme_mf_obj = product_resource.metafields.custom.theme_swatches
           endif
           if theme_mf_obj != blank
-            assign theme_swatches_is_list = theme_mf_obj.list?
             assign theme_entries = theme_mf_obj.value
+            if theme_mf_obj.list?
+              assign theme_swatches_is_list = true
+            endif
+            if theme_mf_obj.type != blank
+              assign theme_mf_type_str = theme_mf_obj.type | append: ''
+              if theme_mf_type_str contains 'list.'
+                assign theme_swatches_is_list = true
+              endif
+            endif
           endif
           assign use_theme_metafield_swatches = false
           assign theme_option_name_normalized = product_option.name | downcase

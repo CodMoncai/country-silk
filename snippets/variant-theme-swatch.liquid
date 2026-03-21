@@ -1,8 +1,8 @@
 {%- doc -%}
-  Theme variant swatch from product metafield: list of Theme Swatch metaobjects, OR a single metaobject reference.
+  Theme variant swatch from a product metafield whose value is multiple Theme Swatch metaobjects (typical), or one metaobject.
 
-  @param {object} theme_entries - Metafield .value (array or one metaobject)
-  @param {boolean} theme_swatches_is_list - Metafield drop .list? (false = single Theme Swatch object for this product)
+  @param {object} theme_entries - Metafield .value (array of entries when list type, or one metaobject)
+  @param {boolean} theme_swatches_is_list - True when metafield is a list (list? or type contains list.); false for a single metaobject reference
   @param {string} product_option_value - Theme option value to match
   @param {string} [mode] - Passed to swatch snippet
 {%- enddoc -%}

@@ -86,11 +86,7 @@
           if block_settings.show_swatches and theme_option_matches
             assign variant_style = 'swatch'
             if theme_entries != blank
-              if theme_swatches_is_list and theme_entries.size > 0
-                assign use_theme_metafield_swatches = true
-              elsif theme_swatches_is_list == false
-                assign use_theme_metafield_swatches = true
-              endif
+              assign use_theme_metafield_swatches = true
             endif
           endif
 

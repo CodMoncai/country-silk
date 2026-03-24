@@ -380,6 +380,19 @@ export default class VariantPicker extends Component {
       this.dataset.productUrl = newProductUrl;
     }
 
+    // Section responses used to ship a script-only picker; morphing that would remove the real form. Prefer full markup
+    // from section-rendering-product-card; if the response has no form, only sync JSON and keep the existing DOM.
+    const hasForm = newVariantPickerSource.querySelector('form.variant-picker__form');
+    if (!hasForm) {
+      const newScript = newVariantPickerSource.querySelector('script[type="application/json"]');
+      const oldScript = this.querySelector('script[type="application/json"]');
+      if (newScript && oldScript) {
+        oldScript.textContent = newScript.textContent;
+      }
+      this.updateVariantPickerCss();
+      return newProduct;
+    }
+
     morph(this, newVariantPickerSource, {
       ...MORPH_OPTIONS,
       getNodeKey: (node) => {

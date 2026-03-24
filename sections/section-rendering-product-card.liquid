@@ -1,8 +1,6 @@
 {% comment %}
-  This section is only to be called by the Section Rendering API. Faster to render a single card than the entire product grid.
-
-  HTML updated based on client-side interactions needs to be rendered here.  It is not important to have the exact
-  same HTML structure as the final rendered product card. The variant-picker.js script will morph specific elements as needed.
+  Section Rendering API only. Returns markup that must match the real variant picker so variant-picker.js can morph
+  without stripping the form (a script-only stub would replace the full picker and hide all options).
 {% endcomment %}
 
 {% liquid
@@ -41,11 +39,7 @@
     href="{{ url }}"
     ref="productCardLink"
   >
-    <variant-picker>
-      <script type="application/json">
-        {{ product.selected_or_first_available_variant | json }}
-      </script>
-    </variant-picker>
+    {% render 'variant-main-picker', product_resource: product, block: section %}
     {% render 'variant-swatches', product_resource: product, has_option_selected: true %}
 
     <product-price>
@@ -75,6 +69,112 @@
       "type": "product",
       "id": "product",
       "label": "t:settings.product"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "variant_style",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "dropdowns",
+          "label": "t:options.dropdowns"
+        },
+        {
+          "value": "buttons",
+          "label": "t:options.buttons"
+        }
+      ],
+      "default": "buttons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "t:settings.swatches",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.theme_theme_swatches_header"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.theme_theme_swatches_intro"
+    },
+    {
+      "type": "text",
+      "id": "theme_option_label",
+      "label": "t:settings.theme_option_label",
+      "default": "Theme,Themes",
+      "info": "t:info.theme_option_label"
+    },
+    {
+      "type": "text",
+      "id": "theme_swatches_metafield_namespace",
+      "label": "t:settings.theme_swatches_metafield_namespace",
+      "default": "custom"
+    },
+    {
+      "type": "text",
+      "id": "theme_swatches_metafield_key",
+      "label": "t:settings.theme_swatches_metafield_key",
+      "default": "theme_swatches",
+      "info": "t:info.theme_swatches_metafield_key"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
     }
   ]
 }

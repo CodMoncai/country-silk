@@ -2,15 +2,15 @@
   Returns the numeric id of the variant that should drive product card links, images, pricing, and swatches.
 
   Priority:
-  1. product.selected_variant on product pages, or when facet filters are active (collection/search); otherwise not used on
-     collection/search grids so Theme/collection matching can run.
-  2. When storefront facet filters are active (collection or search): first available variant with
-     variant.matched, else first matched variant (see Shopify variant.matched for filter context)
-  3. On collection templates: Theme option uses product_option.position (not loop index), matches each option value name
-     against the collection (contains / handle / multi-word overlap), normalizes common "Enchanted" misspellings, and prefers
-     product_option_value.variant (combined listings). Else generic option1–option3 rules.
+  1. product.selected_variant on product pages only.
+  2. On collection templates: Theme + collection title/handle matching runs first (even if facet filters are active), so
+     e.g. /collections/emerald-christmas picks the Emerald Christmas theme variant. If no match, variant.matched applies.
+  3. Search (or non-collection) when facet filters active: product.selected_variant if set, else variant.matched logic.
   4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   5. product.selected_or_first_available_variant
+
+  Collection Theme details: product_option.position, value names vs title/handle (contains / multi-word), spelling normalization,
+  product_option_value.variant fallback; then generic option1–option3 rules before filter fallback.
 
   Note: Facet filtering uses collection.filters / search.filters — not current_tags. Tag-only URLs use current_tags.
 
@@ -29,31 +29,6 @@
 
   if product.selected_variant and template.name == 'product'
     assign out_variant = product.selected_variant
-  elsif product.selected_variant and storefront_filters_active
-    assign out_variant = product.selected_variant
-  elsif storefront_filters_active
-    assign out_variant = product.selected_or_first_available_variant
-    assign found_matched_available = false
-    for variant in product.variants
-      if variant.matched and variant.available
-        assign out_variant = variant
-        assign found_matched_available = true
-        break
-      endif
-    endfor
-    unless found_matched_available
-      assign found_matched = false
-      for variant in product.variants
-        if variant.matched
-          assign out_variant = variant
-          assign found_matched = true
-          break
-        endif
-      endfor
-      unless found_matched
-        assign out_variant = product.selected_or_first_available_variant
-      endunless
-    endunless
   elsif template.name == 'collection' and collection != blank
     assign out_variant = product.selected_or_first_available_variant
     assign found = false
@@ -71,7 +46,7 @@
     if theme_option_label_param == blank
       assign theme_option_label_param = 'Theme,Themes'
     endif
-    assign theme_product_option = false
+    assign theme_product_option = nil
     assign theme_label_candidates = theme_option_label_param | split: ','
     for product_option in product.options_with_values
       assign opt_nm = product_option.name | downcase | strip
@@ -88,7 +63,7 @@
     endfor
     unless found
       if theme_product_option != blank
-        assign theme_pos = theme_product_option.position
+        assign theme_pos = theme_product_option.position | plus: 0
         for product_option_value in theme_product_option.values
           if found
             break
@@ -271,6 +246,59 @@
         endfor
       endif
     endunless
+    unless found
+      if storefront_filters_active
+        assign out_variant = product.selected_or_first_available_variant
+        assign found_matched_available = false
+        for variant in product.variants
+          if variant.matched and variant.available
+            assign out_variant = variant
+            assign found_matched_available = true
+            break
+          endif
+        endfor
+        unless found_matched_available
+          assign found_matched = false
+          for variant in product.variants
+            if variant.matched
+              assign out_variant = variant
+              assign found_matched = true
+              break
+            endif
+          endfor
+          unless found_matched
+            assign out_variant = product.selected_or_first_available_variant
+          endunless
+        endunless
+      endif
+    endunless
+  elsif storefront_filters_active
+    if product.selected_variant
+      assign out_variant = product.selected_variant
+    else
+      assign out_variant = product.selected_or_first_available_variant
+      assign found_matched_available = false
+      for variant in product.variants
+        if variant.matched and variant.available
+          assign out_variant = variant
+          assign found_matched_available = true
+          break
+        endif
+      endfor
+      unless found_matched_available
+        assign found_matched = false
+        for variant in product.variants
+          if variant.matched
+            assign out_variant = variant
+            assign found_matched = true
+            break
+          endif
+        endfor
+        unless found_matched
+          assign out_variant = product.selected_or_first_available_variant
+        endunless
+      endunless
+    endif
   elsif current_tags != blank and current_tags.size > 0
     assign out_variant = product.selected_or_first_available_variant
     assign found = false

@@ -26,7 +26,7 @@
     {% liquid
       assign sort_param = request.query_parameters.sort_by
       if sort_param == blank
-        assign sort_param = search.sort_by | default: 'sku-ascending'
+        assign sort_param = 'sku-ascending'
       endif
       assign sort_results_by_sku = false
       if sort_param == 'sku-ascending' or sort_param == 'sku-descending'

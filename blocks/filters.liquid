@@ -24,7 +24,7 @@
   # Prefer URL sort_by; results.sort_by can be coerced to title when sku-* is not applied server-side
   assign sort_by = request.query_parameters.sort_by
   if sort_by == blank
-    assign sort_by = results.sort_by | default: 'sku-ascending'
+    assign sort_by = 'sku-ascending'
   endif
   assign filters = filters | default: results.filters
   assign total_active_values = 0

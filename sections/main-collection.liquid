@@ -58,7 +58,7 @@
       # URL sort_by wins: Shopify may coerce sku-* to title-ascending on collection.sort_by
       assign sort_param = request.query_parameters.sort_by
       if sort_param == blank
-        assign sort_param = collection.sort_by | default: 'sku-ascending'
+        assign sort_param = 'sku-ascending'
       endif
       assign sort_collection_by_sku = false
       if sort_param == 'sku-ascending' or sort_param == 'sku-descending'

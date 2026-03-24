@@ -23,6 +23,8 @@
     assign default_sort_by = results.default_sort_by
     assign has_sku_ascending = false
     assign has_sku_descending = false
+    assign is_sku_ascending_selected = false
+    assign is_sku_descending_selected = false
     if default_sort_by == blank
       assign default_sort_by = 'sku-ascending'
     endif
@@ -37,6 +39,16 @@
         assign status = option.name
       endif
     endfor
+    if sort_by == 'sku-ascending'
+      assign is_sku_ascending_selected = true
+    elsif sort_by == blank and default_sort_by == 'sku-ascending'
+      assign is_sku_ascending_selected = true
+    endif
+    if sort_by == 'sku-descending'
+      assign is_sku_descending_selected = true
+    elsif sort_by == blank and default_sort_by == 'sku-descending'
+      assign is_sku_descending_selected = true
+    endif
     if sort_by == 'sku-ascending' or default_sort_by == 'sku-ascending'
       assign status = 'SKU'
     elsif sort_by == 'sku-descending' or default_sort_by == 'sku-descending'
@@ -77,7 +89,7 @@
         {% unless has_sku_ascending %}
           <option
             value="sku-ascending"
-            {% if sort_by == 'sku-ascending' or (sort_by == blank and default_sort_by == 'sku-ascending') %}
+            {% if is_sku_ascending_selected %}
               selected
             {% endif %}
           >
@@ -87,7 +99,7 @@
         {% unless has_sku_descending %}
           <option
             value="sku-descending"
-            {% if sort_by == 'sku-descending' or (sort_by == blank and default_sort_by == 'sku-descending') %}
+            {% if is_sku_descending_selected %}
               selected
             {% endif %}
           >
@@ -197,8 +209,8 @@
               <div
                 class="sorting-filter__option"
                 role="option"
-                aria-selected="{% if sort_by == 'sku-ascending' or (sort_by == blank and default_sort_by == 'sku-ascending') %}true{% else %}false{% endif %}"
-                tabindex="{% if sort_by == 'sku-ascending' or (sort_by == blank and default_sort_by == 'sku-ascending') %}0{% else %}-1{% endif %}"
+                aria-selected="{% if is_sku_ascending_selected %}true{% else %}false{% endif %}"
+                tabindex="{% if is_sku_ascending_selected %}0{% else %}-1{% endif %}"
               >
                 <input
                   type="radio"
@@ -210,7 +222,7 @@
                   value="sku-ascending"
                   class="sorting-filter__input"
                   data-option-name="SKU"
-                  {% if sort_by == 'sku-ascending' or (sort_by == blank and default_sort_by == 'sku-ascending') %}
+                  {% if is_sku_ascending_selected %}
                     checked
                   {% endif %}
                   aria-hidden="true"
@@ -229,8 +241,8 @@
               <div
                 class="sorting-filter__option"
                 role="option"
-                aria-selected="{% if sort_by == 'sku-descending' or (sort_by == blank and default_sort_by == 'sku-descending') %}true{% else %}false{% endif %}"
-                tabindex="{% if sort_by == 'sku-descending' or (sort_by == blank and default_sort_by == 'sku-descending') %}0{% else %}-1{% endif %}"
+                aria-selected="{% if is_sku_descending_selected %}true{% else %}false{% endif %}"
+                tabindex="{% if is_sku_descending_selected %}0{% else %}-1{% endif %}"
               >
                 <input
                   type="radio"
@@ -242,7 +254,7 @@
                   value="sku-descending"
                   class="sorting-filter__input"
                   data-option-name="SKU"
-                  {% if sort_by == 'sku-descending' or (sort_by == blank and default_sort_by == 'sku-descending') %}
+                  {% if is_sku_descending_selected %}
                     checked
                   {% endif %}
                   aria-hidden="true"

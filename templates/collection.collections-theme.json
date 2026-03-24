@@ -288,18 +288,6 @@
     "main": {
       "type": "main-collection",
       "blocks": {
-        "collection-breadcrumb": {
-          "type": "breadcrumb",
-          "static": true,
-          "settings": {
-            "alignment": "left",
-            "padding-block-start": 0,
-            "padding-block-end": 8,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
         "filters": {
           "type": "filters",
           "static": true,
@@ -343,7 +331,7 @@
             "card-gallery": {
               "type": "_product-card-gallery",
               "settings": {
-                "image_ratio": "adapt",
+                "image_ratio": "square",
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,

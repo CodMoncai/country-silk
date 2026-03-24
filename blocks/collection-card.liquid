@@ -1,4 +1,10 @@
 {% assign collection = block.settings.collection %}
+{% liquid
+  assign collection_featured_product = nil
+  if collection != blank and collection.products_count > 0
+    assign collection_featured_product = collection.products.first
+  endif
+%}
 
 {% capture card_image %}
   {% content_for 'block',
@@ -9,7 +15,10 @@
 {% endcapture %}
 
 {% capture children %}
-  {% content_for 'blocks' %}
+  {% content_for 'blocks',
+    closest.collection: collection,
+    closest.product: collection_featured_product
+  %}
 {% endcapture %}
 
 {% render 'collection-card',
@@ -38,6 +47,15 @@
     },
     {
       "type": "collection-title"
+    },
+    {
+      "type": "swatches"
+    },
+    {
+      "type": "variant-picker"
+    },
+    {
+      "type": "_product-card-group"
     }
   ],
   "tag": null,
@@ -46,6 +64,10 @@
       "type": "collection",
       "id": "collection",
       "label": "t:settings.collection"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.collection_card_variant_blocks"
     },
     {
       "type": "header",

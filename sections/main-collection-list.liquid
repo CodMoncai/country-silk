@@ -34,7 +34,18 @@
   {% capture list_items %}
     {% for collection in section_collections limit: max_items %}
       <div class="resource-list__item">
-        {% content_for 'block', type: '_collection-card', id: 'static-collection-card', closest.collection: collection %}
+        {% liquid
+          assign collection_card_product = nil
+          if collection != blank and collection.products_count > 0
+            assign collection_card_product = collection.products.first
+          endif
+        %}
+        {% content_for 'block',
+          type: '_collection-card',
+          id: 'static-collection-card',
+          closest.collection: collection,
+          closest.product: collection_card_product
+        %}
       </div>
       {% unless forloop.last %}
         <!--@list/split-->

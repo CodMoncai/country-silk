@@ -4107,16 +4107,16 @@ text-component {
 }
 
 /* 1. Target the Horizon Product Item Container */
-.product-grid .product-item, 
-.product-grid .grid__item {
+[product-grid-view='default'] .product-grid .product-item, 
+[product-grid-view='default'] .product-grid .grid__item {
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
 }
 
 /* 2. Standardize the Image Box */
-.product-item .product-item-image,
-.product-item .grid-view-item__image-wrapper {
+[product-grid-view='default'] .product-item .product-item-image,
+[product-grid-view='default'] .product-item .grid-view-item__image-wrapper {
   flex-shrink: 0 !important;
   width: 100% !important;
   margin-bottom: 10px !important;
@@ -4124,8 +4124,8 @@ text-component {
 }
 
 /* 3. The Content Area (Title/Price) */
-.product-item .product-item-caption,
-.product-item .product-details {
+[product-grid-view='default'] .product-item .product-item-caption,
+[product-grid-view='default'] .product-item .product-details {
   flex-grow: 1 !important; /* Forces this middle section to expand */
   display: flex !important;
   flex-direction: column !important;
@@ -4134,17 +4134,17 @@ text-component {
 
 /* 4. THE FIX: Push the Quantity/Add to Cart to the Bottom */
 /* Horizon usually uses 'product-item-actions' or 'product-form' */
-.product-item .product-item-actions,
-.product-item .product-form,
-.product-item .add-to-cart-wrapper {
+[product-grid-view='default'] .product-item .product-item-actions,
+[product-grid-view='default'].product-item .product-form,
+[product-grid-view='default'] .product-item .add-to-cart-wrapper {
   margin-top: auto !important; /* Pushes the section to the bottom */
   padding-top: 15px !important;
   width: 100% !important;
 }
 
 /* 5. Title Consistency (Handles the 1-line vs 2-line issue) */
-.product-item .product-item-title,
-.product-item h3 {
+[product-grid-view='default'] .product-item .product-item-title,
+[product-grid-view='default'] .product-item h3 {
   min-height: 2.8em !important; 
   line-height: 1.4 !important;
   overflow: hidden !important;

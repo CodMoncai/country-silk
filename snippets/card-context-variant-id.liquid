@@ -1,23 +1,52 @@
 {%- doc -%}
-  Returns the numeric id of the variant that should drive product card links, images, and pricing
-  when the storefront context implies a specific variant.
+  Returns the numeric id of the variant that should drive product card links, images, pricing, and swatches.
 
   Priority:
-  1. product.selected_variant (e.g. ?variant=, or filter relevance when Shopify sets it)
-  2. First variant whose option1–option3 matches a collection filter tag (case-insensitive)
-  3. First variant whose title matches a collection filter tag (case-insensitive)
+  1. product.selected_variant (?variant=, combined listings, etc.)
+  2. When storefront facet filters are active (collection or search): first available variant with
+     variant.matched, else first matched variant (see Shopify variant.matched for filter context)
+  3. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   4. product.selected_or_first_available_variant
 
-  Used on collection pages with tag filters where Shopify does not set featured_media / selected_variant.
+  Note: Facet filtering uses collection.filters / search.filters — not current_tags. Tag-only URLs use current_tags.
 
   @param {object} product - Product object (required)
-
-  @example
-  {% capture vid %}{% render 'card-context-variant-id', product: product %}{% endcapture %}
 {%- enddoc -%}
 {%- liquid
+  capture storefront_filters_active_capture
+    render 'storefront-filters-active'
+  endcapture
+  assign storefront_filters_active_capture = storefront_filters_active_capture | strip
+  assign storefront_filters_active = false
+  if storefront_filters_active_capture == '1'
+    assign storefront_filters_active = true
+  endif
+
   if product.selected_variant
     assign out_variant = product.selected_variant
+  elsif storefront_filters_active
+    assign out_variant = product.selected_or_first_available_variant
+    assign found_matched_available = false
+    for variant in product.variants
+      if variant.matched and variant.available
+        assign out_variant = variant
+        assign found_matched_available = true
+        break
+      endif
+    endfor
+    unless found_matched_available
+      assign found_matched = false
+      for variant in product.variants
+        if variant.matched
+          assign out_variant = variant
+          assign found_matched = true
+          break
+        endif
+      endfor
+      unless found_matched
+        assign out_variant = product.selected_or_first_available_variant
+      endunless
+    endunless
   elsif current_tags != blank and current_tags.size > 0
     assign out_variant = product.selected_or_first_available_variant
     assign found = false

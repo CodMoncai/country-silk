@@ -1,0 +1,35 @@
+{%- doc -%}
+  Outputs `1` when any storefront facet filter is active on the current collection or search results page.
+  Used for product card variant context and swatch preselection.
+{%- enddoc -%}
+{%- liquid
+  assign storefront_filters = nil
+  if template.name == 'collection'
+    assign storefront_filters = collection.filters
+  elsif template.name == 'search'
+    assign storefront_filters = search.filters
+  endif
+  assign active = false
+  if storefront_filters
+    for filter in storefront_filters
+      case filter.type
+        when 'price_range'
+          if filter.min_value.value != null or filter.max_value.value != null
+            assign active = true
+          endif
+        when 'boolean'
+          if filter.active_values.size > 0 and filter.active_values.first.value
+            assign active = true
+          endif
+        else
+          if filter.active_values.size > 0
+            assign active = true
+          endif
+      endcase
+      if active
+        break
+      endif
+    endfor
+  endif
+-%}
+{%- if active -%}1{%- endif -%}

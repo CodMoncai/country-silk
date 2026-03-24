@@ -25,15 +25,26 @@
     assign allow_preselection = true
   endif
 
+  capture storefront_filters_active_flag
+    render 'storefront-filters-active'
+  endcapture
+  assign storefront_filters_active_flag = storefront_filters_active_flag | strip
+  if storefront_filters_active_flag == '1'
+    assign allow_preselection = true
+  endif
+
   capture _card_context_variant_id
     render 'card-context-variant-id', product: product_resource
   endcapture
   assign _card_context_variant_id = _card_context_variant_id | strip
   assign card_context_variant = product_resource.selected_or_first_available_variant
   if _card_context_variant_id != ''
-    assign _resolved_card_variant = product_resource.variants | where: 'id', _card_context_variant_id | first
-    if _resolved_card_variant != blank
-      assign card_context_variant = _resolved_card_variant
+    assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
+    if _card_context_variant_id_num != 0
+      assign _resolved_card_variant = product_resource.variants | find: 'id', _card_context_variant_id_num
+      if _resolved_card_variant != blank
+        assign card_context_variant = _resolved_card_variant
+      endif
     endif
   endif
 %}
@@ -83,7 +94,16 @@
               if featured_media == blank
                 if product_option_value.variant == blank
                   for variant in product_resource.variants
-                    if variant.available and variant[swatch_option_key] == product_option_value.name and variant.featured_media
+                    assign variant_opt_for_swatch = ''
+                    case swatch_option_position
+                      when 1
+                        assign variant_opt_for_swatch = variant.option1
+                      when 2
+                        assign variant_opt_for_swatch = variant.option2
+                      when 3
+                        assign variant_opt_for_swatch = variant.option3
+                    endcase
+                    if variant.available and variant_opt_for_swatch == product_option_value.name and variant.featured_media
                       assign featured_media = variant.featured_media
                       assign first_available_variant = variant
                       break
@@ -106,8 +126,19 @@
               if swatch_checked == false and card_context_variant != blank
                 if effective_variant_id != blank and effective_variant_id == card_context_variant.id
                   assign swatch_checked = true
-                elsif card_context_variant[swatch_option_key] == product_option_value.name
-                  assign swatch_checked = true
+                else
+                  assign context_opt_for_swatch = ''
+                  case swatch_option_position
+                    when 1
+                      assign context_opt_for_swatch = card_context_variant.option1
+                    when 2
+                      assign context_opt_for_swatch = card_context_variant.option2
+                    when 3
+                      assign context_opt_for_swatch = card_context_variant.option3
+                  endcase
+                  if context_opt_for_swatch == product_option_value.name
+                    assign swatch_checked = true
+                  endif
                 endif
               endif
             %}

@@ -86,6 +86,12 @@ export class ProductCard extends Component {
         this.#preloadNextPreviewImage();
       }
     });
+
+    // When a swatch is pre-checked (filtered collection, tag context), sync slideshow visibility + slide
+    requestAnimationFrame(() => {
+      const optionMediaId = this.variantPicker?.selectedOption?.dataset?.optionMediaId;
+      if (optionMediaId) this.#applySwatchMediaToSlideshow(optionMediaId);
+    });
   }
 
   disconnectedCallback() {
@@ -255,6 +261,32 @@ export class ProductCard extends Component {
   }
 
   /**
+   * Shows the slideshow slide for a swatch / variant featured media id (hides other variant-attached slides).
+   * @param {string} selectedImageId
+   */
+  #applySwatchMediaToSlideshow(selectedImageId) {
+    const { slideshow } = this.refs;
+    if (!slideshow) return;
+
+    const id = String(selectedImageId);
+    const { slides = [] } = slideshow.refs;
+    const matchingSlide = slides.find((slide) => slide.getAttribute('slide-id') === id);
+
+    if (matchingSlide) {
+      for (const slide of slides) {
+        if (slide.getAttribute('variant-image') == null) continue;
+
+        slide.hidden = slide.getAttribute('slide-id') !== id;
+      }
+
+      slideshow.select({ id }, undefined, { animate: false });
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Sync the card gallery to the selected variant (slideshow slide or preview image).
    * @param {import('@theme/events').VariantUpdateEvent} [event]
    */
@@ -272,20 +304,9 @@ export class ProductCard extends Component {
 
     if (!selectedImageId) return;
 
+    if (this.#applySwatchMediaToSlideshow(selectedImageId)) return;
+
     const { slides = [] } = slideshow.refs;
-    const matchingSlide = slides.find((slide) => slide.getAttribute('slide-id') === selectedImageId);
-
-    if (matchingSlide) {
-      for (const slide of slides) {
-        if (slide.getAttribute('variant-image') == null) continue;
-
-        slide.hidden = slide.getAttribute('slide-id') !== selectedImageId;
-      }
-
-      slideshow.select({ id: selectedImageId }, undefined, { animate: false });
-      return;
-    }
-
     const previewSrc =
       resource?.featured_media?.preview_image?.src ||
       resource?.featured_media?.preview_image?.url ||

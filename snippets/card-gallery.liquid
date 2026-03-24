@@ -19,9 +19,12 @@
   assign _card_context_variant_id = _card_context_variant_id | strip
   assign card_context_variant = product.selected_or_first_available_variant
   if _card_context_variant_id != ''
-    assign _resolved_card_variant = product.variants | where: 'id', _card_context_variant_id | first
-    if _resolved_card_variant != blank
-      assign card_context_variant = _resolved_card_variant
+    assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
+    if _card_context_variant_id_num != 0
+      assign _resolved_card_variant = product.variants | find: 'id', _card_context_variant_id_num
+      if _resolved_card_variant != blank
+        assign card_context_variant = _resolved_card_variant
+      endif
     endif
   endif
 
@@ -108,6 +111,18 @@
       assign primary_card_media = product.featured_media
       if card_context_variant.featured_media != blank
         assign primary_card_media = card_context_variant.featured_media
+      elsif card_context_variant.featured_image != blank
+        assign ctx_featured_src = card_context_variant.featured_image.src
+        for m in product.media
+          if m.src == ctx_featured_src
+            assign primary_card_media = m
+            break
+          endif
+          if m.preview_image.src == ctx_featured_src
+            assign primary_card_media = m
+            break
+          endif
+        endfor
       endif
 
       assign other_media = product.media | reject: 'src', primary_card_media

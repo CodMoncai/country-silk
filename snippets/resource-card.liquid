@@ -32,9 +32,12 @@
     assign card_context_variant_id_str = card_context_variant_id_str | strip
     assign card_ctx_variant = resource.selected_or_first_available_variant
     if card_context_variant_id_str != ''
-      assign resolved_ctx_variant = resource.variants | where: 'id', card_context_variant_id_str | first
-      if resolved_ctx_variant != blank
-        assign card_ctx_variant = resolved_ctx_variant
+      assign card_context_variant_id_num = card_context_variant_id_str | plus: 0
+      if card_context_variant_id_num != 0
+        assign resolved_ctx_variant = resource.variants | find: 'id', card_context_variant_id_num
+        if resolved_ctx_variant != blank
+          assign card_ctx_variant = resolved_ctx_variant
+        endif
       endif
     endif
     assign featured_media_url = card_ctx_variant.featured_image | image_url: width: image_width

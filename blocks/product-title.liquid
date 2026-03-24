@@ -11,9 +11,12 @@
     assign _card_context_variant_id = _card_context_variant_id | strip
     assign card_context_variant = closest.product.selected_or_first_available_variant
     if _card_context_variant_id != ''
-      assign _resolved = closest.product.variants | where: 'id', _card_context_variant_id | first
-      if _resolved != blank
-        assign card_context_variant = _resolved
+      assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
+      if _card_context_variant_id_num != 0
+        assign _resolved = closest.product.variants | find: 'id', _card_context_variant_id_num
+        if _resolved != blank
+          assign card_context_variant = _resolved
+        endif
       endif
     endif
   %}

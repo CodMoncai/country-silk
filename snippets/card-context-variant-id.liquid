@@ -5,7 +5,8 @@
   1. product.selected_variant (?variant=, combined listings, etc.)
   2. When storefront facet filters are active (collection or search): first available variant with
      variant.matched, else first matched variant (see Shopify variant.matched for filter context)
-  3. On collection templates: collection title or handle matched against option1–option3 (and handleized), then variant title
+  3. On collection templates: collection title or handle matched against option1–option3 (and handleized), variant title
+     (exact, slug substring, substring when long enough). "echnated"/"enchated" spelling is normalized so collection and variant labels can differ slightly.
   4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   5. product.selected_or_first_available_variant
 
@@ -51,24 +52,28 @@
   elsif template.name == 'collection' and collection != blank
     assign out_variant = product.selected_or_first_available_variant
     assign found = false
-    assign col_title_key = collection.title | downcase | strip
-    assign col_handle = collection.handle
+    comment
+      Normalize echnated/enchated so collection "Echnated …" matches variant "Enchated …" without breaking words like "technician".
+    endcomment
+    assign col_title_key = collection.title | downcase | strip | replace: 'echnated', 'enchated'
+    assign col_handle = collection.handle | replace: 'echnated', 'enchated'
+    assign col_title_handleized = collection.title | handleize | replace: 'echnated', 'enchated'
     for variant in product.variants
       if found
         break
       endif
       if col_title_key != blank
-        if variant.option1 != blank and variant.option1 | downcase | strip == col_title_key
+        if variant.option1 != blank and variant.option1 | downcase | strip | replace: 'echnated', 'enchated' == col_title_key
           assign out_variant = variant
           assign found = true
           break
         endif
-        if variant.option2 != blank and variant.option2 | downcase | strip == col_title_key
+        if variant.option2 != blank and variant.option2 | downcase | strip | replace: 'echnated', 'enchated' == col_title_key
           assign out_variant = variant
           assign found = true
           break
         endif
-        if variant.option3 != blank and variant.option3 | downcase | strip == col_title_key
+        if variant.option3 != blank and variant.option3 | downcase | strip | replace: 'echnated', 'enchated' == col_title_key
           assign out_variant = variant
           assign found = true
           break
@@ -82,17 +87,17 @@
           if found
             break
           endif
-          if variant.option1 != blank and variant.option1 | downcase | strip == col_handle_words
+          if variant.option1 != blank and variant.option1 | downcase | strip | replace: 'echnated', 'enchated' == col_handle_words
             assign out_variant = variant
             assign found = true
             break
           endif
-          if variant.option2 != blank and variant.option2 | downcase | strip == col_handle_words
+          if variant.option2 != blank and variant.option2 | downcase | strip | replace: 'echnated', 'enchated' == col_handle_words
             assign out_variant = variant
             assign found = true
             break
           endif
-          if variant.option3 != blank and variant.option3 | downcase | strip == col_handle_words
+          if variant.option3 != blank and variant.option3 | downcase | strip | replace: 'echnated', 'enchated' == col_handle_words
             assign out_variant = variant
             assign found = true
             break
@@ -106,17 +111,17 @@
           if found
             break
           endif
-          if variant.option1 != blank and variant.option1 | handleize == col_handle
+          if variant.option1 != blank and variant.option1 | handleize | replace: 'echnated', 'enchated' == col_handle
             assign out_variant = variant
             assign found = true
             break
           endif
-          if variant.option2 != blank and variant.option2 | handleize == col_handle
+          if variant.option2 != blank and variant.option2 | handleize | replace: 'echnated', 'enchated' == col_handle
             assign out_variant = variant
             assign found = true
             break
           endif
-          if variant.option3 != blank and variant.option3 | handleize == col_handle
+          if variant.option3 != blank and variant.option3 | handleize | replace: 'echnated', 'enchated' == col_handle
             assign out_variant = variant
             assign found = true
             break
@@ -127,7 +132,70 @@
     unless found
       if col_title_key != blank
         for variant in product.variants
-          if variant.title != blank and variant.title | downcase | strip == col_title_key
+          if variant.title != blank and variant.title | downcase | strip | replace: 'echnated', 'enchated' == col_title_key
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+        endfor
+      endif
+    endunless
+    unless found
+      if col_title_handleized != blank
+        for variant in product.variants
+          if found
+            break
+          endif
+          assign opt1h = variant.option1 | handleize | replace: 'echnated', 'enchated'
+          assign opt2h = variant.option2 | handleize | replace: 'echnated', 'enchated'
+          assign opt3h = variant.option3 | handleize | replace: 'echnated', 'enchated'
+          if variant.option1 != blank and opt1h == col_title_handleized
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+          if variant.option2 != blank and opt2h == col_title_handleized
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+          if variant.option3 != blank and opt3h == col_title_handleized
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+        endfor
+      endif
+    endunless
+    unless found
+      if col_title_handleized != blank and col_title_handleized.size >= 8
+        for variant in product.variants
+          if found
+            break
+          endif
+          assign vth = variant.title | handleize | replace: 'echnated', 'enchated'
+          if vth != blank and vth contains col_title_handleized
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+        endfor
+      endif
+    endunless
+    unless found
+      if col_title_key != blank and col_title_key.size >= 8
+        for variant in product.variants
+          if found
+            break
+          endif
+          assign vt_key = variant.title | downcase | strip | replace: 'echnated', 'enchated'
+          if vt_key != blank and vt_key contains col_title_key
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+          assign opt_blob = variant.option1 | append: ' ' | append: variant.option2 | append: ' ' | append: variant.option3 | downcase | strip | replace: 'echnated', 'enchated'
+          if opt_blob contains col_title_key
             assign out_variant = variant
             assign found = true
             break

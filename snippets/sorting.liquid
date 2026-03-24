@@ -21,11 +21,27 @@
 >
   {% liquid
     assign default_sort_by = results.default_sort_by
+    assign has_sku_ascending = false
+    assign has_sku_descending = false
+    if default_sort_by == blank
+      assign default_sort_by = 'sku-ascending'
+    endif
     for option in results.sort_options
+      if option.value == 'sku-ascending'
+        assign has_sku_ascending = true
+      endif
+      if option.value == 'sku-descending'
+        assign has_sku_descending = true
+      endif
       if option.value == sort_by
         assign status = option.name
       endif
     endfor
+    if sort_by == 'sku-ascending' or default_sort_by == 'sku-ascending'
+      assign status = 'SKU'
+    elsif sort_by == 'sku-descending' or default_sort_by == 'sku-descending'
+      assign status = 'SKU'
+    endif
   %}
 
   <div class="sorting-filter__container {% if should_use_select_on_mobile %} desktop:hidden {% else %} hidden {% endif %}">
@@ -51,9 +67,33 @@
               selected
             {% endif %}
           >
-            {{ option.name }}
+            {% if option.value == 'sku-ascending' or option.value == 'sku-descending' %}
+              SKU
+            {% else %}
+              {{ option.name }}
+            {% endif %}
           </option>
         {% endfor %}
+        {% unless has_sku_ascending %}
+          <option
+            value="sku-ascending"
+            {% if sort_by == 'sku-ascending' or (sort_by == blank and default_sort_by == 'sku-ascending') %}
+              selected
+            {% endif %}
+          >
+            SKU
+          </option>
+        {% endunless %}
+        {% unless has_sku_descending %}
+          <option
+            value="sku-descending"
+            {% if sort_by == 'sku-descending' or (sort_by == blank and default_sort_by == 'sku-descending') %}
+              selected
+            {% endif %}
+          >
+            SKU
+          </option>
+        {% endunless %}
       </select>
       <svg
         aria-hidden="true"
@@ -131,7 +171,7 @@
                   {% endif %}
                   value="{{ option.value }}"
                   class="sorting-filter__input"
-                  data-option-name="{{ option.name }}"
+                  data-option-name="{% if option.value == 'sku-ascending' or option.value == 'sku-descending' %}SKU{% else %}{{ option.name }}{% endif %}"
                   {% if option.value == sort_by %}
                     checked
                   {% endif %}
@@ -140,10 +180,80 @@
                 <span class="svg-wrapper icon-checkmark sorting-filter__checkmark">
                   {{- 'icon-checkmark.svg' | inline_asset_content -}}
                 </span>
-                <span class="sorting-filter__label">{{ option.name }}</span>
+                <span class="sorting-filter__label">
+                  {% if option.value == 'sku-ascending' or option.value == 'sku-descending' %}
+                    SKU
+                  {% else %}
+                    {{ option.name }}
+                  {% endif %}
+                </span>
               </div>
             </label>
           {% endfor %}
+          {% unless has_sku_ascending %}
+            <label
+              for="sort-option-sku-ascending-{{ section_id }}"
+            >
+              <div
+                class="sorting-filter__option"
+                role="option"
+                aria-selected="{% if sort_by == 'sku-ascending' or (sort_by == blank and default_sort_by == 'sku-ascending') %}true{% else %}false{% endif %}"
+                tabindex="{% if sort_by == 'sku-ascending' or (sort_by == blank and default_sort_by == 'sku-ascending') %}0{% else %}-1{% endif %}"
+              >
+                <input
+                  type="radio"
+                  name="sort_by"
+                  id="sort-option-sku-ascending-{{ section_id }}"
+                  {% if suffix != blank %}
+                    form="FacetFiltersForm--{{ section_id }}-{{ suffix }}"
+                  {% endif %}
+                  value="sku-ascending"
+                  class="sorting-filter__input"
+                  data-option-name="SKU"
+                  {% if sort_by == 'sku-ascending' or (sort_by == blank and default_sort_by == 'sku-ascending') %}
+                    checked
+                  {% endif %}
+                  aria-hidden="true"
+                >
+                <span class="svg-wrapper icon-checkmark sorting-filter__checkmark">
+                  {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                </span>
+                <span class="sorting-filter__label">SKU</span>
+              </div>
+            </label>
+          {% endunless %}
+          {% unless has_sku_descending %}
+            <label
+              for="sort-option-sku-descending-{{ section_id }}"
+            >
+              <div
+                class="sorting-filter__option"
+                role="option"
+                aria-selected="{% if sort_by == 'sku-descending' or (sort_by == blank and default_sort_by == 'sku-descending') %}true{% else %}false{% endif %}"
+                tabindex="{% if sort_by == 'sku-descending' or (sort_by == blank and default_sort_by == 'sku-descending') %}0{% else %}-1{% endif %}"
+              >
+                <input
+                  type="radio"
+                  name="sort_by"
+                  id="sort-option-sku-descending-{{ section_id }}"
+                  {% if suffix != blank %}
+                    form="FacetFiltersForm--{{ section_id }}-{{ suffix }}"
+                  {% endif %}
+                  value="sku-descending"
+                  class="sorting-filter__input"
+                  data-option-name="SKU"
+                  {% if sort_by == 'sku-descending' or (sort_by == blank and default_sort_by == 'sku-descending') %}
+                    checked
+                  {% endif %}
+                  aria-hidden="true"
+                >
+                <span class="svg-wrapper icon-checkmark sorting-filter__checkmark">
+                  {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                </span>
+                <span class="sorting-filter__label">SKU</span>
+              </div>
+            </label>
+          {% endunless %}
         </div>
       </floating-panel-component>
     </details>

@@ -6,9 +6,9 @@
      collection/search grids so Theme/collection matching can run.
   2. When storefront facet filters are active (collection or search): first available variant with
      variant.matched, else first matched variant (see Shopify variant.matched for filter context)
-  3. On collection templates: if a product option is named Theme, the variant whose Theme value appears in the collection
-     title/handle (partial match) wins first; else option1–option3 exact/handleized/concat substring. "echnated"/"enchated"
-     is normalized when comparing.
+  3. On collection templates: Theme option uses product_option.position (not loop index), matches each option value name
+     against the collection (contains / handle / multi-word overlap), normalizes common "Enchanted" misspellings, and prefers
+     product_option_value.variant (combined listings). Else generic option1–option3 rules.
   4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   5. product.selected_or_first_available_variant
 
@@ -63,60 +63,93 @@
     assign col_title_key = collection.title | downcase | strip | replace: 'echnated', 'enchated'
     assign col_handle = collection.handle | replace: 'echnated', 'enchated'
     assign col_title_handleized = collection.title | handleize | replace: 'echnated', 'enchated'
+    assign col_cmp = collection.title | downcase | strip
+    assign col_cmp = col_cmp | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
+    assign handle_cmp = col_handle | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
+    assign col_h_cmp = collection.title | handleize | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
     assign theme_option_label_param = theme_option_label | default: 'Theme,Themes' | strip
     if theme_option_label_param == blank
       assign theme_option_label_param = 'Theme,Themes'
     endif
-    assign theme_option_position = 0
+    assign theme_product_option = false
     assign theme_label_candidates = theme_option_label_param | split: ','
     for product_option in product.options_with_values
       assign opt_nm = product_option.name | downcase | strip
-      assign option_index = forloop.index
       for theme_label_part in theme_label_candidates
         assign part_norm = theme_label_part | strip | downcase
         if part_norm != blank and opt_nm == part_norm
-          assign theme_option_position = option_index
+          assign theme_product_option = product_option
           break
         endif
       endfor
-      if theme_option_position > 0
+      if theme_product_option != blank
         break
       endif
     endfor
     unless found
-      if theme_option_position > 0
-        for variant in product.variants
+      if theme_product_option != blank
+        assign theme_pos = theme_product_option.position
+        for product_option_value in theme_product_option.values
           if found
             break
           endif
-          case theme_option_position
-            when 1
-              assign theme_value = variant.option1
-            when 2
-              assign theme_value = variant.option2
-            when 3
-              assign theme_value = variant.option3
-            else
-              assign theme_value = ''
-          endcase
-          if theme_value != blank
-            assign theme_val = theme_value | downcase | strip | replace: 'echnated', 'enchated'
-            assign theme_h = theme_value | handleize | replace: 'echnated', 'enchated'
-            if theme_val.size >= 2
-              if col_title_key contains theme_val
-                assign out_variant = variant
-                assign found = true
-                break
-              elsif theme_val contains col_title_key
-                assign out_variant = variant
-                assign found = true
-                break
-              elsif col_title_handleized != blank and theme_h != blank and col_title_handleized contains theme_h
-                assign out_variant = variant
-                assign found = true
-                break
-              elsif col_handle != blank and theme_h != blank and col_handle contains theme_h
-                assign out_variant = variant
+          assign vo_raw = product_option_value.name
+          if vo_raw != blank
+            assign vo = vo_raw | downcase | strip
+            assign vo = vo | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
+            assign vo_h = vo_raw | handleize | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
+            assign matched_theme = false
+            if vo.size >= 2
+              if col_cmp contains vo
+                assign matched_theme = true
+              elsif col_cmp.size >= 3 and vo contains col_cmp
+                assign matched_theme = true
+              elsif col_h_cmp != blank and vo_h != blank and col_h_cmp contains vo_h
+                assign matched_theme = true
+              elsif handle_cmp != blank and vo_h != blank and handle_cmp contains vo_h
+                assign matched_theme = true
+              elsif col_h_cmp != blank and vo_h != blank and vo_h contains col_h_cmp
+                assign matched_theme = true
+              elsif handle_cmp != blank and vo_h != blank and vo_h contains handle_cmp
+                assign matched_theme = true
+              endif
+            endif
+            unless matched_theme
+              if vo contains ' '
+                assign tw_first = vo | split: ' ' | first
+                assign tw_last = vo | split: ' ' | last
+                if tw_first != tw_last and tw_first.size >= 4 and tw_last.size >= 4
+                  if col_cmp contains tw_first and col_cmp contains tw_last
+                    assign matched_theme = true
+                  endif
+                endif
+              endif
+            endunless
+            if matched_theme
+              assign vo_key_cmp = vo_raw | downcase | strip
+              assign resolved_theme_variant = false
+              for v in product.variants
+                assign v_opt = ''
+                case theme_pos
+                  when 1
+                    assign v_opt = v.option1
+                  when 2
+                    assign v_opt = v.option2
+                  when 3
+                    assign v_opt = v.option3
+                endcase
+                assign v_opt_key = v_opt | downcase | strip
+                assign v_opt_norm = v_opt_key | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
+                if v_opt == vo_raw or v_opt_key == vo_key_cmp or v_opt_norm == vo
+                  assign resolved_theme_variant = v
+                  break
+                endif
+              endfor
+              if resolved_theme_variant == false and product_option_value.variant != blank
+                assign resolved_theme_variant = product_option_value.variant
+              endif
+              if resolved_theme_variant != blank
+                assign out_variant = resolved_theme_variant
                 assign found = true
                 break
               endif

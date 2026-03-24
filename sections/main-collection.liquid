@@ -54,21 +54,77 @@
       {% assign products_per_page = section.settings.products_per_page %}
     {% endif %}
 
+    {% liquid
+      assign sort_param = collection.sort_by | default: request.query_parameters.sort_by | default: 'sku-ascending'
+      assign sort_collection_by_sku = false
+      if sort_param == 'sku-ascending' or sort_param == 'sku-descending'
+        assign sort_collection_by_sku = true
+      endif
+    %}
+
     {% paginate collection.products by products_per_page %}
+      {% if sort_collection_by_sku %}
+        {% capture sort_pairs_string %}
+          {% for product in collection.products %}
+            {% assign vsku = product.selected_or_first_available_variant.sku | strip %}
+            {% if vsku == blank %}
+              {% assign vsku = 'zzzzzzzzzz' %}
+            {% endif %}
+            {{ vsku }}~~SORT~~{{ product.id }}{% unless forloop.last %}||{% endunless %}
+          {% endfor %}
+        {% endcapture %}
+        {% assign sku_sort_pairs = sort_pairs_string | strip | split: '||' %}
+        {% assign sku_sort_pairs_sorted = sku_sort_pairs | sort %}
+        {% if sort_param == 'sku-descending' %}
+          {% assign sku_sort_pairs_sorted = sku_sort_pairs_sorted | reverse %}
+        {% endif %}
+      {% endif %}
+
       {% capture children %}
-        {% for product in collection.products %}
-          <li
-            id="{{ section.id }}-{{ product.id }}"
-            class="product-grid__item product-grid__item--{{ forloop.index0 }}"
-            data-page="{{ paginate.current_page }}"
-            data-product-id="{{ product.id }}"
-            ref="cards[]"
-          >
-            {% # theme-check-disable %}
-            {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
-            {% # theme-check-enable %}
-          </li>
-        {% endfor %}
+        {% if sort_collection_by_sku %}
+          {% assign sku_item_index = 0 %}
+          {% for pair in sku_sort_pairs_sorted %}
+            {% if pair == blank %}
+              {% continue %}
+            {% endif %}
+            {% assign pair_bits = pair | split: '~~SORT~~' %}
+            {% if pair_bits.size < 2 %}
+              {% continue %}
+            {% endif %}
+            {% assign sorted_product_id = pair_bits[1] | strip | plus: 0 %}
+            {% for product in collection.products %}
+              {% if product.id == sorted_product_id %}
+                <li
+                  id="{{ section.id }}-{{ product.id }}"
+                  class="product-grid__item product-grid__item--{{ sku_item_index }}"
+                  data-page="{{ paginate.current_page }}"
+                  data-product-id="{{ product.id }}"
+                  ref="cards[]"
+                >
+                  {% # theme-check-disable %}
+                  {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
+                  {% # theme-check-enable %}
+                </li>
+                {% assign sku_item_index = sku_item_index | plus: 1 %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        {% else %}
+          {% for product in collection.products %}
+            <li
+              id="{{ section.id }}-{{ product.id }}"
+              class="product-grid__item product-grid__item--{{ forloop.index0 }}"
+              data-page="{{ paginate.current_page }}"
+              data-product-id="{{ product.id }}"
+              ref="cards[]"
+            >
+              {% # theme-check-disable %}
+              {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
+              {% # theme-check-enable %}
+            </li>
+          {% endfor %}
+        {% endif %}
       {% endcapture %}
 
       {% render 'product-grid',

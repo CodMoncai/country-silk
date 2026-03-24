@@ -20,14 +20,11 @@
   data-should-use-select-on-mobile="{{ should_use_select_on_mobile }}"
 >
   {% liquid
-    assign default_sort_by = results.default_sort_by
+    assign default_sort_by = results.default_sort_by | default: 'sku-ascending'
     assign has_sku_ascending = false
     assign has_sku_descending = false
     assign is_sku_ascending_selected = false
     assign is_sku_descending_selected = false
-    if default_sort_by == blank
-      assign default_sort_by = 'sku-ascending'
-    endif
     for option in results.sort_options
       if option.value == 'sku-ascending'
         assign has_sku_ascending = true
@@ -50,9 +47,9 @@
       assign is_sku_descending_selected = true
     endif
     if sort_by == 'sku-ascending' or default_sort_by == 'sku-ascending'
-      assign status = 'SKU'
+      assign status = 'SKU, low to high'
     elsif sort_by == 'sku-descending' or default_sort_by == 'sku-descending'
-      assign status = 'SKU'
+      assign status = 'SKU, high to low'
     endif
   %}
 
@@ -79,8 +76,10 @@
               selected
             {% endif %}
           >
-            {% if option.value == 'sku-ascending' or option.value == 'sku-descending' %}
-              SKU
+            {% if option.value == 'sku-ascending' %}
+              SKU, low to high
+            {% elsif option.value == 'sku-descending' %}
+              SKU, high to low
             {% else %}
               {{ option.name }}
             {% endif %}
@@ -93,7 +92,7 @@
               selected
             {% endif %}
           >
-            SKU
+            SKU, low to high
           </option>
         {% endunless %}
         {% unless has_sku_descending %}
@@ -103,7 +102,7 @@
               selected
             {% endif %}
           >
-            SKU
+            SKU, high to low
           </option>
         {% endunless %}
       </select>
@@ -183,7 +182,7 @@
                   {% endif %}
                   value="{{ option.value }}"
                   class="sorting-filter__input"
-                  data-option-name="{% if option.value == 'sku-ascending' or option.value == 'sku-descending' %}SKU{% else %}{{ option.name }}{% endif %}"
+                  data-option-name="{% if option.value == 'sku-ascending' %}SKU, low to high{% elsif option.value == 'sku-descending' %}SKU, high to low{% else %}{{ option.name }}{% endif %}"
                   {% if option.value == sort_by %}
                     checked
                   {% endif %}
@@ -193,8 +192,10 @@
                   {{- 'icon-checkmark.svg' | inline_asset_content -}}
                 </span>
                 <span class="sorting-filter__label">
-                  {% if option.value == 'sku-ascending' or option.value == 'sku-descending' %}
-                    SKU
+                  {% if option.value == 'sku-ascending' %}
+                    SKU, low to high
+                  {% elsif option.value == 'sku-descending' %}
+                    SKU, high to low
                   {% else %}
                     {{ option.name }}
                   {% endif %}
@@ -221,7 +222,7 @@
                   {% endif %}
                   value="sku-ascending"
                   class="sorting-filter__input"
-                  data-option-name="SKU"
+                  data-option-name="SKU, low to high"
                   {% if is_sku_ascending_selected %}
                     checked
                   {% endif %}
@@ -230,7 +231,7 @@
                 <span class="svg-wrapper icon-checkmark sorting-filter__checkmark">
                   {{- 'icon-checkmark.svg' | inline_asset_content -}}
                 </span>
-                <span class="sorting-filter__label">SKU</span>
+                <span class="sorting-filter__label">SKU, low to high</span>
               </div>
             </label>
           {% endunless %}
@@ -253,7 +254,7 @@
                   {% endif %}
                   value="sku-descending"
                   class="sorting-filter__input"
-                  data-option-name="SKU"
+                  data-option-name="SKU, high to low"
                   {% if is_sku_descending_selected %}
                     checked
                   {% endif %}
@@ -262,7 +263,7 @@
                 <span class="svg-wrapper icon-checkmark sorting-filter__checkmark">
                   {{- 'icon-checkmark.svg' | inline_asset_content -}}
                 </span>
-                <span class="sorting-filter__label">SKU</span>
+                <span class="sorting-filter__label">SKU, high to low</span>
               </div>
             </label>
           {% endunless %}

@@ -4105,3 +4105,51 @@ text-component {
 .collection-card__link {
   text-transform: uppercase !important;
 }
+
+.ul.product-grid {
+  align-items: end !important;
+}
+
+.ul.product-grid li {
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  height: 100%;           /* Ensure all cards in a row are equal height */
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+}
+
+/* 3. Image Handling */
+.ul.product-grid .product-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;    /* Forces all image containers to be square */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.ul.product-grid .product-image-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;    /* Prevents stretching/cropping of different sized images */
+}
+
+/* 4. Text/Title Handling */
+.ul.product-grid .product-info {
+  margin-bottom: 15px;
+}
+
+.ul.product-grid .product-title {
+  /* This ensures titles that are 1 line vs 2 lines don't break alignment */
+  min-height: 3em; 
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 5. The Bottom Section (Quantity + Buttons) */
+.ul.product-grid .product-actions {
+  margin-top: auto;       /* Pushes this entire block to the bottom of the LI */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

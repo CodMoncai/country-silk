@@ -4101,3 +4101,7 @@ text-component {
 #shippingMethod { 
   display: none !important;
 }
+
+.collection-card__link {
+  text-transform: uppercase !important;
+}

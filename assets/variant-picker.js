@@ -279,6 +279,7 @@ export default class VariantPicker extends Component {
     const SECTION_ID_MAP = {
       'quick-add-component': 'section-rendering-product-card',
       'swatches-variant-picker-component': 'section-rendering-product-card',
+      'product-card': 'section-rendering-product-card',
       'featured-product-information': this.closest('featured-product-information')?.id,
     };
 

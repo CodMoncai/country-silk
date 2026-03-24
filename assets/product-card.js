@@ -140,7 +140,18 @@ export class ProductCard extends Component {
       this.variantPicker?.updateVariantPicker(event.detail.data.html);
     }
 
-    this.#updateVariantImages();
+    const resource = event.detail.resource;
+    this.#lastVariantFeaturedMediaId =
+      resource?.featured_media?.id != null ? String(resource.featured_media.id) : undefined;
+    const preview = resource?.featured_media?.preview_image;
+    this.#lastVariantPreviewSrc =
+      typeof preview?.src === 'string'
+        ? preview.src
+        : typeof preview?.url === 'string'
+          ? preview.url
+          : undefined;
+
+    this.#updateVariantImages(event);
     this.#previousSlideIndex = null;
 
     // Remove attribute after re-rendering since a variant selection has been made
@@ -244,19 +255,27 @@ export class ProductCard extends Component {
   }
 
   /**
-   * Hide the variant images that are not for the selected variant.
+   * Sync the card gallery to the selected variant (slideshow slide or preview image).
+   * @param {import('@theme/events').VariantUpdateEvent} [event]
    */
-  #updateVariantImages() {
+  #updateVariantImages(event) {
     const { slideshow } = this.refs;
-    if (!this.variantPicker?.selectedOption) {
-      return;
+    if (!slideshow) return;
+
+    const resource = event?.detail?.resource;
+    let selectedImageId =
+      resource?.featured_media?.id != null ? String(resource.featured_media.id) : undefined;
+
+    if (!selectedImageId) {
+      selectedImageId = this.variantPicker?.selectedOption?.dataset.optionMediaId;
     }
 
-    const selectedImageId = this.variantPicker?.selectedOption.dataset.optionMediaId;
+    if (!selectedImageId) return;
 
-    if (slideshow && selectedImageId) {
-      const { slides = [] } = slideshow.refs;
+    const { slides = [] } = slideshow.refs;
+    const matchingSlide = slides.find((slide) => slide.getAttribute('slide-id') === selectedImageId);
 
+    if (matchingSlide) {
       for (const slide of slides) {
         if (slide.getAttribute('variant-image') == null) continue;
 
@@ -264,6 +283,23 @@ export class ProductCard extends Component {
       }
 
       slideshow.select({ id: selectedImageId }, undefined, { animate: false });
+      return;
+    }
+
+    const previewSrc =
+      resource?.featured_media?.preview_image?.src ||
+      resource?.featured_media?.preview_image?.url ||
+      this.#lastVariantPreviewSrc;
+    if (typeof previewSrc === 'string' && previewSrc && slides[0]) {
+      const firstSlide = slides[0];
+      firstSlide.removeAttribute('hidden');
+      firstSlide.setAttribute('aria-hidden', 'false');
+      const img = firstSlide.querySelector('img');
+      if (img) {
+        img.src = previewSrc;
+        img.removeAttribute('srcset');
+        img.removeAttribute('sizes');
+      }
     }
   }
 
@@ -276,14 +312,22 @@ export class ProductCard extends Component {
   }
 
   /**
-   * Gets the variant picker component.
-   * @returns {VariantPicker | null} The variant picker component.
+   * Gets the variant picker component (swatches wrapper or core variant-picker).
+   * @returns {HTMLElement | null}
    */
   get variantPicker() {
-    return this.querySelector('swatches-variant-picker-component');
+    return (
+      this.querySelector('swatches-variant-picker-component') || this.querySelector('variant-picker')
+    );
   }
   /** @type {number | null} */
   #previousSlideIndex = null;
+
+  /** @type {string | undefined} Resolved variant featured media id from the last variant:update. */
+  #lastVariantFeaturedMediaId;
+
+  /** @type {string | undefined} Preview URL when no slideshow slide matches (e.g. combined listing). */
+  #lastVariantPreviewSrc;
 
   /**
    * Handles the slideshow select event.
@@ -356,7 +400,8 @@ export class ProductCard extends Component {
 
     // If we have a selected variant, always use its image
     if (this.variantPicker?.selectedOption) {
-      const id = this.variantPicker.selectedOption.dataset.optionMediaId;
+      const id =
+        this.#lastVariantFeaturedMediaId || this.variantPicker.selectedOption.dataset.optionMediaId;
       if (id) {
         slideshow.select({ id }, undefined, { animate: false });
         return;

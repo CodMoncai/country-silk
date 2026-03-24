@@ -136,6 +136,15 @@
                   {% if product_option_value.variant.id %}
                     data-variant-id="{{ product_option_value.variant.id }}"
                   {% endif %}
+                  {% liquid
+                    assign option_featured_media = product_option_value.variant.featured_media
+                    if option_featured_media == blank and product_option_value.product_url
+                      assign option_featured_media = product_option_value.variant.product.featured_media
+                    endif
+                  %}
+                  {% if option_featured_media %}
+                    data-option-media-id="{{ option_featured_media.id }}"
+                  {% endif %}
                   {% if product_option_value.selected %}
                     data-current-checked="true"
                     checked

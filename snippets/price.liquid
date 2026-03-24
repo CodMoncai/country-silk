@@ -11,11 +11,23 @@
   assign show_unit_price = show_unit_price | default: false
   assign show_sale_price_first = show_sale_price_first | default: false
   assign selected_variant = product_resource.selected_or_first_available_variant
-  assign price = selected_variant.price
+  assign variant_price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
+  assign show_rlp_raw = selected_variant.metafields.custom.show_rlp.value | default: selected_variant.metafields.custom.show_rlp
+  assign has_rlp_override = false
+  assign price = variant_price
+
+  if show_rlp_raw != blank and show_rlp_raw != false
+    assign has_rlp_override = true
+    if show_rlp_raw == true
+      assign price = selected_variant.compare_at_price | default: variant_price
+    else
+      assign price = show_rlp_raw
+    endif
+  endif
 
   assign show_compare_price = false
-  if compare_at_price > price
+  if compare_at_price > variant_price and has_rlp_override == false
     assign show_compare_price = true
   endif
 
@@ -36,12 +48,17 @@
   endif
 
   if is_product_card
-    assign price_min = product_resource.price_min
-    assign price_max = product_resource.price_max
+    if has_rlp_override
+      assign price_min = price
+      assign price_max = price
+    else
+      assign price_min = product_resource.price_min
+      assign price_max = product_resource.price_max
+    endif
     assign has_volume_pricing = product_resource.quantity_price_breaks_configured? | default: false
   else
     # Product page: only use selected variant's pricing
-    if selected_variant.quantity_price_breaks.size > 0
+    if selected_variant.quantity_price_breaks.size > 0 and has_rlp_override == false
       assign has_volume_pricing = true
       assign price_min = selected_variant.quantity_price_breaks.last.price
       assign price_max = selected_variant.price

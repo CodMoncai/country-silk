@@ -2,6 +2,15 @@
   assign block_settings = block.settings
   assign product_resource = closest.product
   assign selected_variant = product_resource.selected_or_first_available_variant
+  assign show_rlp_raw = selected_variant.metafields.custom.show_rlp.value | default: selected_variant.metafields.custom.show_rlp
+  assign display_price = selected_variant.price
+  if show_rlp_raw != blank and show_rlp_raw != false
+    if show_rlp_raw == true
+      assign display_price = selected_variant.compare_at_price | default: selected_variant.price
+    else
+      assign display_price = show_rlp_raw
+    endif
+  endif
 -%}
 
 {% liquid
@@ -65,7 +74,7 @@
         <div class="product-price__total-cell" ref="totalPriceContainer">
           <span class="price" ref="totalPrice">
             {%- if selected_variant != blank -%}
-              {{ selected_variant.price | money }}
+              {{ display_price | money }}
             {%- endif -%}
           </span>
         </div>

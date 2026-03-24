@@ -129,17 +129,17 @@
     "section_LKib84": {
       "type": "section",
       "blocks": {
-        "custom_liquid_CKJWyt": {
-          "type": "custom-liquid",
-          "name": "t:names.custom_liquid",
+        "custom_html_EdKnKB": {
+          "type": "custom-html",
+          "name": "Custom HTML",
           "settings": {
-            "custom_liquid": "<div class=\"adf-forms\" data-id=\"347\"></div>"
+            "custom_html": "<div class=\"adf-forms\" data-id=\"347\"></div>"
           },
           "blocks": {}
         }
       },
       "block_order": [
-        "custom_liquid_CKJWyt"
+        "custom_html_EdKnKB"
       ],
       "name": "t:names.custom_section",
       "settings": {

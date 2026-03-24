@@ -4155,3 +4155,7 @@ text-component {
   height: 40px;
   width: 40px;
 }
+
+.header-logo__image-container {
+  text-transform: uppercase !important;
+}

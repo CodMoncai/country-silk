@@ -8,14 +8,26 @@
     assign product = closest.product
   endif
 
+  capture _card_context_variant_id
+    render 'card-context-variant-id', product: product
+  endcapture
+  assign _card_context_variant_id = _card_context_variant_id | strip
+  assign card_context_variant = product.selected_or_first_available_variant
+  if _card_context_variant_id != ''
+    assign _resolved_card_variant = product.variants | where: 'id', _card_context_variant_id | first
+    if _resolved_card_variant != blank
+      assign card_context_variant = _resolved_card_variant
+    endif
+  endif
+
   if settings.transition_to_main_product
-    assign featured_media_url = product.selected_or_first_available_variant.featured_image | image_url: width: 500
+    assign featured_media_url = card_context_variant.featured_image | image_url: width: 500
     if featured_media_url == blank
       assign featured_media_url = product.featured_media.preview_image | image_url: width: 500
     endif
   endif
 
-  assign url = product.selected_or_first_available_variant.url
+  assign url = card_context_variant.url
   unless url
     assign url = product.first_available_variant.url
   endunless
@@ -23,7 +35,7 @@
     assign url = product.url
   endunless
 
-  assign sku = product.selected_or_first_available_variant.sku
+  assign sku = card_context_variant.sku
 %}
 
 {%- if settings.transition_to_main_product -%}

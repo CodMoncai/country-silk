@@ -14,10 +14,27 @@
   # Allow pre-selection of a swatch if there is a selected variant
   # product.selected_variant is automatically set in filtered collection, filtered search and some unfiltered search contexts based on result relevance.
   # Applying a filter updates the displayed image, so a swatch can help communicate the change.
+  # Tag-filtered collections also need preselection so card-context variant matches the active swatch (see card-context-variant-id).
   assign allow_preselection = false
 
   if product_resource.selected_variant or has_option_selected
     assign allow_preselection = true
+  endif
+
+  if current_tags != blank and current_tags.size > 0
+    assign allow_preselection = true
+  endif
+
+  capture _card_context_variant_id
+    render 'card-context-variant-id', product: product_resource
+  endcapture
+  assign _card_context_variant_id = _card_context_variant_id | strip
+  assign card_context_variant = product_resource.selected_or_first_available_variant
+  if _card_context_variant_id != ''
+    assign _resolved_card_variant = product_resource.variants | where: 'id', _card_context_variant_id | first
+    if _resolved_card_variant != blank
+      assign card_context_variant = _resolved_card_variant
+    endif
   endif
 %}
 
@@ -53,6 +70,7 @@
         {% capture children %}
           {%- for product_option_value in product_option.values -%}
             {% liquid
+              assign first_available_variant = nil
               comment
                 Identify the most relevant variant image to show in a card-gallery, and optionally as the swatch content.
                 The `product_option_value.variant` can be nil when no valid variant is associated with the combination of the current option-value and the other option values.
@@ -79,6 +97,21 @@
               endif
             %}
 
+            {% liquid
+              assign effective_variant_id = first_available_variant.id | default: product_option_value.variant.id
+              assign swatch_checked = false
+              if allow_preselection and product_option_value.selected
+                assign swatch_checked = true
+              endif
+              if swatch_checked == false and card_context_variant != blank
+                if effective_variant_id != blank and effective_variant_id == card_context_variant.id
+                  assign swatch_checked = true
+                elsif card_context_variant[swatch_option_key] == product_option_value.name
+                  assign swatch_checked = true
+                endif
+              endif
+            %}
+
             <li class="variant-option__swatch">
               <label
                 data-media-id="{{ featured_media.id }}"
@@ -96,7 +129,7 @@
                   data-option-value-id="{{ product_option_value.id }}"
                   data-option-available="{{ product_option_value.available }}"
                   data-connected-product-url="{{ product_option_value.product_url }}"
-                  {% if allow_preselection and product_option_value.selected %}
+                  {% if swatch_checked %}
                     checked
                   {% endif %}
                   data-variant-id="{{ first_available_variant.id | default: product_option_value.variant.id }}"
@@ -125,7 +158,7 @@
       </fieldset>
     {%- endfor -%}
     <script type="application/json">
-      {{ product_resource.selected_or_first_available_variant | json }}
+      {{ card_context_variant | json }}
     </script>
   </form>
 </swatches-variant-picker-component>

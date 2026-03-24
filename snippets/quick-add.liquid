@@ -14,7 +14,17 @@
   assign color_scheme = color_scheme | default: settings.quick_add_color_scheme
 
   # Logic to determine which variant to use (matching swatch selection logic from product-card)
+  capture _card_context_variant_id
+    render 'card-context-variant-id', product: product
+  endcapture
+  assign _card_context_variant_id = _card_context_variant_id | strip
   assign variant = product.selected_or_first_available_variant
+  if _card_context_variant_id != ''
+    assign _resolved_card_variant = product.variants | where: 'id', _card_context_variant_id | first
+    if _resolved_card_variant != blank
+      assign variant = _resolved_card_variant
+    endif
+  endif
 
   if variant.available
     assign can_add_to_cart = true

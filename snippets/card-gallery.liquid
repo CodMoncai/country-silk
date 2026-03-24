@@ -13,6 +13,18 @@
   assign block_settings = block.settings
   assign image_sizes = '(min-width: 750px) 50vw, 100vw'
 
+  capture _card_context_variant_id
+    render 'card-context-variant-id', product: product
+  endcapture
+  assign _card_context_variant_id = _card_context_variant_id | strip
+  assign card_context_variant = product.selected_or_first_available_variant
+  if _card_context_variant_id != ''
+    assign _resolved_card_variant = product.variants | where: 'id', _card_context_variant_id | first
+    if _resolved_card_variant != blank
+      assign card_context_variant = _resolved_card_variant
+    endif
+  endif
+
   # Check if product has badges and determine position
   assign has_badges = false
   assign badge_position = null
@@ -53,6 +65,9 @@
       assign ratio = '1'
     when 'adapt'
       assign ratio = product.featured_media.preview_image.aspect_ratio | default: '1'
+      if card_context_variant.featured_media != blank
+        assign ratio = card_context_variant.featured_media.preview_image.aspect_ratio | default: ratio
+      endif
   endcase
 
   if block_settings.image_ratio == 'adapt' and block_settings.constrain_to_viewport
@@ -88,11 +103,15 @@
       assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src'
       assign generic_media_size = product.media.size | minus: variant_images.size
 
-      # Sort media so product.featured_media.preview_image comes first as that is the most relevant image to display
-      # product.featured_media updates based on search context and filters applied
+      # Sort media so the context variant's featured media comes first when set (e.g. tag-filtered collections);
+      # otherwise product.featured_media, which updates for some filter/search contexts
+      assign primary_card_media = product.featured_media
+      if card_context_variant.featured_media != blank
+        assign primary_card_media = card_context_variant.featured_media
+      endif
 
-      assign other_media = product.media | reject: 'src', product.featured_media
-      assign media_list_to_show = product.featured_media | concat: other_media
+      assign other_media = product.media | reject: 'src', primary_card_media
+      assign media_list_to_show = primary_card_media | concat: other_media
 
       if product.media.size > 2 and generic_media_size > 0
         assign show_arrows = true
@@ -160,7 +179,7 @@
     <a
       class="contents"
       ref="cardGalleryLink"
-      href="{{ product.selected_or_first_available_variant.url }}"
+      href="{{ card_context_variant.url }}"
       aria-label="{{- product.title -}}"
     >
       {% render 'slideshow',
@@ -177,7 +196,7 @@
       <a
         class="contents"
         ref="productTitleLink"
-        href="{{ product.selected_or_first_available_variant.url }}"
+        href="{{ card_context_variant.url }}"
         aria-hidden="true"
       >
         <span class="title-text">{{- product.title -}}</span>

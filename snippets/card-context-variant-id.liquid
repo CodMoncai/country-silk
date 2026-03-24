@@ -1,0 +1,66 @@
+{%- doc -%}
+  Returns the numeric id of the variant that should drive product card links, images, and pricing
+  when the storefront context implies a specific variant.
+
+  Priority:
+  1. product.selected_variant (e.g. ?variant=, or filter relevance when Shopify sets it)
+  2. First variant whose option1–option3 matches a collection filter tag (case-insensitive)
+  3. First variant whose title matches a collection filter tag (case-insensitive)
+  4. product.selected_or_first_available_variant
+
+  Used on collection pages with tag filters where Shopify does not set featured_media / selected_variant.
+
+  @param {object} product - Product object (required)
+
+  @example
+  {% capture vid %}{% render 'card-context-variant-id', product: product %}{% endcapture %}
+{%- enddoc -%}
+{%- liquid
+  if product.selected_variant
+    assign out_variant = product.selected_variant
+  elsif current_tags != blank and current_tags.size > 0
+    assign out_variant = product.selected_or_first_available_variant
+    assign found = false
+    for variant in product.variants
+      if found
+        break
+      endif
+      for tag in current_tags
+        assign tag_key = tag | downcase | strip
+        if variant.option1 != blank and variant.option1 | downcase | strip == tag_key
+          assign out_variant = variant
+          assign found = true
+          break
+        endif
+        if variant.option2 != blank and variant.option2 | downcase | strip == tag_key
+          assign out_variant = variant
+          assign found = true
+          break
+        endif
+        if variant.option3 != blank and variant.option3 | downcase | strip == tag_key
+          assign out_variant = variant
+          assign found = true
+          break
+        endif
+      endfor
+    endfor
+    unless found
+      for variant in product.variants
+        if found
+          break
+        endif
+        for tag in current_tags
+          assign tag_key = tag | downcase | strip
+          if variant.title != blank and variant.title | downcase | strip == tag_key
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+        endfor
+      endfor
+    endunless
+  else
+    assign out_variant = product.selected_or_first_available_variant
+  endif
+-%}
+{{- out_variant.id -}}

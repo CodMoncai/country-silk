@@ -34,8 +34,18 @@
   assign product_card_id = 'product-card-link-' | append: block.id | append: '-' | append: product.id
   assign product_card_gap_value = product_card_gap | default: block_settings.product_card_gap
 
-  # Logic to determine which variant URL to use (matching swatch selection logic)
+  # Logic to determine which variant URL to use (matching swatch selection logic + tag-filtered collections)
+  capture _card_context_variant_id
+    render 'card-context-variant-id', product: product
+  endcapture
+  assign _card_context_variant_id = _card_context_variant_id | strip
   assign variant_to_link = product.selected_or_first_available_variant
+  if _card_context_variant_id != ''
+    assign _resolved_card_variant = product.variants | where: 'id', _card_context_variant_id | first
+    if _resolved_card_variant != blank
+      assign variant_to_link = _resolved_card_variant
+    endif
+  endif
 
   if settings.transition_to_main_product
     assign featured_image = variant_to_link.featured_image

@@ -26,7 +26,18 @@
   endif
 
   if resource_type == 'product' and settings.transition_to_main_product
-    assign featured_media_url = resource.selected_or_first_available_variant.featured_image | image_url: width: image_width
+    capture card_context_variant_id_str
+      render 'card-context-variant-id', product: resource
+    endcapture
+    assign card_context_variant_id_str = card_context_variant_id_str | strip
+    assign card_ctx_variant = resource.selected_or_first_available_variant
+    if card_context_variant_id_str != ''
+      assign resolved_ctx_variant = resource.variants | where: 'id', card_context_variant_id_str | first
+      if resolved_ctx_variant != blank
+        assign card_ctx_variant = resolved_ctx_variant
+      endif
+    endif
+    assign featured_media_url = card_ctx_variant.featured_image | image_url: width: image_width
     if featured_media_url == blank
       assign featured_media_url = resource.featured_media.preview_image | image_url: width: image_width
     endif

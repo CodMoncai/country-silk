@@ -5,7 +5,17 @@
     assign product = collections.all.products.first
   endif
 
+  capture _card_context_variant_id
+    render 'card-context-variant-id', product: closest.product
+  endcapture
+  assign _card_context_variant_id = _card_context_variant_id | strip
   assign variant = closest.product.selected_or_first_available_variant
+  if _card_context_variant_id != ''
+    assign _resolved_card_variant = closest.product.variants | where: 'id', _card_context_variant_id | first
+    if _resolved_card_variant != blank
+      assign variant = _resolved_card_variant
+    endif
+  endif
   assign inventory_quantity = variant.inventory_quantity
   assign inventory_policy = variant.inventory_policy
 
@@ -45,7 +55,7 @@
       data-product-id="{{ product.id }}"
       data-product-url="{{ product.url }}"
       on:submit="/handleSubmit"
-      data-quantity-default="{% if product.selected_or_first_available_variant.quantity_rule.min %}{{ product.selected_or_first_available_variant.quantity_rule.min }}{% else %}1{% endif %}"
+      data-quantity-default="{% if variant.quantity_rule.min %}{{ variant.quantity_rule.min }}{% else %}1{% endif %}"
       data-quantity-error-max="{{ 'products.product.quantity_error_max' | t }}"
     >
       <div
@@ -60,7 +70,7 @@
           type="hidden"
           name="id"
           ref="variantId"
-          value="{{ product.selected_or_first_available_variant.id }}"
+          value="{{ variant.id }}"
         >
         {%- if block_settings.gift_card_form and product.gift_card? -%}
           {%- render 'gift-card-recipient-form', product: product, form: form, section: section, block: block -%}
@@ -244,7 +254,7 @@
     type="module"
   ></script>
 
-  {%- assign pick_up_availabilities = closest.product.selected_or_first_available_variant.store_availabilities
+  {%- assign pick_up_availabilities = variant.store_availabilities
     | where: 'pick_up_enabled', true
   -%}
 
@@ -255,7 +265,7 @@
     {% endif %}
     data-section-id="{{ section.id }}"
     data-product-url="{{ closest.product.url }}"
-    data-variant-id="{{ closest.product.selected_or_first_available_variant.id }}"
+    data-variant-id="{{ variant.id }}"
     style="{% render 'spacing-style', settings: block_settings %}"
     ref="localPickupButton"
   >
@@ -308,7 +318,7 @@
             <div class="pickup-availability__column">
               <h4 class="pickup-location__h4">{{ closest.product.title }}</h4>
               <p class="pickup-location__text-sm">
-                {{ closest.product.selected_or_first_available_variant.title }}
+                {{ variant.title }}
               </p>
             </div>
             <button

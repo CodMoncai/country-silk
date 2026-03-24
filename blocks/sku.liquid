@@ -2,6 +2,18 @@
   assign block_settings = block.settings
   assign product_resource = closest.product
   assign selected_variant = product_resource.selected_or_first_available_variant
+  if template.name != 'product'
+    capture _card_context_variant_id
+      render 'card-context-variant-id', product: product_resource
+    endcapture
+    assign _card_context_variant_id = _card_context_variant_id | strip
+    if _card_context_variant_id != ''
+      assign _resolved_card_variant = product_resource.variants | where: 'id', _card_context_variant_id | first
+      if _resolved_card_variant != blank
+        assign selected_variant = _resolved_card_variant
+      endif
+    endif
+  endif
   assign sku = selected_variant.sku
 -%}
 

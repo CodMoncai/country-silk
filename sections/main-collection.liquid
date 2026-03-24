@@ -70,7 +70,7 @@
       {% if sort_collection_by_sku %}
         {% capture sort_pairs_string %}
           {% for product in collection.products %}
-            {% assign vsku = product.selected_or_first_available_variant.sku | strip %}
+            {% assign vsku = product.selected_or_first_available_variant.sku | default: product.first_available_variant.sku | default: product.variants.first.sku | strip | upcase %}
             {% if vsku == blank %}
               {% assign vsku = 'zzzzzzzzzz' %}
             {% endif %}

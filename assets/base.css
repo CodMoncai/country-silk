@@ -4156,6 +4156,7 @@ text-component {
   width: 40px;
 }
 
-.header-logo__image-container {
+.header-logo__image-container,
+.add-to-cart-text {
   text-transform: uppercase !important;
 }

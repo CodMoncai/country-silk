@@ -1,0 +1,27 @@
+<div
+  class="custom-html"
+  {{ block.shopify_attributes }}
+>
+  {{ block.settings.custom_html }}
+</div>
+
+{% schema %}
+{
+  "name": "Custom HTML",
+  "tag": null,
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "custom_html",
+      "label": "HTML code",
+      "info": "Add custom HTML markup to display in this block."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom HTML",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

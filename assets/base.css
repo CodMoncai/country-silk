@@ -4150,3 +4150,8 @@ text-component {
   line-height: 1.4 !important;
   overflow: hidden !important;
 }
+
+.swatch.swatch--variant-image {
+  height: 40px;
+  width: 40px;
+}

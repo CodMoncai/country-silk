@@ -9,7 +9,7 @@
   endif
 
   capture _card_context_variant_id
-    render 'card-context-variant-id', product: product
+    render 'card-context-variant-id', product: product, theme_option_label: section.settings.theme_option_label
   endcapture
   assign _card_context_variant_id = _card_context_variant_id | strip
   assign card_context_variant = product.selected_or_first_available_variant

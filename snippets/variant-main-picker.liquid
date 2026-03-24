@@ -3,9 +3,27 @@
 
   @param {object} product_resource - The product object.
   @param {object} [block] - The block object
+  @param {boolean} [enable_collection_context_variant] - When true (e.g. product cards on collection pages), pre-select options using card-context-variant-id (collection name/handle, filters, tags).
 {%- enddoc -%}
 
 {% assign block_settings = block.settings %}
+
+{% liquid
+  assign picker_context_variant = nil
+  assign enable_collection_context_variant = enable_collection_context_variant | default: false
+  if enable_collection_context_variant
+    capture _picker_ctx_vid
+      render 'card-context-variant-id', product: product_resource
+    endcapture
+    assign _picker_ctx_vid = _picker_ctx_vid | strip
+    if _picker_ctx_vid != ''
+      assign _picker_ctx_num = _picker_ctx_vid | plus: 0
+      if _picker_ctx_num != 0
+        assign picker_context_variant = product_resource.variants | find: 'id', _picker_ctx_num
+      endif
+    endif
+  endif
+%}
 
 {% unless product_resource.has_only_default_variant %}
   {% liquid
@@ -108,7 +126,26 @@
             <legend>
               {{ product_option.name | escape -}}
               {%- if variant_style == 'swatch' -%}
-                <span class="variant-option__swatch-value">{{ product_option.selected_value }}</span>
+                {% liquid
+                  assign swatch_legend_value = product_option.selected_value
+                  if picker_context_variant != blank
+                    case product_option.position
+                      when 1
+                        if picker_context_variant.option1 != blank
+                          assign swatch_legend_value = picker_context_variant.option1
+                        endif
+                      when 2
+                        if picker_context_variant.option2 != blank
+                          assign swatch_legend_value = picker_context_variant.option2
+                        endif
+                      when 3
+                        if picker_context_variant.option3 != blank
+                          assign swatch_legend_value = picker_context_variant.option3
+                        endif
+                    endcase
+                  endif
+                %}
+                <span class="variant-option__swatch-value">{{ swatch_legend_value | escape }}</span>
               {%- endif %}
             </legend>
             {%- for product_option_value in product_option.values -%}
@@ -145,7 +182,24 @@
                   {% if option_featured_media %}
                     data-option-media-id="{{ option_featured_media.id }}"
                   {% endif %}
-                  {% if product_option_value.selected %}
+                  {% liquid
+                    assign picker_input_checked = product_option_value.selected
+                    if picker_input_checked == false and picker_context_variant != blank
+                      assign ctx_opt_for_picker = ''
+                      case product_option.position
+                        when 1
+                          assign ctx_opt_for_picker = picker_context_variant.option1
+                        when 2
+                          assign ctx_opt_for_picker = picker_context_variant.option2
+                        when 3
+                          assign ctx_opt_for_picker = picker_context_variant.option3
+                      endcase
+                      if ctx_opt_for_picker == product_option_value.name
+                        assign picker_input_checked = true
+                      endif
+                    endif
+                  %}
+                  {% if picker_input_checked %}
                     data-current-checked="true"
                     checked
                   {% else %}
@@ -233,13 +287,30 @@
                 class="variant-option__select"
               >
                 {%- for product_option_value in product_option.values -%}
+                  {% liquid
+                    assign picker_option_selected = product_option_value.selected
+                    if picker_option_selected == false and picker_context_variant != blank
+                      assign ctx_opt_for_select = ''
+                      case product_option.position
+                        when 1
+                          assign ctx_opt_for_select = picker_context_variant.option1
+                        when 2
+                          assign ctx_opt_for_select = picker_context_variant.option2
+                        when 3
+                          assign ctx_opt_for_select = picker_context_variant.option3
+                      endcase
+                      if ctx_opt_for_select == product_option_value.name
+                        assign picker_option_selected = true
+                      endif
+                    endif
+                  %}
                   <option
                     value="{{ product_option_value | escape }}"
                     data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
                     data-option-value-id="{{ product_option_value.id }}"
                     data-variant-id="{{ product_option_value.variant.id }}"
                     data-connected-product-url="{{ product_option_value.product_url }}"
-                    {% if product_option_value.selected %}
+                    {% if picker_option_selected %}
                       selected="selected"
                     {% endif %}
                   >
@@ -264,8 +335,14 @@
         {%- endif -%}
       {%- endfor -%}
 
+      {% liquid
+        assign variant_json_for_script = product_resource.selected_or_first_available_variant
+        if picker_context_variant != blank
+          assign variant_json_for_script = picker_context_variant
+        endif
+      %}
       <script type="application/json">
-        {{ product_resource.selected_or_first_available_variant | json }}
+        {{ variant_json_for_script | json }}
       </script>
     </form>
   </variant-picker>

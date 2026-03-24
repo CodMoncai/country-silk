@@ -5,8 +5,9 @@
   1. product.selected_variant (?variant=, combined listings, etc.)
   2. When storefront facet filters are active (collection or search): first available variant with
      variant.matched, else first matched variant (see Shopify variant.matched for filter context)
-  3. Legacy tag URLs: current_tags matched against option1–option3, then variant title
-  4. product.selected_or_first_available_variant
+  3. On collection templates: collection title or handle matched against option1–option3 (and handleized), then variant title
+  4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
+  5. product.selected_or_first_available_variant
 
   Note: Facet filtering uses collection.filters / search.filters — not current_tags. Tag-only URLs use current_tags.
 
@@ -46,6 +47,93 @@
       unless found_matched
         assign out_variant = product.selected_or_first_available_variant
       endunless
+    endunless
+  elsif template.name == 'collection' and collection != blank
+    assign out_variant = product.selected_or_first_available_variant
+    assign found = false
+    assign col_title_key = collection.title | downcase | strip
+    assign col_handle = collection.handle
+    for variant in product.variants
+      if found
+        break
+      endif
+      if col_title_key != blank
+        if variant.option1 != blank and variant.option1 | downcase | strip == col_title_key
+          assign out_variant = variant
+          assign found = true
+          break
+        endif
+        if variant.option2 != blank and variant.option2 | downcase | strip == col_title_key
+          assign out_variant = variant
+          assign found = true
+          break
+        endif
+        if variant.option3 != blank and variant.option3 | downcase | strip == col_title_key
+          assign out_variant = variant
+          assign found = true
+          break
+        endif
+      endif
+    endfor
+    unless found
+      if col_handle != blank
+        assign col_handle_words = col_handle | replace: '-', ' ' | downcase | strip
+        for variant in product.variants
+          if found
+            break
+          endif
+          if variant.option1 != blank and variant.option1 | downcase | strip == col_handle_words
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+          if variant.option2 != blank and variant.option2 | downcase | strip == col_handle_words
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+          if variant.option3 != blank and variant.option3 | downcase | strip == col_handle_words
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+        endfor
+      endif
+    endunless
+    unless found
+      if col_handle != blank
+        for variant in product.variants
+          if found
+            break
+          endif
+          if variant.option1 != blank and variant.option1 | handleize == col_handle
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+          if variant.option2 != blank and variant.option2 | handleize == col_handle
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+          if variant.option3 != blank and variant.option3 | handleize == col_handle
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+        endfor
+      endif
+    endunless
+    unless found
+      if col_title_key != blank
+        for variant in product.variants
+          if variant.title != blank and variant.title | downcase | strip == col_title_key
+            assign out_variant = variant
+            assign found = true
+            break
+          endif
+        endfor
+      endif
     endunless
   elsif current_tags != blank and current_tags.size > 0
     assign out_variant = product.selected_or_first_available_variant

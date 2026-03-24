@@ -5,8 +5,18 @@
   endif
 -%}
 
+{% liquid
+  assign enable_collection_context_variant = false
+  if template.name == 'collection'
+    assign enable_collection_context_variant = true
+  endif
+%}
 {% unless product_resource == blank %}
-  {% render 'variant-main-picker', product_resource: product_resource, block: block %}
+  {% render 'variant-main-picker',
+    product_resource: product_resource,
+    block: block,
+    enable_collection_context_variant: enable_collection_context_variant
+  %}
 {% endunless %}
 
 {% schema %}

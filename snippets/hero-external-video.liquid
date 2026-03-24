@@ -16,6 +16,7 @@
 
   assign video_id = ''
   assign video_type = ''
+  assign vimeo_hash = ''
 
   if external_url != blank
     if external_url contains 'youtu.be'
@@ -28,7 +29,30 @@
       assign video_id = external_url | split: 'v=' | last | split: '&' | first
       assign video_type = 'youtube'
     elsif external_url contains 'vimeo.com'
-      assign video_id = external_url | split: '/' | last | split: '?' | first
+      assign vimeo_path = external_url | split: '?' | first | split: '#' | first
+      assign vimeo_path_parts = vimeo_path | split: '/'
+      for part in vimeo_path_parts reversed
+        assign non_numeric_part = part
+          | replace: '0', ''
+          | replace: '1', ''
+          | replace: '2', ''
+          | replace: '3', ''
+          | replace: '4', ''
+          | replace: '5', ''
+          | replace: '6', ''
+          | replace: '7', ''
+          | replace: '8', ''
+          | replace: '9', ''
+        if part != blank and non_numeric_part == blank
+          assign video_id = part
+          break
+        endif
+      endfor
+
+      if external_url contains 'h='
+        assign vimeo_hash = external_url | split: 'h=' | last | split: '&' | first
+      endif
+
       assign video_type = 'vimeo'
     endif
   endif
@@ -37,7 +61,7 @@
 {% if video_type == 'vimeo' and video_id != blank %}
   <div class="hero__video-iframe-wrapper {{ video_class }}">
     <iframe
-      src="https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0"
+      src="https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0{% if vimeo_hash != blank %}&h={{ vimeo_hash }}{% endif %}"
       class="hero__video-iframe {{ video_class }}"
       allow="autoplay; fullscreen; picture-in-picture"
       allowfullscreen

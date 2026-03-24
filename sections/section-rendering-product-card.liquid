@@ -55,6 +55,7 @@
     ref="productCardLink"
   >
     {% render 'variant-main-picker', product_resource: product, block: section %}
+    {% render 'variant-swatches', product_resource: product, has_option_selected: true %}
 
     <product-price>
       {% render 'price', product_resource: product, show_unit_price: true %}
@@ -110,7 +111,7 @@
       "type": "checkbox",
       "id": "show_swatches",
       "label": "t:settings.swatches",
-      "default": false
+      "default": true
     },
     {
       "type": "header",

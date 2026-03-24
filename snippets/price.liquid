@@ -13,17 +13,16 @@
   assign selected_variant = product_resource.selected_or_first_available_variant
   assign variant_price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
-  assign show_rlp_raw = selected_variant.metafields.custom.show_rlp.value | default: selected_variant.metafields.custom.show_rlp
+  assign show_rlp_raw = selected_variant.metafields.custom.show_rlp.value
+  if show_rlp_raw == blank
+    assign show_rlp_raw = selected_variant.metafields.custom.show_rlp
+  endif
   assign has_rlp_override = false
   assign price = variant_price
 
-  if show_rlp_raw != blank and show_rlp_raw != false
+  if show_rlp_raw == true or show_rlp_raw == 'true' or show_rlp_raw == '1'
     assign has_rlp_override = true
-    if show_rlp_raw == true
-      assign price = selected_variant.compare_at_price | default: variant_price
-    else
-      assign price = show_rlp_raw
-    endif
+    assign price = selected_variant.compare_at_price | default: variant_price
   endif
 
   assign show_compare_price = false

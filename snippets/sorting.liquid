@@ -20,37 +20,12 @@
   data-should-use-select-on-mobile="{{ should_use_select_on_mobile }}"
 >
   {% liquid
-    assign default_sort_by = results.default_sort_by | default: 'sku-ascending'
-    assign has_sku_ascending = false
-    assign has_sku_descending = false
-    assign is_sku_ascending_selected = false
-    assign is_sku_descending_selected = false
+    assign default_sort_by = results.default_sort_by
     for option in results.sort_options
-      if option.value == 'sku-ascending'
-        assign has_sku_ascending = true
-      endif
-      if option.value == 'sku-descending'
-        assign has_sku_descending = true
-      endif
       if option.value == sort_by
         assign status = option.name
       endif
     endfor
-    if sort_by == 'sku-ascending'
-      assign is_sku_ascending_selected = true
-    elsif sort_by == blank and default_sort_by == 'sku-ascending'
-      assign is_sku_ascending_selected = true
-    endif
-    if sort_by == 'sku-descending'
-      assign is_sku_descending_selected = true
-    elsif sort_by == blank and default_sort_by == 'sku-descending'
-      assign is_sku_descending_selected = true
-    endif
-    if sort_by == 'sku-ascending' or default_sort_by == 'sku-ascending'
-      assign status = 'SKU, low to high'
-    elsif sort_by == 'sku-descending' or default_sort_by == 'sku-descending'
-      assign status = 'SKU, high to low'
-    endif
   %}
 
   <div class="sorting-filter__container {% if should_use_select_on_mobile %} desktop:hidden {% else %} hidden {% endif %}">
@@ -76,35 +51,9 @@
               selected
             {% endif %}
           >
-            {% if option.value == 'sku-ascending' %}
-              SKU, low to high
-            {% elsif option.value == 'sku-descending' %}
-              SKU, high to low
-            {% else %}
-              {{ option.name }}
-            {% endif %}
+            {{ option.name }}
           </option>
         {% endfor %}
-        {% unless has_sku_ascending %}
-          <option
-            value="sku-ascending"
-            {% if is_sku_ascending_selected %}
-              selected
-            {% endif %}
-          >
-            SKU, low to high
-          </option>
-        {% endunless %}
-        {% unless has_sku_descending %}
-          <option
-            value="sku-descending"
-            {% if is_sku_descending_selected %}
-              selected
-            {% endif %}
-          >
-            SKU, high to low
-          </option>
-        {% endunless %}
       </select>
       <svg
         aria-hidden="true"
@@ -182,7 +131,7 @@
                   {% endif %}
                   value="{{ option.value }}"
                   class="sorting-filter__input"
-                  data-option-name="{% if option.value == 'sku-ascending' %}SKU, low to high{% elsif option.value == 'sku-descending' %}SKU, high to low{% else %}{{ option.name }}{% endif %}"
+                  data-option-name="{{ option.name }}"
                   {% if option.value == sort_by %}
                     checked
                   {% endif %}
@@ -191,82 +140,10 @@
                 <span class="svg-wrapper icon-checkmark sorting-filter__checkmark">
                   {{- 'icon-checkmark.svg' | inline_asset_content -}}
                 </span>
-                <span class="sorting-filter__label">
-                  {% if option.value == 'sku-ascending' %}
-                    SKU, low to high
-                  {% elsif option.value == 'sku-descending' %}
-                    SKU, high to low
-                  {% else %}
-                    {{ option.name }}
-                  {% endif %}
-                </span>
+                <span class="sorting-filter__label">{{ option.name }}</span>
               </div>
             </label>
           {% endfor %}
-          {% unless has_sku_ascending %}
-            <label
-              for="sort-option-sku-ascending-{{ section_id }}"
-            >
-              <div
-                class="sorting-filter__option"
-                role="option"
-                aria-selected="{% if is_sku_ascending_selected %}true{% else %}false{% endif %}"
-                tabindex="{% if is_sku_ascending_selected %}0{% else %}-1{% endif %}"
-              >
-                <input
-                  type="radio"
-                  name="sort_by"
-                  id="sort-option-sku-ascending-{{ section_id }}"
-                  {% if suffix != blank %}
-                    form="FacetFiltersForm--{{ section_id }}-{{ suffix }}"
-                  {% endif %}
-                  value="sku-ascending"
-                  class="sorting-filter__input"
-                  data-option-name="SKU, low to high"
-                  {% if is_sku_ascending_selected %}
-                    checked
-                  {% endif %}
-                  aria-hidden="true"
-                >
-                <span class="svg-wrapper icon-checkmark sorting-filter__checkmark">
-                  {{- 'icon-checkmark.svg' | inline_asset_content -}}
-                </span>
-                <span class="sorting-filter__label">SKU, low to high</span>
-              </div>
-            </label>
-          {% endunless %}
-          {% unless has_sku_descending %}
-            <label
-              for="sort-option-sku-descending-{{ section_id }}"
-            >
-              <div
-                class="sorting-filter__option"
-                role="option"
-                aria-selected="{% if is_sku_descending_selected %}true{% else %}false{% endif %}"
-                tabindex="{% if is_sku_descending_selected %}0{% else %}-1{% endif %}"
-              >
-                <input
-                  type="radio"
-                  name="sort_by"
-                  id="sort-option-sku-descending-{{ section_id }}"
-                  {% if suffix != blank %}
-                    form="FacetFiltersForm--{{ section_id }}-{{ suffix }}"
-                  {% endif %}
-                  value="sku-descending"
-                  class="sorting-filter__input"
-                  data-option-name="SKU, high to low"
-                  {% if is_sku_descending_selected %}
-                    checked
-                  {% endif %}
-                  aria-hidden="true"
-                >
-                <span class="svg-wrapper icon-checkmark sorting-filter__checkmark">
-                  {{- 'icon-checkmark.svg' | inline_asset_content -}}
-                </span>
-                <span class="sorting-filter__label">SKU, high to low</span>
-              </div>
-            </label>
-          {% endunless %}
         </div>
       </floating-panel-component>
     </details>

@@ -23,17 +23,6 @@
       {% assign products_per_page = section.settings.products_per_page %}
     {% endif %}
 
-    {% liquid
-      assign sort_param = request.query_parameters.sort_by
-      if sort_param == blank
-        assign sort_param = 'sku-ascending'
-      endif
-      assign sort_results_by_sku = false
-      if sort_param == 'sku-ascending' or sort_param == 'sku-descending'
-        assign sort_results_by_sku = true
-      endif
-    %}
-
     {% paginate search.results by products_per_page %}
       {% if search.results_count > 0 %}
         {% content_for 'block', type: 'filters', id: 'filters', results: search, results_size: search.results_count %}
@@ -45,64 +34,18 @@
         {% assign products = collection.products %}
       {% endif %}
 
-      {% if sort_results_by_sku and search.results_count > 0 %}
-        {% capture sort_pairs_string %}
-          {% for product in products %}
-            {% assign vsku = product.selected_or_first_available_variant.sku | default: product.first_available_variant.sku | default: product.variants.first.sku | strip | upcase %}
-            {% if vsku == blank %}
-              {% assign vsku = 'zzzzzzzzzz' %}
-            {% endif %}
-            {{ vsku }}~~SORT~~{{ product.id }}{% unless forloop.last %}||{% endunless %}
-          {% endfor %}
-        {% endcapture %}
-        {% assign sku_sort_pairs = sort_pairs_string | strip | split: '||' %}
-        {% assign sku_sort_pairs_sorted = sku_sort_pairs | sort %}
-        {% if sort_param == 'sku-descending' %}
-          {% assign sku_sort_pairs_sorted = sku_sort_pairs_sorted | reverse %}
-        {% endif %}
-      {% endif %}
-
       {% capture children %}
-        {% if sort_results_by_sku and search.results_count > 0 %}
-          {% assign sku_item_index = 0 %}
-          {% for pair in sku_sort_pairs_sorted %}
-            {% if pair == blank %}
-              {% continue %}
-            {% endif %}
-            {% assign pair_bits = pair | split: '~~SORT~~' %}
-            {% if pair_bits.size < 2 %}
-              {% continue %}
-            {% endif %}
-            {% assign sorted_product_id = pair_bits[1] | strip | plus: 0 %}
-            {% for product in products %}
-              {% if product.id == sorted_product_id %}
-                <li
-                  id="{{ section.id }}-{{ product.id }}"
-                  class="product-grid__item product-grid__item--{{ sku_item_index }}"
-                  data-page="{{ paginate.current_page }}"
-                  data-product-id="{{ product.id }}"
-                  ref="cards[]"
-                >
-                  {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
-                </li>
-                {% assign sku_item_index = sku_item_index | plus: 1 %}
-                {% break %}
-              {% endif %}
-            {% endfor %}
-          {% endfor %}
-        {% else %}
-          {% for product in products %}
-            <li
-              id="{{ section.id }}-{{ product.id }}"
-              class="product-grid__item product-grid__item--{{ forloop.index0 }}"
-              data-page="{{ paginate.current_page }}"
-              data-product-id="{{ product.id }}"
-              ref="cards[]"
-            >
-              {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
-            </li>
-          {% endfor %}
-        {% endif %}
+        {% for product in products %}
+          <li
+            id="{{ section.id }}-{{ product.id }}"
+            class="product-grid__item product-grid__item--{{ forloop.index0 }}"
+            data-page="{{ paginate.current_page }}"
+            data-product-id="{{ product.id }}"
+            ref="cards[]"
+          >
+            {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
+          </li>
+        {% endfor %}
       {% endcapture %}
 
       {% render 'product-grid',

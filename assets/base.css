@@ -4107,8 +4107,8 @@ text-component {
 }
 
 /* 1. Target the Horizon Product Item Container */
-[product-grid-view='default'] .product-grid .product-item, 
-[product-grid-view='default'] .product-grid .grid__item {
+[product-grid-view='default'].product-grid .product-item, 
+[product-grid-view='default'].product-grid .grid__item {
   display: flex !important;
   flex-direction: column !important;
   height: 100% !important;
@@ -4135,7 +4135,7 @@ text-component {
 /* 4. THE FIX: Push the Quantity/Add to Cart to the Bottom */
 /* Horizon usually uses 'product-item-actions' or 'product-form' */
 [product-grid-view='default'] .product-item .product-item-actions,
-[product-grid-view='default'].product-item .product-form,
+[product-grid-view='default'] .product-item .product-form,
 [product-grid-view='default'] .product-item .add-to-cart-wrapper {
   margin-top: auto !important; /* Pushes the section to the bottom */
   padding-top: 15px !important;

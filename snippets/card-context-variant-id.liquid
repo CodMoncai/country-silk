@@ -5,8 +5,8 @@
   1. product.selected_variant (?variant=, combined listings, etc.)
   2. When storefront facet filters are active (collection or search): first available variant with
      variant.matched, else first matched variant (see Shopify variant.matched for filter context)
-  3. On collection templates: collection title or handle matched against option1–option3 (and handleized), variant title
-     (exact, slug substring, substring when long enough). "echnated"/"enchated" spelling is normalized so collection and variant labels can differ slightly.
+  3. On collection templates: collection title or handle matched against variant option values only (option1–option3:
+     exact, handleized, substring on concatenated options). "echnated"/"enchated" spelling is normalized when comparing.
   4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   5. product.selected_or_first_available_variant
 
@@ -130,17 +130,6 @@
       endif
     endunless
     unless found
-      if col_title_key != blank
-        for variant in product.variants
-          if variant.title != blank and variant.title | downcase | strip | replace: 'echnated', 'enchated' == col_title_key
-            assign out_variant = variant
-            assign found = true
-            break
-          endif
-        endfor
-      endif
-    endunless
-    unless found
       if col_title_handleized != blank
         for variant in product.variants
           if found
@@ -168,30 +157,9 @@
       endif
     endunless
     unless found
-      if col_title_handleized != blank and col_title_handleized.size >= 8
-        for variant in product.variants
-          if found
-            break
-          endif
-          assign vth = variant.title | handleize | replace: 'echnated', 'enchated'
-          if vth != blank and vth contains col_title_handleized
-            assign out_variant = variant
-            assign found = true
-            break
-          endif
-        endfor
-      endif
-    endunless
-    unless found
       if col_title_key != blank and col_title_key.size >= 8
         for variant in product.variants
           if found
-            break
-          endif
-          assign vt_key = variant.title | downcase | strip | replace: 'echnated', 'enchated'
-          if vt_key != blank and vt_key contains col_title_key
-            assign out_variant = variant
-            assign found = true
             break
           endif
           assign opt_blob = variant.option1 | append: ' ' | append: variant.option2 | append: ' ' | append: variant.option3 | downcase | strip | replace: 'echnated', 'enchated'

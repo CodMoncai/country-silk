@@ -115,7 +115,7 @@
     "responsive_font_sizes": "Sizes automatically scale for all screen sizes",
     "resource_reference_breadcrumb": "Shows Home and the current collection or product. Placed automatically on collection and product templates.",
     "resource_reference_collection_card": "Displays collection from parent section",
-    "collection_card_variant_blocks": "Swatches, variant picker, and product card group use the collection’s first available product for variant context.",
+    "collection_card_variant_blocks": "Swatches, variant picker, and product card group use the collection’s first available product for variant context. Add a Product block to pick a specific product; inside it you can add Swatches or Variant picker.",
     "resource_reference_collection_card_image": "Displays image from parent collection",
     "resource_reference_collection_title": "Displays title from parent collection",
     "resource_reference_product": "Auto connects to parent product",

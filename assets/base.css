@@ -4145,7 +4145,7 @@ text-component {
 
 /* 5. Title Consistency (Handles the 1-line vs 2-line issue) */
 [product-grid-view='default'] .product-grid__item .product-item-title,
-[product-grid-view='default'] .product-grid__item h3 {
+[product-grid-view='default'] .product-grid__item p {
   min-height: 2.8em !important; 
   line-height: 1.4 !important;
   overflow: hidden !important;

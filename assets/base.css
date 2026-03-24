@@ -4106,50 +4106,46 @@ text-component {
   text-transform: uppercase !important;
 }
 
-/* .ul.product-grid {
-  align-items: end !important;
-} */
-
-.ul.product-grid li {
-  display: flex;
-  flex-direction: column; /* Stack children vertically */
-  height: 100%;           /* Ensure all cards in a row are equal height */
-  border: 1px solid #e0e0e0;
-  padding: 15px;
+/* 1. Target the Horizon Product Item Container */
+.product-grid .product-item, 
+.product-grid .grid__item {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
 }
 
-/* 3. Image Handling */
-.ul.product-grid .product-image-wrapper {
-  width: 100%;
-  aspect-ratio: 1 / 1;    /* Forces all image containers to be square */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
+/* 2. Standardize the Image Box */
+.product-item .product-item-image,
+.product-item .grid-view-item__image-wrapper {
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  margin-bottom: 10px !important;
+  display: block !important;
 }
 
-.ul.product-grid .product-image-wrapper img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;    /* Prevents stretching/cropping of different sized images */
+/* 3. The Content Area (Title/Price) */
+.product-item .product-item-caption,
+.product-item .product-details {
+  flex-grow: 1 !important; /* Forces this middle section to expand */
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 10px 0 !important;
 }
 
-/* 4. Text/Title Handling */
-.ul.product-grid .product-info {
-  margin-bottom: 15px;
+/* 4. THE FIX: Push the Quantity/Add to Cart to the Bottom */
+/* Horizon usually uses 'product-item-actions' or 'product-form' */
+.product-item .product-item-actions,
+.product-item .product-form,
+.product-item .add-to-cart-wrapper {
+  margin-top: auto !important; /* Pushes the section to the bottom */
+  padding-top: 15px !important;
+  width: 100% !important;
 }
 
-.ul.product-grid .product-title {
-  /* This ensures titles that are 1 line vs 2 lines don't break alignment */
-  min-height: 3em; 
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* 5. The Bottom Section (Quantity + Buttons) */
-.ul.product-grid .product-actions {
-  margin-top: auto;       /* Pushes this entire block to the bottom of the LI */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* 5. Title Consistency (Handles the 1-line vs 2-line issue) */
+.product-item .product-item-title,
+.product-item h3 {
+  min-height: 2.8em !important; 
+  line-height: 1.4 !important;
+  overflow: hidden !important;
 }

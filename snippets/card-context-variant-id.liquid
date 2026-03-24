@@ -5,8 +5,9 @@
   1. product.selected_variant (?variant=, combined listings, etc.)
   2. When storefront facet filters are active (collection or search): first available variant with
      variant.matched, else first matched variant (see Shopify variant.matched for filter context)
-  3. On collection templates: collection title or handle matched against variant option values only (option1–option3:
-     exact, handleized, substring on concatenated options). "echnated"/"enchated" spelling is normalized when comparing.
+  3. On collection templates: if a product option is named Theme, the variant whose Theme value appears in the collection
+     title/handle (partial match) wins first; else option1–option3 exact/handleized/concat substring. "echnated"/"enchated"
+     is normalized when comparing.
   4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   5. product.selected_or_first_available_variant
 
@@ -58,6 +59,56 @@
     assign col_title_key = collection.title | downcase | strip | replace: 'echnated', 'enchated'
     assign col_handle = collection.handle | replace: 'echnated', 'enchated'
     assign col_title_handleized = collection.title | handleize | replace: 'echnated', 'enchated'
+    assign theme_option_position = 0
+    for product_option in product.options_with_values
+      assign opt_nm = product_option.name | downcase | strip
+      if opt_nm == 'theme'
+        assign theme_option_position = forloop.index
+        break
+      endif
+    endfor
+    unless found
+      if theme_option_position > 0
+        for variant in product.variants
+          if found
+            break
+          endif
+          case theme_option_position
+            when 1
+              assign theme_value = variant.option1
+            when 2
+              assign theme_value = variant.option2
+            when 3
+              assign theme_value = variant.option3
+            else
+              assign theme_value = ''
+          endcase
+          if theme_value != blank
+            assign theme_val = theme_value | downcase | strip | replace: 'echnated', 'enchated'
+            assign theme_h = theme_value | handleize | replace: 'echnated', 'enchated'
+            if theme_val.size >= 2
+              if col_title_key contains theme_val
+                assign out_variant = variant
+                assign found = true
+                break
+              elsif theme_val contains col_title_key
+                assign out_variant = variant
+                assign found = true
+                break
+              elsif col_title_handleized != blank and theme_h != blank and col_title_handleized contains theme_h
+                assign out_variant = variant
+                assign found = true
+                break
+              elsif col_handle != blank and theme_h != blank and col_handle contains theme_h
+                assign out_variant = variant
+                assign found = true
+                break
+              endif
+            endif
+          endif
+        endfor
+      endif
+    endunless
     for variant in product.variants
       if found
         break

@@ -4106,9 +4106,9 @@ text-component {
   text-transform: uppercase !important;
 }
 
-.ul.product-grid {
+/* .ul.product-grid {
   align-items: end !important;
-}
+} */
 
 .ul.product-grid li {
   display: flex;

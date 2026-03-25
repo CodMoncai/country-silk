@@ -1,6 +1,24 @@
 {%- doc -%}
   For collection pages: picks a variant when Variant SKU ends with a Theme Code (suffix match).
-  Codes and collection routing follow Country Silk theme tables — update when codes change.
+  Shopify collection handles are hyphenated (e.g. peppermint, candy, specials).
+
+  Routing (Country Silk):
+  - Specials: all Christmas / palette themes share one collection URL; first SKU suffix match wins using the ordered code list below.
+  - Peppermint: handle or title contains "peppermint" (no "Christmas" in collection name) → RW2.
+  - Candy: hyphenated handle contains "candy" (e.g. candy, candy-…), or collection title is exactly "candy" → CND.
+
+  Theme table (Theme Code = last 3 characters of Variant SKU):
+  | # | Theme Name            | Code |
+  |---|------------------------|------|
+  | 18 | Peppermint            | RW2  |
+  | 19 | Candy                 | CND  |
+  | 23 | Traditional Christmas | TR2 (TRA alternate in list) |
+  | 34 | Cozy Christmas        | BR2  |
+  | 49 | Enchanted Christmas   | BSW  |
+  | 51 | Ruby Red Christmas    | RRD  |
+  | 52 | Festive Christmas     | FAS  |
+
+  Specials list order: Christmas themes by table, then other palette codes still used on that collection.
 
   Outputs variant id or empty.
 
@@ -13,48 +31,16 @@
   assign ct = collection.title | downcase | strip
   assign codes_line = ''
 
+  comment
+    Specials = single URL for Traditional, Cozy, Enchanted, Ruby Red, Festive, Emerald, Gold/Silver/Red-White, etc.
+    Order: try each code in sequence; first variant with matching SKU suffix wins.
+  endcomment
   if ch == 'specials' or ch == 'special-offers' or ct == 'specials' or ch contains 'specials'
-    assign codes_line = 'GWN,GLD,SWC,BRW,PGW,EMR,RSC,BUF,RRW2,RRW,GD2'
+    assign codes_line = 'TR2,TRA,BR2,BSW,RRD,FAS,EMR,GD2,SWC,RRW2,RRW,GWN,GLD,BRW,PGW,RSC,BUF'
   elsif ch contains 'peppermint' or ct contains 'peppermint'
     assign codes_line = 'RW2'
-  elsif ch contains 'candy' and ch contains 'christmas'
+  elsif ch contains 'candy' or ct == 'candy'
     assign codes_line = 'CND'
-  elsif ch == 'candy' or ct == 'candy' or ch == 'candy-christmas' or ct == 'candy christmas'
-    assign codes_line = 'CND'
-  elsif ch contains 'traditional' and ch contains 'christmas'
-    assign codes_line = 'TR2,TRA'
-  elsif ct contains 'traditional' and ct contains 'christmas'
-    assign codes_line = 'TR2,TRA'
-  elsif ch contains 'cozy' and ch contains 'christmas'
-    assign codes_line = 'BR2'
-  elsif ct contains 'cozy' and ct contains 'christmas'
-    assign codes_line = 'BR2'
-  elsif ch contains 'enchanted' and ch contains 'christmas'
-    assign codes_line = 'BSW'
-  elsif ct contains 'enchanted' and ct contains 'christmas'
-    assign codes_line = 'BSW'
-  elsif ch contains 'ruby' and ch contains 'red'
-    assign codes_line = 'RRD'
-  elsif ct contains 'ruby' and ct contains 'red'
-    assign codes_line = 'RRD'
-  elsif ch contains 'festive' and (ch contains 'christmas' or ch contains 'xmas')
-    assign codes_line = 'FAS'
-  elsif ct contains 'festive' and (ct contains 'christmas' or ct contains 'xmas')
-    assign codes_line = 'FAS'
-  elsif ch contains 'gold' and ch contains 'white'
-    assign codes_line = 'GD2'
-  elsif ct contains 'gold white'
-    assign codes_line = 'GD2'
-  elsif ch contains 'silver' and ch contains 'white'
-    assign codes_line = 'SWC'
-  elsif ct contains 'silver white'
-    assign codes_line = 'SWC'
-  elsif ch contains 'red-red' or ct contains 'red red white'
-    assign codes_line = 'RRW2,RRW'
-  elsif ch contains 'emerald' and ch contains 'christmas'
-    assign codes_line = 'EMR'
-  elsif ct contains 'emerald' and ct contains 'christmas'
-    assign codes_line = 'EMR'
   endif
 
   if codes_line != blank

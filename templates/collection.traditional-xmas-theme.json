@@ -190,6 +190,7 @@
                 "variant_style": "buttons",
                 "show_swatches": true,
                 "theme_option_label": "Theme,Themes",
+                "priority_theme_option_values": "Traditional Christmas, Traditional",
                 "theme_swatches_metafield_namespace": "custom",
                 "theme_swatches_metafield_key": "theme_swatches",
                 "alignment": "left",
@@ -204,6 +205,7 @@
               "type": "swatches",
               "name": "t:names.swatches",
               "settings": {
+                "priority_theme_option_values": "",
                 "product_swatches_alignment": "center",
                 "product_swatches_alignment_mobile": "center",
                 "hide_padding": false,

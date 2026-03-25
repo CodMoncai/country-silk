@@ -4,7 +4,7 @@
 {%- enddoc -%}
 {%- liquid
   assign storefront_filters = nil
-  if template.name == 'collection'
+  if request.page_type == 'collection'
     assign storefront_filters = collection.filters
   elsif template.name == 'search'
     assign storefront_filters = search.filters

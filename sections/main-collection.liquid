@@ -65,7 +65,12 @@
             ref="cards[]"
           >
             {% # theme-check-disable %}
-            {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
+            {% content_for 'block',
+              type: '_product-card',
+              id: 'product-card',
+              closest.product: product,
+              closest.collection: collection
+            %}
             {% # theme-check-enable %}
           </li>
         {% endfor %}

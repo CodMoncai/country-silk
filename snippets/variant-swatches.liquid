@@ -50,13 +50,17 @@
 
   assign card_swatches_theme_option_position = nil
   assign card_swatches_theme_codes = ''
-  if template.name == 'collection' and collection != blank
+  assign card_swatches_collection = collection
+  if card_swatches_collection == blank and closest.collection != blank
+    assign card_swatches_collection = closest.collection
+  endif
+  if request.page_type == 'collection' and card_swatches_collection != blank
     for po in product_resource.options_with_values
       assign _po_nm = po.name | downcase | strip
       if _po_nm == 'theme' or _po_nm == 'themes' or _po_nm contains 'theme'
         assign card_swatches_theme_option_position = po.position | plus: 0
         capture card_swatches_theme_codes
-          render 'collection-theme-variant-codes', collection: collection
+          render 'collection-theme-variant-codes', collection: card_swatches_collection
         endcapture
         assign card_swatches_theme_codes = card_swatches_theme_codes | strip
         break

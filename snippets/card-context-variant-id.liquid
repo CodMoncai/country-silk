@@ -30,7 +30,7 @@
 
   if product.selected_variant and template.name == 'product'
     assign out_variant = product.selected_variant
-  elsif template.name == 'collection' and collection != blank
+  elsif request.page_type == 'collection' and collection != blank
     assign out_variant = product.selected_or_first_available_variant
     assign found = false
     assign ch_lc = collection.handle | downcase

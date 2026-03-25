@@ -116,9 +116,13 @@
           assign theme_codes_line_for_sort = ''
           assign theme_value_ids_ordered = ''
           assign apply_theme_sku_value_order = false
-          if template.name == 'collection' and collection != blank and sort_this_option_by_theme_sku
+          assign picker_sort_collection = collection
+          if picker_sort_collection == blank and closest.collection != blank
+            assign picker_sort_collection = closest.collection
+          endif
+          if request.page_type == 'collection' and picker_sort_collection != blank and sort_this_option_by_theme_sku
             capture theme_codes_line_for_sort
-              render 'collection-theme-variant-codes', collection: collection
+              render 'collection-theme-variant-codes', collection: picker_sort_collection
             endcapture
             assign theme_codes_line_for_sort = theme_codes_line_for_sort | strip
           endif

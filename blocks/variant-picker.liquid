@@ -7,7 +7,7 @@
 
 {% liquid
   assign enable_collection_context_variant = false
-  if template.name == 'collection'
+  if request.page_type == 'collection'
     assign enable_collection_context_variant = true
   endif
 %}

@@ -11,38 +11,20 @@
 {% liquid
   assign picker_context_variant = nil
   assign enable_collection_context_variant = enable_collection_context_variant | default: false
-  assign _picker_ctx_collection = collection
-  if _picker_ctx_collection == blank and closest.collection != blank
-    assign _picker_ctx_collection = closest.collection
-  endif
   if enable_collection_context_variant
     capture _picker_ctx_vid
-      render 'card-context-variant-id', product: product_resource, theme_option_label: block_settings.theme_option_label, current_collection: _picker_ctx_collection
+      render 'card-context-variant-id', product: product_resource, theme_option_label: block_settings.theme_option_label
     endcapture
     assign _picker_ctx_vid = _picker_ctx_vid | strip
     if _picker_ctx_vid != ''
-      assign _want_picker_vid = _picker_ctx_vid | strip
-      for v in product_resource.variants
-        assign _picker_vid_s = v.id | append: ''
-        if _picker_vid_s == _want_picker_vid
-          assign picker_context_variant = v
-          break
-        endif
-      endfor
+      assign _picker_ctx_num = _picker_ctx_vid | plus: 0
+      if _picker_ctx_num != 0
+        assign picker_context_variant = product_resource.variants | find: 'id', _picker_ctx_num
+      endif
     endif
   endif
 %}
 
-{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active', scope_collection: _picker_ctx_collection %}{% endcapture %}
-{% assign theme_sku_layout_active = false %}
-{% if _theme_sku_layout_flag | strip == '1' %}
-  {% assign theme_sku_layout_active = true %}
-{% endif %}
-
-{% capture collection_card_variant_option_sort %}
-  {% render 'resolve-collection-card-variant-option-sort', section: section %}
-{% endcapture %}
-{% assign collection_card_variant_option_sort = collection_card_variant_option_sort | strip %}
 {% unless product_resource.has_only_default_variant %}
   {% liquid
     assign button_background_brightness = section.settings.color_scheme.settings.foreground | color_brightness
@@ -127,46 +109,6 @@
             endif
           endif
 
-          assign sort_this_option_by_theme_sku = theme_option_matches
-          if sort_this_option_by_theme_sku == false and theme_option_name_normalized contains 'theme'
-            assign sort_this_option_by_theme_sku = true
-          endif
-          assign theme_codes_line_for_sort = ''
-          assign theme_value_ids_ordered = ''
-          assign apply_theme_sku_value_order = false
-          assign picker_sort_collection = collection
-          if picker_sort_collection == blank and closest.collection != blank
-            assign picker_sort_collection = closest.collection
-          endif
-          if collection_card_variant_option_sort == 'alphabetical'
-            assign sorted_option_values = product_option.values | sort: 'name'
-            assign theme_value_ids_ordered = ''
-            for pov_alpha in sorted_option_values
-              assign theme_value_ids_ordered = theme_value_ids_ordered | append: '|' | append: pov_alpha.id
-            endfor
-            assign theme_value_ids_ordered = theme_value_ids_ordered | strip
-            if theme_value_ids_ordered != blank
-              assign apply_theme_sku_value_order = true
-            endif
-          elsif collection_card_variant_option_sort != 'shopify_default' and theme_sku_layout_active and picker_sort_collection != blank and sort_this_option_by_theme_sku
-            capture theme_codes_line_for_sort
-              render 'collection-theme-variant-codes', collection: picker_sort_collection
-            endcapture
-            assign theme_codes_line_for_sort = theme_codes_line_for_sort | strip
-            if theme_codes_line_for_sort != blank
-              capture theme_value_ids_ordered
-                render 'product-option-value-ids-by-theme-sku',
-                  product: product_resource,
-                  product_option: product_option,
-                  codes_line: theme_codes_line_for_sort
-              endcapture
-              assign theme_value_ids_ordered = theme_value_ids_ordered | strip
-              if theme_value_ids_ordered != blank
-                assign apply_theme_sku_value_order = true
-              endif
-            endif
-          endif
-
           if variant_style == 'buttons' and settings.variant_button_width == 'equal-width-buttons'
             assign fieldset_id = section.id | append: '-' | append: product_resource.id | append: '-' | append: product_option.name | handleize
             assign option_id_attribute = 'data-option-id="' | append: fieldset_id | append: '"'
@@ -207,60 +149,106 @@
                 <span class="variant-option__swatch-value">{{ swatch_legend_value | escape }}</span>
               {%- endif %}
             </legend>
-            {%- if apply_theme_sku_value_order -%}
-              {%- assign _value_id_parts = theme_value_ids_ordered | split: '|' -%}
-              {%- assign value_input_index = -1 -%}
-              {%- for vid_token in _value_id_parts -%}
-                {%- assign vt_str = vid_token | strip -%}
-                {%- if vt_str == blank -%}
-                  {%- continue -%}
-                {%- endif -%}
-                {%- for product_option_value in product_option.values -%}
-                  {%- assign pov_id_str = product_option_value.id | append: '' -%}
-                  {%- if pov_id_str != vt_str -%}
-                    {%- continue -%}
-                  {%- endif -%}
-                  {%- assign value_input_index = value_input_index | plus: 1 -%}
-                  {% if product_option_value.size > longest_value and option_id_attribute %}
-                    {% assign longest_value = product_option_value.size %}
+            {%- for product_option_value in product_option.values -%}
+              {% if product_option_value.size > longest_value and option_id_attribute %}
+                {% assign longest_value = product_option_value.size %}
+              {% endif %}
+              <label
+                class="variant-option__button-label{% if variant_style == 'swatch' %} variant-option__button-label--has-swatch{% endif %}"
+              >
+                <input
+                  type="radio"
+                  name="{{ product_option.name | escape }}-{{ block.id }}-{{ product_resource.id }}"
+                  value="{{ product_option_value | escape }}"
+                  aria-label="{{ product_option_value.name }}"
+                  {% if product_option_value.available == false %}
+                    aria-disabled="true"
                   {% endif %}
-                  {% render 'variant-main-picker-option-value-control',
-                    product_option_value: product_option_value,
-                    product_option: product_option,
-                    product_resource: product_resource,
-                    block: block,
-                    fieldset_index: fieldset_index,
-                    value_input_index: value_input_index,
-                    variant_style: variant_style,
-                    opt_pos_num: opt_pos_num,
-                    picker_context_variant: picker_context_variant,
-                    use_theme_metafield_swatches: use_theme_metafield_swatches,
-                    theme_entries: theme_entries,
-                    theme_swatches_is_list: theme_swatches_is_list
+                  data-previous-checked="false"
+                  data-fieldset-index="{{ fieldset_index }}"
+                  data-input-index="{{ forloop.index0 }}"
+                  data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
+                  data-option-value-id="{{ product_option_value.id }}"
+                  data-option-available="{{ product_option_value.available }}"
+                  data-connected-product-url="{{ product_option_value.product_url }}"
+                  {% if product_option_value.variant.id %}
+                    data-variant-id="{{ product_option_value.variant.id }}"
+                  {% endif %}
+                  {% liquid
+                    assign option_featured_media = product_option_value.variant.featured_media
+                    if option_featured_media == blank and product_option_value.product_url
+                      assign option_featured_media = product_option_value.variant.product.featured_media
+                    endif
                   %}
-                {%- endfor -%}
-              {%- endfor -%}
-            {%- else -%}
-              {%- for product_option_value in product_option.values -%}
-                {% if product_option_value.size > longest_value and option_id_attribute %}
-                  {% assign longest_value = product_option_value.size %}
+                  {% if option_featured_media %}
+                    data-option-media-id="{{ option_featured_media.id }}"
+                  {% endif %}
+                  {% liquid
+                    assign picker_input_checked = product_option_value.selected
+                    if picker_input_checked == false and picker_context_variant != blank
+                      assign ctx_opt_for_picker = ''
+                      case opt_pos_num
+                        when 1
+                          assign ctx_opt_for_picker = picker_context_variant.option1
+                        when 2
+                          assign ctx_opt_for_picker = picker_context_variant.option2
+                        when 3
+                          assign ctx_opt_for_picker = picker_context_variant.option3
+                      endcase
+                      if ctx_opt_for_picker == product_option_value.name
+                        assign picker_input_checked = true
+                      endif
+                    endif
+                  %}
+                  {% if picker_input_checked %}
+                    data-current-checked="true"
+                    checked
+                  {% else %}
+                    data-current-checked="false"
+                  {% endif %}
+                >
+                {% if variant_style == 'swatch' %}
+                  {% liquid
+                    assign featured_media = product_option_value.variant.featured_media
+
+                    # If the variant has no featured media, and we have a combined listing product, then fall back to
+                    # using the featured media of the child product that is linked to this option value.
+                    if featured_media == blank and product_option_value.product_url
+                      assign featured_media = product_option_value.variant.product.featured_media
+                    endif
+                  %}
+
+                  {% if use_theme_metafield_swatches %}
+                    {% render 'variant-theme-swatch',
+                      theme_entries: theme_entries,
+                      theme_swatches_is_list: theme_swatches_is_list,
+                      product_option_value: product_option_value,
+                      mode: 'unscaled'
+                    %}
+                  {% else %}
+                    {% render 'swatch',
+                      swatch: product_option_value.swatch,
+                      variant_image: featured_media,
+                      mode: 'unscaled'
+                    %}
+                  {% endif %}
+                {% else %}
+                  {% if product_option_value.available == true %}
+                    <span
+                      class="variant-option__button-label__pill"
+                      data-key="variant-option-pill"
+                    ></span>
+                  {% endif %}
+                  <span
+                    class="variant-option__button-label__text"
+                    data-key="variant-option-text"
+                  >
+                    {{- product_option_value | escape -}}
+                  </span>
                 {% endif %}
-                {% render 'variant-main-picker-option-value-control',
-                  product_option_value: product_option_value,
-                  product_option: product_option,
-                  product_resource: product_resource,
-                  block: block,
-                  fieldset_index: fieldset_index,
-                  value_input_index: forloop.index0,
-                  variant_style: variant_style,
-                  opt_pos_num: opt_pos_num,
-                  picker_context_variant: picker_context_variant,
-                  use_theme_metafield_swatches: use_theme_metafield_swatches,
-                  theme_entries: theme_entries,
-                  theme_swatches_is_list: theme_swatches_is_list
-                %}
-              {%- endfor -%}
-            {%- endif -%}
+                {% render 'strikethrough-variant', product_option: product_option_value %}
+              </label>
+            {%- endfor -%}
             {% if option_id_attribute %}
               {% style %}
                 [data-option-id="{{ fieldset_id }}"] {
@@ -299,92 +287,41 @@
                 name="options[{{ product_option.name | escape }}]"
                 class="variant-option__select"
               >
-                {%- if apply_theme_sku_value_order -%}
-                  {%- assign _value_id_parts_dd = theme_value_ids_ordered | split: '|' -%}
-                  {%- assign value_input_index_dd = -1 -%}
-                  {%- for vid_token_dd in _value_id_parts_dd -%}
-                    {%- assign vt_str_dd = vid_token_dd | strip -%}
-                    {%- if vt_str_dd == blank -%}
-                      {%- continue -%}
-                    {%- endif -%}
-                    {%- for product_option_value in product_option.values -%}
-                      {%- assign pov_id_str_dd = product_option_value.id | append: '' -%}
-                      {%- if pov_id_str_dd != vt_str_dd -%}
-                        {%- continue -%}
-                      {%- endif -%}
-                      {%- assign value_input_index_dd = value_input_index_dd | plus: 1 -%}
-                      {% liquid
-                        assign picker_option_selected = product_option_value.selected
-                        if picker_option_selected == false and picker_context_variant != blank
-                          assign ctx_opt_for_select = ''
-                          case opt_pos_num
-                            when 1
-                              assign ctx_opt_for_select = picker_context_variant.option1
-                            when 2
-                              assign ctx_opt_for_select = picker_context_variant.option2
-                            when 3
-                              assign ctx_opt_for_select = picker_context_variant.option3
-                          endcase
-                          if ctx_opt_for_select == product_option_value.name
-                            assign picker_option_selected = true
-                          endif
-                        endif
-                      %}
-                      <option
-                        value="{{ product_option_value | escape }}"
-                        data-input-id="{{ product_option.position }}-{{ value_input_index_dd }}"
-                        data-option-value-id="{{ product_option_value.id }}"
-                        data-variant-id="{{ product_option_value.variant.id }}"
-                        data-connected-product-url="{{ product_option_value.product_url }}"
-                        {% if picker_option_selected %}
-                          selected="selected"
-                        {% endif %}
-                      >
-                        {% if product_option_value.available == false %}
-                          {{ product_option_value | escape }} - {{ 'content.unavailable' | t }}
-                        {% else %}
-                          {{ product_option_value | escape }}
-                        {% endif %}
-                      </option>
-                    {%- endfor -%}
-                  {%- endfor -%}
-                {%- else -%}
-                  {%- for product_option_value in product_option.values -%}
-                    {% liquid
-                      assign picker_option_selected = product_option_value.selected
-                      if picker_option_selected == false and picker_context_variant != blank
-                        assign ctx_opt_for_select = ''
-                        case opt_pos_num
-                          when 1
-                            assign ctx_opt_for_select = picker_context_variant.option1
-                          when 2
-                            assign ctx_opt_for_select = picker_context_variant.option2
-                          when 3
-                            assign ctx_opt_for_select = picker_context_variant.option3
-                        endcase
-                        if ctx_opt_for_select == product_option_value.name
-                          assign picker_option_selected = true
-                        endif
+                {%- for product_option_value in product_option.values -%}
+                  {% liquid
+                    assign picker_option_selected = product_option_value.selected
+                    if picker_option_selected == false and picker_context_variant != blank
+                      assign ctx_opt_for_select = ''
+                      case opt_pos_num
+                        when 1
+                          assign ctx_opt_for_select = picker_context_variant.option1
+                        when 2
+                          assign ctx_opt_for_select = picker_context_variant.option2
+                        when 3
+                          assign ctx_opt_for_select = picker_context_variant.option3
+                      endcase
+                      if ctx_opt_for_select == product_option_value.name
+                        assign picker_option_selected = true
                       endif
-                    %}
-                    <option
-                      value="{{ product_option_value | escape }}"
-                      data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
-                      data-option-value-id="{{ product_option_value.id }}"
-                      data-variant-id="{{ product_option_value.variant.id }}"
-                      data-connected-product-url="{{ product_option_value.product_url }}"
-                      {% if picker_option_selected %}
-                        selected="selected"
-                      {% endif %}
-                    >
-                      {% if product_option_value.available == false %}
-                        {{ product_option_value | escape }} - {{ 'content.unavailable' | t }}
-                      {% else %}
-                        {{ product_option_value | escape }}
-                      {% endif %}
-                    </option>
-                  {%- endfor -%}
-                {%- endif -%}
+                    endif
+                  %}
+                  <option
+                    value="{{ product_option_value | escape }}"
+                    data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
+                    data-option-value-id="{{ product_option_value.id }}"
+                    data-variant-id="{{ product_option_value.variant.id }}"
+                    data-connected-product-url="{{ product_option_value.product_url }}"
+                    {% if picker_option_selected %}
+                      selected="selected"
+                    {% endif %}
+                  >
+                    {% if product_option_value.available == false %}
+                      {{ product_option_value | escape }} - {{ 'content.unavailable' | t }}
+                    {% else %}
+                      {{ product_option_value | escape }}
+                    {% endif %}
+                  </option>
+                {%- endfor -%}
               </select>
               <svg
                 aria-hidden="true"

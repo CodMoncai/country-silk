@@ -415,7 +415,7 @@
               "name": "t:names.product_variant_picker",
               "settings": {
                 "variant_style": "buttons",
-                "show_swatches": true,
+                "show_swatches": false,
                 "theme_option_label": "Theme,Themes",
                 "theme_swatches_metafield_namespace": "custom",
                 "theme_swatches_metafield_key": "theme_swatches",

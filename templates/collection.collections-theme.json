@@ -415,11 +415,11 @@
               "name": "t:names.product_variant_picker",
               "settings": {
                 "variant_style": "buttons",
-                "show_swatches": false,
+                "show_swatches": true,
                 "theme_option_label": "Theme,Themes",
                 "theme_swatches_metafield_namespace": "custom",
                 "theme_swatches_metafield_key": "theme_swatches",
-                "alignment": "left",
+                "alignment": "center",
                 "padding-block-start": 0,
                 "padding-block-end": 8,
                 "padding-inline-start": 0,

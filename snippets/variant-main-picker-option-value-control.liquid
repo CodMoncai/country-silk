@@ -1,0 +1,108 @@
+{%- doc -%}
+  One theme/button option value control (radio + swatch or pill). Used by variant-main-picker; keep in sync when editing picker markup.
+
+  @param {object} product_option_value
+  @param {object} product_option
+  @param {object} product_resource
+  @param {object} block
+  @param {number} fieldset_index
+  @param {number} value_input_index - index for data-input-index / data-input id segment
+  @param {string} variant_style - swatch | buttons branch
+  @param {number} opt_pos_num
+  @param {object} [picker_context_variant]
+  @param {boolean} use_theme_metafield_swatches
+  @param {object} [theme_entries]
+  @param {boolean} theme_swatches_is_list
+{%- enddoc -%}
+<label
+  class="variant-option__button-label{% if variant_style == 'swatch' %} variant-option__button-label--has-swatch{% endif %}"
+>
+  <input
+    type="radio"
+    name="{{ product_option.name | escape }}-{{ block.id }}-{{ product_resource.id }}"
+    value="{{ product_option_value | escape }}"
+    aria-label="{{ product_option_value.name }}"
+    {% if product_option_value.available == false %}
+      aria-disabled="true"
+    {% endif %}
+    data-previous-checked="false"
+    data-fieldset-index="{{ fieldset_index }}"
+    data-input-index="{{ value_input_index }}"
+    data-input-id="{{ product_option.position }}-{{ value_input_index }}"
+    data-option-value-id="{{ product_option_value.id }}"
+    data-option-available="{{ product_option_value.available }}"
+    data-connected-product-url="{{ product_option_value.product_url }}"
+    {% if product_option_value.variant.id %}
+      data-variant-id="{{ product_option_value.variant.id }}"
+    {% endif %}
+    {% liquid
+      assign option_featured_media = product_option_value.variant.featured_media
+      if option_featured_media == blank and product_option_value.product_url
+        assign option_featured_media = product_option_value.variant.product.featured_media
+      endif
+    %}
+    {% if option_featured_media %}
+      data-option-media-id="{{ option_featured_media.id }}"
+    {% endif %}
+    {% liquid
+      assign picker_input_checked = product_option_value.selected
+      if picker_input_checked == false and picker_context_variant != blank
+        assign ctx_opt_for_picker = ''
+        case opt_pos_num
+          when 1
+            assign ctx_opt_for_picker = picker_context_variant.option1
+          when 2
+            assign ctx_opt_for_picker = picker_context_variant.option2
+          when 3
+            assign ctx_opt_for_picker = picker_context_variant.option3
+        endcase
+        if ctx_opt_for_picker == product_option_value.name
+          assign picker_input_checked = true
+        endif
+      endif
+    %}
+    {% if picker_input_checked %}
+      data-current-checked="true"
+      checked
+    {% else %}
+      data-current-checked="false"
+    {% endif %}
+  >
+  {% if variant_style == 'swatch' %}
+    {% liquid
+      assign featured_media = product_option_value.variant.featured_media
+      if featured_media == blank and product_option_value.product_url
+        assign featured_media = product_option_value.variant.product.featured_media
+      endif
+    %}
+
+    {% if use_theme_metafield_swatches %}
+      {% render 'variant-theme-swatch',
+        theme_entries: theme_entries,
+        theme_swatches_is_list: theme_swatches_is_list,
+        product_option_value: product_option_value,
+        mode: 'unscaled'
+      %}
+    {% else %}
+      {% render 'swatch',
+        swatch: product_option_value.swatch,
+        variant_image: featured_media,
+        mode: 'unscaled'
+      %}
+    {% endif %}
+  {% else %}
+    {% if product_option_value.available == true %}
+      <span
+        class="variant-option__button-label__pill"
+        data-key="variant-option-pill"
+      ></span>
+    {% endif %}
+    <span
+      class="variant-option__button-label__text"
+      data-key="variant-option-text"
+    >
+      {{- product_option_value | escape -}}
+    </span>
+  {% endif %}
+  {% render 'strikethrough-variant', product_option: product_option_value %}
+</label>

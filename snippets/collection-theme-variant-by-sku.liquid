@@ -28,40 +28,10 @@
 {%- enddoc -%}
 {%- liquid
   assign pick_id = ''
-  assign ch = collection.handle | downcase | strip
-  assign ct = collection.title | downcase | strip | replace: 'chrsitmas', 'christmas'
-  assign codes_line = ''
-
-  comment
-    Match specific collections before Specials. Handles are hyphenated; titles include full theme names.
-  endcomment
-  if ch contains 'peppermint' or ct contains 'peppermint'
-    assign codes_line = 'RW2'
-  elsif ch contains 'candy' or ct == 'candy'
-    assign codes_line = 'CND'
-  elsif ch contains 'traditional' and (ch contains 'christmas' or ch contains 'xmas')
-    assign codes_line = 'TR2,TRA'
-  elsif ct contains 'traditional' and (ct contains 'christmas' or ct contains 'xmas')
-    assign codes_line = 'TR2,TRA'
-  elsif ch contains 'cozy' and (ch contains 'christmas' or ch contains 'xmas')
-    assign codes_line = 'BR2'
-  elsif ct contains 'cozy' and (ct contains 'christmas' or ct contains 'xmas')
-    assign codes_line = 'BR2'
-  elsif ch contains 'enchanted' and (ch contains 'christmas' or ch contains 'xmas')
-    assign codes_line = 'BSW'
-  elsif ct contains 'enchanted' and (ct contains 'christmas' or ct contains 'xmas')
-    assign codes_line = 'BSW'
-  elsif ch contains 'ruby' and ch contains 'red'
-    assign codes_line = 'RRD'
-  elsif ct contains 'ruby' and ct contains 'red' and (ct contains 'christmas' or ct contains 'xmas')
-    assign codes_line = 'RRD'
-  elsif ch contains 'festive' and (ch contains 'christmas' or ch contains 'xmas')
-    assign codes_line = 'FAS'
-  elsif ct contains 'festive' and (ct contains 'christmas' or ct contains 'xmas')
-    assign codes_line = 'FAS'
-  elsif ch == 'specials' or ch == 'special-offers' or ct == 'specials'
-    assign codes_line = 'GWN,GLD,SWC,BRW,PGW,EMR,RSC,BUF,RRW2,RRW,GD2'
-  endif
+  capture codes_line
+    render 'collection-theme-variant-codes', collection: collection
+  endcapture
+  assign codes_line = codes_line | strip
 
   if codes_line != blank
     assign code_parts = codes_line | split: ','

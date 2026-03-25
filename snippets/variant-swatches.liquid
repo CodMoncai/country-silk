@@ -47,6 +47,22 @@
       endif
     endif
   endif
+
+  assign card_swatches_theme_option_position = nil
+  assign card_swatches_theme_codes = ''
+  if template.name == 'collection' and collection != blank
+    for po in product_resource.options_with_values
+      assign _po_nm = po.name | downcase | strip
+      if _po_nm == 'theme' or _po_nm == 'themes' or _po_nm contains 'theme'
+        assign card_swatches_theme_option_position = po.position | plus: 0
+        capture card_swatches_theme_codes
+          render 'collection-theme-variant-codes', collection: collection
+        endcapture
+        assign card_swatches_theme_codes = card_swatches_theme_codes | strip
+        break
+      endif
+    endfor
+  endif
 %}
 
 <swatches-variant-picker-component
@@ -75,10 +91,125 @@
         # Use product_option.position which is the actual position among ALL options
         assign swatch_option_position = product_option.position
         assign swatch_option_key = 'option' | append: swatch_option_position
+        assign card_swatches_value_order = ''
+        assign apply_card_swatches_sku_order = false
+        if card_swatches_theme_codes != blank and card_swatches_theme_option_position != nil
+          assign _sw_pos = product_option.position | plus: 0
+          if _sw_pos == card_swatches_theme_option_position
+            capture card_swatches_value_order
+              render 'product-option-value-ids-by-theme-sku',
+                product: product_resource,
+                product_option: product_option,
+                codes_line: card_swatches_theme_codes
+            endcapture
+            assign card_swatches_value_order = card_swatches_value_order | strip
+            if card_swatches_value_order != blank
+              assign apply_card_swatches_sku_order = true
+            endif
+          endif
+        endif
       -%}
 
       <fieldset class="variant-option variant-option--buttons variant-option--swatches">
         {% capture children %}
+          {%- if apply_card_swatches_sku_order -%}
+            {%- assign _swatch_vid_parts = card_swatches_value_order | split: '|' -%}
+            {%- assign swatch_input_ix = -1 -%}
+            {%- for vid_sw in _swatch_vid_parts -%}
+              {%- assign vt_sw = vid_sw | strip -%}
+              {%- if vt_sw == blank -%}
+                {%- continue -%}
+              {%- endif -%}
+              {%- for product_option_value in product_option.values -%}
+                {%- assign pov_sw = product_option_value.id | append: '' -%}
+                {%- if pov_sw != vt_sw -%}
+                  {%- continue -%}
+                {%- endif -%}
+                {%- assign swatch_input_ix = swatch_input_ix | plus: 1 -%}
+            {%- liquid
+              assign first_available_variant = nil
+              assign featured_media = product_option_value.variant.featured_media
+              if featured_media == blank
+                if product_option_value.variant == blank
+                  for variant in product_resource.variants
+                    assign variant_opt_for_swatch = ''
+                    case swatch_option_position
+                      when 1
+                        assign variant_opt_for_swatch = variant.option1
+                      when 2
+                        assign variant_opt_for_swatch = variant.option2
+                      when 3
+                        assign variant_opt_for_swatch = variant.option3
+                    endcase
+                    if variant.available and variant_opt_for_swatch == product_option_value.name and variant.featured_media
+                      assign featured_media = variant.featured_media
+                      assign first_available_variant = variant
+                      break
+                    endif
+                  endfor
+                elsif product_option_value.product_url
+                  assign featured_media = product_option_value.variant.product.featured_media
+                endif
+              endif
+            %}
+            {% liquid
+              assign effective_variant_id = first_available_variant.id | default: product_option_value.variant.id
+              assign swatch_checked = false
+              if allow_preselection and product_option_value.selected
+                assign swatch_checked = true
+              endif
+              if swatch_checked == false and card_context_variant != blank
+                if effective_variant_id != blank and effective_variant_id == card_context_variant.id
+                  assign swatch_checked = true
+                else
+                  assign context_opt_for_swatch = ''
+                  case swatch_option_position
+                    when 1
+                      assign context_opt_for_swatch = card_context_variant.option1
+                    when 2
+                      assign context_opt_for_swatch = card_context_variant.option2
+                    when 3
+                      assign context_opt_for_swatch = card_context_variant.option3
+                  endcase
+                  if context_opt_for_swatch == product_option_value.name
+                    assign swatch_checked = true
+                  endif
+                endif
+              endif
+            %}
+            <li class="variant-option__swatch">
+              <label
+                data-media-id="{{ featured_media.id }}"
+                class="variant-option__button-label variant-option__button-label--has-swatch swatch-rounded"
+                on:pointerenter="product-card/previewVariant/{{ featured_media.id }}"
+                on:pointerleave="product-card/resetVariant"
+              >
+                <input
+                  type="radio"
+                  name="{{ product_option.name | escape }}-{{ product_resource.id }}-swatch"
+                  value="{{ product_option_value | escape }}"
+                  aria-label="{{ product_option_value.name }}"
+                  data-input-id="{{ product_option.position }}-{{ swatch_input_ix }}"
+                  data-option-media-id="{{ featured_media.id }}"
+                  data-option-value-id="{{ product_option_value.id }}"
+                  data-option-available="{{ product_option_value.available }}"
+                  data-connected-product-url="{{ product_option_value.product_url }}"
+                  {% if swatch_checked %}
+                    checked
+                  {% endif %}
+                  data-variant-id="{{ first_available_variant.id | default: product_option_value.variant.id }}"
+                  data-first-available-or-first-variant-id="{{ first_available_variant.id | default: product_option_value.variant.id }}"
+                >
+                {% render 'swatch',
+                  swatch: product_option_value.swatch,
+                  variant_image: featured_media,
+                %}
+                {% render 'strikethrough-variant', product_option: product_option_value %}
+              </label>
+            </li>
+              {%- endfor -%}
+            {%- endfor -%}
+          {%- else -%}
           {%- for product_option_value in product_option.values -%}
             {% liquid
               assign first_available_variant = nil
@@ -174,6 +305,7 @@
               </label>
             </li>
           {%- endfor -%}
+          {%- endif -%}
           <li
             slot="more"
           >

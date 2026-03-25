@@ -1,0 +1,67 @@
+{%- doc -%}
+  Pipe-separated option value IDs in display order: values whose linked variant SKU ends with a code
+  from codes_line first (in code list order, then by option value order within each code), then remaining values.
+
+  @param {object} product - Product
+  @param {object} product_option - One product option from options_with_values
+  @param {string} codes_line - Comma-separated uppercase suffix codes (e.g. from collection-theme-variant-codes)
+{%- enddoc -%}
+{%- liquid
+  assign out_ids = ''
+  assign opt_pos = product_option.position | plus: 0
+  assign code_parts = codes_line | strip | split: ','
+
+  for code_token in code_parts
+    assign code_u = code_token | strip | upcase
+    if code_u == blank
+      continue
+    endif
+    assign csize = code_u.size
+    for product_option_value in product_option.values
+      assign v = product_option_value.variant
+      if v == blank
+        for variant in product.variants
+          assign match_opt = ''
+          case opt_pos
+            when 1
+              assign match_opt = variant.option1
+            when 2
+              assign match_opt = variant.option2
+            when 3
+              assign match_opt = variant.option3
+          endcase
+          if match_opt == product_option_value.name and variant.sku != blank
+            assign v = variant
+            break
+          endif
+        endfor
+      endif
+      if v == blank or v.sku == blank
+        continue
+      endif
+      assign sku_u = v.sku | strip | upcase
+      assign ssize = sku_u.size
+      if ssize < csize
+        continue
+      endif
+      assign start_i = ssize | minus: csize
+      assign suf = sku_u | slice: start_i, csize
+      if suf == code_u
+        assign vid = product_option_value.id | append: ''
+        assign needle = '|' | append: vid | append: '|'
+        unless out_ids contains needle
+          assign out_ids = out_ids | append: '|' | append: vid
+        endunless
+      endif
+    endfor
+  endfor
+
+  for product_option_value in product_option.values
+    assign vid = product_option_value.id | append: ''
+    assign needle = '|' | append: vid | append: '|'
+    unless out_ids contains needle
+      assign out_ids = out_ids | append: '|' | append: vid
+    endunless
+  endfor
+-%}
+{{- out_ids -}}

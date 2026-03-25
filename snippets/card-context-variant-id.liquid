@@ -33,6 +33,8 @@
   elsif template.name == 'collection' and collection != blank
     assign out_variant = product.selected_or_first_available_variant
     assign found = false
+    assign ch_lc = collection.handle | downcase
+    assign ct_lc = collection.title | downcase | strip
     capture _theme_sku_variant_id
       render 'collection-theme-variant-by-sku', product: product, collection: collection
     endcapture
@@ -42,8 +44,21 @@
       if _theme_sku_variant_id_num != 0
         assign _sku_resolved = product.variants | find: 'id', _theme_sku_variant_id_num
         if _sku_resolved != blank
-          assign out_variant = _sku_resolved
-          assign found = true
+          assign _sku_pick_ok = true
+          comment
+            Suffix codes (e.g. FAS) can match an unrelated variant. For Festive Christmas collections, require options to name that theme so we can fall back to title/handle/theme matching.
+          endcomment
+          if ch_lc contains 'festive' and (ch_lc contains 'christmas' or ch_lc contains 'xmas' or ct_lc contains 'christmas' or ct_lc contains 'xmas')
+            assign _sku_opt_blob = _sku_resolved.option1 | append: ' ' | append: _sku_resolved.option2 | append: ' ' | append: _sku_resolved.option3 | downcase
+            assign _sku_pick_ok = false
+            if _sku_opt_blob contains 'festive' and (_sku_opt_blob contains 'christmas' or _sku_opt_blob contains 'xmas')
+              assign _sku_pick_ok = true
+            endif
+          endif
+          if _sku_pick_ok
+            assign out_variant = _sku_resolved
+            assign found = true
+          endif
         endif
       endif
     endif

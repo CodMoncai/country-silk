@@ -9,8 +9,9 @@
   4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   5. product.selected_or_first_available_variant
 
-  Collection Theme details: product_option.position, value names vs title/handle (contains / multi-word), spelling normalization,
-  product_option_value.variant fallback; then generic option1–option3 rules before filter fallback.
+  Collection Theme details: option named Theme/Themes (or single-option products use that option), product_option.position,
+  value names vs title/handle (contains / multi-word / first-word + “title contains first word” for labels like “Traditional V1”),
+  spelling normalization, product_option_value.variant fallback; then generic rules before filter fallback.
 
   Note: Facet filtering uses collection.filters / search.filters — not current_tags. Tag-only URLs use current_tags.
 
@@ -61,6 +62,9 @@
         break
       endif
     endfor
+    if theme_product_option == blank and product.options.size == 1
+      assign theme_product_option = product.options_with_values.first
+    endif
     unless found
       if theme_product_option != blank
         assign theme_pos = theme_product_option.position | plus: 0
@@ -98,6 +102,16 @@
                     assign matched_theme = true
                   endif
                 endif
+              endif
+            endunless
+            unless matched_theme
+              assign vo_first = vo | split: ' ' | first | strip
+              assign col_first = col_cmp | split: ' ' | first | strip
+              if vo_first.size >= 4 and col_first.size >= 4 and vo_first == col_first
+                assign matched_theme = true
+              endif
+              if matched_theme == false and vo_first.size >= 4 and col_cmp contains vo_first
+                assign matched_theme = true
               endif
             endunless
             if matched_theme

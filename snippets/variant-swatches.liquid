@@ -15,7 +15,10 @@
   if card_swatches_collection == blank and closest.collection != blank
     assign card_swatches_collection = closest.collection
   endif
-  assign collection_card_variant_option_sort = section.settings.collection_card_variant_option_sort | default: 'collection_theme_sku'
+  capture collection_card_variant_option_sort
+    render 'resolve-collection-card-variant-option-sort', section: section
+  endcapture
+  assign collection_card_variant_option_sort = collection_card_variant_option_sort | strip
 %}
 {% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active', scope_collection: card_swatches_collection %}{% endcapture %}
 {% assign theme_sku_layout_active = false %}

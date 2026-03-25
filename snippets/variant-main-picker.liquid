@@ -39,7 +39,10 @@
   {% assign theme_sku_layout_active = true %}
 {% endif %}
 
-{% assign collection_card_variant_option_sort = section.settings.collection_card_variant_option_sort | default: 'collection_theme_sku' %}
+{% capture collection_card_variant_option_sort %}
+  {% render 'resolve-collection-card-variant-option-sort', section: section %}
+{% endcapture %}
+{% assign collection_card_variant_option_sort = collection_card_variant_option_sort | strip %}
 {% unless product_resource.has_only_default_variant %}
   {% liquid
     assign button_background_brightness = section.settings.color_scheme.settings.foreground | color_brightness

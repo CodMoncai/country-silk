@@ -1,0 +1,35 @@
+{%- doc -%}
+  Sort mode for variant/theme option values on collection cards (resolved for nested swatches / variant-picker).
+  Uses the first `_collection-card` or `collection-card` block in the section (direct child or one level nested).
+
+  @param {object} section - Parent section
+{%- enddoc -%}
+{%- liquid
+  assign sort_mode = ''
+  for b in section.blocks
+    if b.type == '_collection-card' or b.type == 'collection-card'
+      assign sort_mode = b.settings.collection_card_variant_option_sort
+      break
+    endif
+    for c in b.blocks
+      if c.type == '_collection-card' or c.type == 'collection-card'
+        assign sort_mode = c.settings.collection_card_variant_option_sort
+        break
+      endif
+      for d in c.blocks
+        if d.type == '_collection-card' or d.type == 'collection-card'
+          assign sort_mode = d.settings.collection_card_variant_option_sort
+          break
+        endif
+      endfor
+      if sort_mode != blank
+        break
+      endif
+    endfor
+    if sort_mode != blank
+      break
+    endif
+  endfor
+  assign sort_mode = sort_mode | default: section.settings.collection_card_variant_option_sort | default: 'collection_theme_sku'
+-%}
+{{- sort_mode -}}

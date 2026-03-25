@@ -39,6 +39,7 @@
   {% assign theme_sku_layout_active = true %}
 {% endif %}
 
+{% assign collection_card_variant_option_sort = section.settings.collection_card_variant_option_sort | default: 'collection_theme_sku' %}
 {% unless product_resource.has_only_default_variant %}
   {% liquid
     assign button_background_brightness = section.settings.color_scheme.settings.foreground | color_brightness
@@ -134,22 +135,32 @@
           if picker_sort_collection == blank and closest.collection != blank
             assign picker_sort_collection = closest.collection
           endif
-          if theme_sku_layout_active and picker_sort_collection != blank and sort_this_option_by_theme_sku
+          if collection_card_variant_option_sort == 'alphabetical'
+            assign sorted_option_values = product_option.values | sort: 'name'
+            assign theme_value_ids_ordered = ''
+            for pov_alpha in sorted_option_values
+              assign theme_value_ids_ordered = theme_value_ids_ordered | append: '|' | append: pov_alpha.id
+            endfor
+            assign theme_value_ids_ordered = theme_value_ids_ordered | strip
+            if theme_value_ids_ordered != blank
+              assign apply_theme_sku_value_order = true
+            endif
+          elsif collection_card_variant_option_sort != 'shopify_default' and theme_sku_layout_active and picker_sort_collection != blank and sort_this_option_by_theme_sku
             capture theme_codes_line_for_sort
               render 'collection-theme-variant-codes', collection: picker_sort_collection
             endcapture
             assign theme_codes_line_for_sort = theme_codes_line_for_sort | strip
-          endif
-          if theme_codes_line_for_sort != blank
-            capture theme_value_ids_ordered
-              render 'product-option-value-ids-by-theme-sku',
-                product: product_resource,
-                product_option: product_option,
-                codes_line: theme_codes_line_for_sort
-            endcapture
-            assign theme_value_ids_ordered = theme_value_ids_ordered | strip
-            if theme_value_ids_ordered != blank
-              assign apply_theme_sku_value_order = true
+            if theme_codes_line_for_sort != blank
+              capture theme_value_ids_ordered
+                render 'product-option-value-ids-by-theme-sku',
+                  product: product_resource,
+                  product_option: product_option,
+                  codes_line: theme_codes_line_for_sort
+              endcapture
+              assign theme_value_ids_ordered = theme_value_ids_ordered | strip
+              if theme_value_ids_ordered != blank
+                assign apply_theme_sku_value_order = true
+              endif
             endif
           endif
 

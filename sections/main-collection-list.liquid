@@ -111,6 +111,34 @@
   "settings": [
     {
       "type": "header",
+      "content": "t:content.collection_card_variant_options"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.collection_card_variant_option_sort_help"
+    },
+    {
+      "type": "select",
+      "id": "collection_card_variant_option_sort",
+      "label": "t:settings.collection_card_variant_option_sort",
+      "options": [
+        {
+          "value": "collection_theme_sku",
+          "label": "t:options.variant_option_sort_collection_theme_sku"
+        },
+        {
+          "value": "shopify_default",
+          "label": "t:options.variant_option_sort_shopify_default"
+        },
+        {
+          "value": "alphabetical",
+          "label": "t:options.variant_option_sort_alphabetical"
+        }
+      ],
+      "default": "collection_theme_sku"
+    },
+    {
+      "type": "header",
       "content": "t:content.cards_layout"
     },
     {

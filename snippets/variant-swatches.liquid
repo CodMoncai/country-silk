@@ -15,6 +15,7 @@
   if card_swatches_collection == blank and closest.collection != blank
     assign card_swatches_collection = closest.collection
   endif
+  assign collection_card_variant_option_sort = section.settings.collection_card_variant_option_sort | default: 'collection_theme_sku'
 %}
 {% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active', scope_collection: card_swatches_collection %}{% endcapture %}
 {% assign theme_sku_layout_active = false %}
@@ -110,7 +111,16 @@
         assign swatch_option_key = 'option' | append: swatch_option_position
         assign card_swatches_value_order = ''
         assign apply_card_swatches_sku_order = false
-        if card_swatches_theme_codes != blank and card_swatches_theme_option_position != nil
+        if collection_card_variant_option_sort == 'alphabetical' and swatch_count > 0
+          assign sorted_swatch_values = product_option.values | sort: 'name'
+          for pov_swatch_alpha in sorted_swatch_values
+            assign card_swatches_value_order = card_swatches_value_order | append: '|' | append: pov_swatch_alpha.id
+          endfor
+          assign card_swatches_value_order = card_swatches_value_order | strip
+          if card_swatches_value_order != blank
+            assign apply_card_swatches_sku_order = true
+          endif
+        elsif collection_card_variant_option_sort != 'shopify_default' and card_swatches_theme_codes != blank and card_swatches_theme_option_position != nil
           assign _sw_pos = product_option.position | plus: 0
           if _sw_pos == card_swatches_theme_option_position
             capture card_swatches_value_order

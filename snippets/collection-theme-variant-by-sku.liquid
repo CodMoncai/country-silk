@@ -1,0 +1,93 @@
+{%- doc -%}
+  For collection pages: picks a variant when Variant SKU ends with a Theme Code (suffix match).
+  Codes and collection routing follow Country Silk theme tables — update when codes change.
+
+  Outputs variant id or empty.
+
+  @param {object} product - Product
+  @param {object} collection - Current collection
+{%- enddoc -%}
+{%- liquid
+  assign pick_id = ''
+  assign ch = collection.handle | downcase | strip
+  assign ct = collection.title | downcase | strip
+  assign codes_line = ''
+
+  if ch == 'specials' or ch == 'special-offers' or ct == 'specials' or ch contains 'specials'
+    assign codes_line = 'GWN,GLD,SWC,BRW,PGW,EMR,RSC,BUF,RRW2,RRW,GD2'
+  elsif ch contains 'peppermint' or ct contains 'peppermint'
+    assign codes_line = 'RW2'
+  elsif ch contains 'candy' and ch contains 'christmas'
+    assign codes_line = 'CND'
+  elsif ch == 'candy' or ct == 'candy' or ch == 'candy-christmas' or ct == 'candy christmas'
+    assign codes_line = 'CND'
+  elsif ch contains 'traditional' and ch contains 'christmas'
+    assign codes_line = 'TR2,TRA'
+  elsif ct contains 'traditional' and ct contains 'christmas'
+    assign codes_line = 'TR2,TRA'
+  elsif ch contains 'cozy' and ch contains 'christmas'
+    assign codes_line = 'BR2'
+  elsif ct contains 'cozy' and ct contains 'christmas'
+    assign codes_line = 'BR2'
+  elsif ch contains 'enchanted' and ch contains 'christmas'
+    assign codes_line = 'BSW'
+  elsif ct contains 'enchanted' and ct contains 'christmas'
+    assign codes_line = 'BSW'
+  elsif ch contains 'ruby' and ch contains 'red'
+    assign codes_line = 'RRD'
+  elsif ct contains 'ruby' and ct contains 'red'
+    assign codes_line = 'RRD'
+  elsif ch contains 'festive' and ch contains 'christmas'
+    assign codes_line = 'FAS'
+  elsif ct contains 'festive' and ct contains 'christmas'
+    assign codes_line = 'FAS'
+  elsif ch contains 'gold' and ch contains 'white'
+    assign codes_line = 'GD2'
+  elsif ct contains 'gold white'
+    assign codes_line = 'GD2'
+  elsif ch contains 'silver' and ch contains 'white'
+    assign codes_line = 'SWC'
+  elsif ct contains 'silver white'
+    assign codes_line = 'SWC'
+  elsif ch contains 'red-red' or ct contains 'red red white'
+    assign codes_line = 'RRW2,RRW'
+  elsif ch contains 'emerald' and ch contains 'christmas'
+    assign codes_line = 'EMR'
+  elsif ct contains 'emerald' and ct contains 'christmas'
+    assign codes_line = 'EMR'
+  endif
+
+  if codes_line != blank
+    assign code_parts = codes_line | split: ','
+    for code_token in code_parts
+      if pick_id != blank
+        break
+      endif
+      assign code_u = code_token | strip | upcase
+      if code_u == blank
+        continue
+      endif
+      assign csize = code_u.size
+      for variant in product.variants
+        if pick_id != blank
+          break
+        endif
+        assign sku_raw = variant.sku | strip
+        if sku_raw == blank
+          continue
+        endif
+        assign sku_u = sku_raw | upcase
+        assign ssize = sku_u.size
+        if ssize >= csize
+          assign start_i = ssize | minus: csize
+          assign suf = sku_u | slice: start_i, csize
+          if suf == code_u
+            assign pick_id = variant.id
+            break
+          endif
+        endif
+      endfor
+    endfor
+  endif
+-%}
+{{- pick_id -}}

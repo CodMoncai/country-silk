@@ -10,9 +10,8 @@
   4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   5. product.selected_or_first_available_variant
 
-  Collection Theme details: option named Theme/Themes (or single-option products use that option), product_option.position,
-  value names vs title/handle (contains / multi-word / first-word + “title contains first word” for labels like “Traditional V1”),
-  spelling normalization, product_option_value.variant fallback; then generic rules before filter fallback.
+  Collection Theme details: SKU suffix vs Theme Code (see collection-theme-variant-by-sku) runs first; then option name/value
+  matching, spelling normalization, etc. Update the SKU snippet when Theme Codes change.
 
   Note: Facet filtering uses collection.filters / search.filters — not current_tags. Tag-only URLs use current_tags.
 
@@ -34,6 +33,20 @@
   elsif template.name == 'collection' and collection != blank
     assign out_variant = product.selected_or_first_available_variant
     assign found = false
+    capture _theme_sku_variant_id
+      render 'collection-theme-variant-by-sku', product: product, collection: collection
+    endcapture
+    assign _theme_sku_variant_id = _theme_sku_variant_id | strip
+    if _theme_sku_variant_id != ''
+      assign _theme_sku_variant_id_num = _theme_sku_variant_id | plus: 0
+      if _theme_sku_variant_id_num != 0
+        assign _sku_resolved = product.variants | find: 'id', _theme_sku_variant_id_num
+        if _sku_resolved != blank
+          assign out_variant = _sku_resolved
+          assign found = true
+        endif
+      endif
+    endif
     comment
       Normalize echnated/enchated so collection "Echnated …" matches variant "Enchated …" without breaking words like "technician".
     endcomment

@@ -1,26 +1,27 @@
 {%- doc -%}
   For collection pages: picks a variant when Variant SKU ends with a Theme Code (suffix match).
-  Shopify collection handles are hyphenated (e.g. peppermint, candy, specials).
+  Collection URLs use hyphenated handles (e.g. traditional-christmas, ruby-red-christmas).
 
-  Routing (Country Silk):
-  - Specials: all Christmas / palette themes share one collection URL; first SKU suffix match wins using the ordered code list below.
-  - Peppermint: handle or title contains "peppermint" (no "Christmas" in collection name) → RW2.
-  - Candy: hyphenated handle contains "candy" (e.g. candy, candy-…), or collection title is exactly "candy" → CND.
+  Dedicated collections → single code (or TR2 then TRA for Traditional):
+  - Peppermint → RW2
+  - Candy → CND
+  - Traditional Christmas → TR2, TRA
+  - Cozy Christmas → BR2
+  - Enchanted Christmas → BSW (title typo "Chrsitmas" normalized to match)
+  - Ruby Red Christmas → RRD
+  - Festive Christmas → FAS
 
-  Theme table (Theme Code = last 3 characters of Variant SKU):
-  | # | Theme Name            | Code |
-  |---|------------------------|------|
-  | 18 | Peppermint            | RW2  |
-  | 19 | Candy                 | CND  |
-  | 23 | Traditional Christmas | TR2 (TRA alternate in list) |
-  | 34 | Cozy Christmas        | BR2  |
-  | 49 | Enchanted Christmas   | BSW  |
-  | 51 | Ruby Red Christmas    | RRD  |
-  | 52 | Festive Christmas     | FAS  |
+  Specials → every other theme / palette code only (not the seven collections above):
+  GWN, GLD, SWC, BRW, PGW, EMR, RSC, BUF, RRW2, RRW, GD2
 
-  Specials list order: Christmas themes by table, then other palette codes still used on that collection.
-
-  Outputs variant id or empty.
+  Theme table (suffix = last 3 characters of Variant SKU):
+  | 18 | Peppermint              | RW2 |
+  | 19 | Candy                   | CND |
+  | 23 | Traditional Christmas   | TR2 |
+  | 34 | Cozy Christmas          | BR2 |
+  | 49 | Enchanted Christmas     | BSW |
+  | 51 | Ruby Red Christmas      | RRD |
+  | 52 | Festive Christmas       | FAS |
 
   @param {object} product - Product
   @param {object} collection - Current collection
@@ -28,19 +29,38 @@
 {%- liquid
   assign pick_id = ''
   assign ch = collection.handle | downcase | strip
-  assign ct = collection.title | downcase | strip
+  assign ct = collection.title | downcase | strip | replace: 'chrsitmas', 'christmas'
   assign codes_line = ''
 
   comment
-    Specials = single URL for Traditional, Cozy, Enchanted, Ruby Red, Festive, Emerald, Gold/Silver/Red-White, etc.
-    Order: try each code in sequence; first variant with matching SKU suffix wins.
+    Match specific collections before Specials. Handles are hyphenated; titles include full theme names.
   endcomment
-  if ch == 'specials' or ch == 'special-offers' or ct == 'specials' or ch contains 'specials'
-    assign codes_line = 'TR2,TRA,BR2,BSW,RRD,FAS,EMR,GD2,SWC,RRW2,RRW,GWN,GLD,BRW,PGW,RSC,BUF'
-  elsif ch contains 'peppermint' or ct contains 'peppermint'
+  if ch contains 'peppermint' or ct contains 'peppermint'
     assign codes_line = 'RW2'
   elsif ch contains 'candy' or ct == 'candy'
     assign codes_line = 'CND'
+  elsif ch contains 'traditional' and (ch contains 'christmas' or ch contains 'xmas')
+    assign codes_line = 'TR2,TRA'
+  elsif ct contains 'traditional' and (ct contains 'christmas' or ct contains 'xmas')
+    assign codes_line = 'TR2,TRA'
+  elsif ch contains 'cozy' and (ch contains 'christmas' or ch contains 'xmas')
+    assign codes_line = 'BR2'
+  elsif ct contains 'cozy' and (ct contains 'christmas' or ct contains 'xmas')
+    assign codes_line = 'BR2'
+  elsif ch contains 'enchanted' and (ch contains 'christmas' or ch contains 'xmas')
+    assign codes_line = 'BSW'
+  elsif ct contains 'enchanted' and (ct contains 'christmas' or ct contains 'xmas')
+    assign codes_line = 'BSW'
+  elsif ch contains 'ruby' and ch contains 'red'
+    assign codes_line = 'RRD'
+  elsif ct contains 'ruby' and ct contains 'red' and (ct contains 'christmas' or ct contains 'xmas')
+    assign codes_line = 'RRD'
+  elsif ch contains 'festive' and (ch contains 'christmas' or ch contains 'xmas')
+    assign codes_line = 'FAS'
+  elsif ct contains 'festive' and (ct contains 'christmas' or ct contains 'xmas')
+    assign codes_line = 'FAS'
+  elsif ch == 'specials' or ch == 'special-offers' or ct == 'specials'
+    assign codes_line = 'GWN,GLD,SWC,BRW,PGW,EMR,RSC,BUF,RRW2,RRW,GD2'
   endif
 
   if codes_line != blank

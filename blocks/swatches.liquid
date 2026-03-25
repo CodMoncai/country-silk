@@ -1,5 +1,12 @@
 {%- liquid
   assign block_settings = block.settings
+  assign swatch_priority_for_render = block.settings.priority_theme_option_values | default: '' | strip
+  if swatch_priority_for_render == blank
+    capture swatch_priority_for_render
+      render 'resolve-variant-picker-priority-theme-line', section: section
+    endcapture
+    assign swatch_priority_for_render = swatch_priority_for_render | strip
+  endif
   for product_option in closest.product.options_with_values
     assign swatch_count = product_option.values | map: 'swatch' | compact | size
 
@@ -27,7 +34,7 @@
   >
     {% render 'variant-swatches',
       product_resource: closest.product,
-      priority_theme_option_values: block.settings.priority_theme_option_values,
+      priority_theme_option_values: swatch_priority_for_render,
       swatch_block_id: block.id
     %}
   </product-swatches>
@@ -117,7 +124,7 @@
       "type": "textarea",
       "id": "priority_theme_option_values",
       "label": "t:settings.priority_theme_option_values",
-      "info": "t:info.priority_theme_option_values"
+      "info": "t:info.priority_theme_option_values_swatches"
     },
     {
       "type": "select",

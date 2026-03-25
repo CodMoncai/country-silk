@@ -1,0 +1,61 @@
+{%- doc -%}
+  Returns `priority_theme_option_values` from the first `variant-picker` block found under the section’s
+  block tree (product cards, collection cards, or grouped layouts). Used when the Swatches block leaves
+  its own Theme value order blank so one list on the Variant picker applies to both.
+  @param {object} section - Current section
+{%- enddoc -%}
+{%- liquid
+  assign out = ''
+  assign done = false
+  for b in section.blocks
+    if done
+      break
+    endif
+    if b.type == 'variant-picker'
+      assign out = b.settings.priority_theme_option_values | default: '' | strip
+      if out != blank
+        assign done = true
+      endif
+    endif
+    unless done
+      for c in b.blocks
+        if done
+          break
+        endif
+        if c.type == 'variant-picker'
+          assign out = c.settings.priority_theme_option_values | default: '' | strip
+          if out != blank
+            assign done = true
+          endif
+        endif
+        unless done
+          for d in c.blocks
+            if done
+              break
+            endif
+            if d.type == 'variant-picker'
+              assign out = d.settings.priority_theme_option_values | default: '' | strip
+              if out != blank
+                assign done = true
+              endif
+            endif
+            unless done
+              for e in d.blocks
+                if done
+                  break
+                endif
+                if e.type == 'variant-picker'
+                  assign out = e.settings.priority_theme_option_values | default: '' | strip
+                  if out != blank
+                    assign done = true
+                  endif
+                endif
+              endfor
+            endunless
+          endfor
+        endunless
+      endfor
+    endunless
+  endfor
+-%}
+{{- out -}}

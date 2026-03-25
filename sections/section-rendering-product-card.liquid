@@ -69,7 +69,11 @@
       block: section,
       enable_collection_context_variant: true
     %}
-    {% render 'variant-swatches', product_resource: product, has_option_selected: true %}
+    {% render 'variant-swatches',
+      product_resource: product,
+      has_option_selected: true,
+      swatch_block_id: section.id
+    %}
 
     <product-price>
       {% render 'price', product_resource: product, show_unit_price: true %}

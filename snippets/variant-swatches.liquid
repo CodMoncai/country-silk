@@ -6,6 +6,7 @@
   @param {object} product_resource - The product object, which contains variants and options.
   @param {boolean} [has_option_selected] - Whether to render the swatches in a pre-selected state.
   @param {string} [priority_theme_option_values] - Comma-separated Theme value names to show first (same as Variant picker block).
+  @param {string} [swatch_block_id] - Block id for unique radio groups when the same product appears on multiple cards (pass parent block.id).
 
   @example
     {% render 'variant-swatches', product_resource: product %}
@@ -20,6 +21,13 @@
   if swatch_priority_line != blank
     assign swatch_priority_line = swatch_priority_line | split: '
 ' | join: ','
+  endif
+  assign swatch_radio_group_suffix = product_resource.id | append: ''
+  if swatch_block_id != blank
+    assign swatch_radio_group_suffix = swatch_radio_group_suffix | append: '-b' | append: swatch_block_id
+  endif
+  if card_swatches_collection != blank and card_swatches_collection.id != blank
+    assign swatch_radio_group_suffix = swatch_radio_group_suffix | append: '-coll' | append: card_swatches_collection.id
   endif
   capture collection_card_variant_option_sort
     render 'resolve-collection-card-variant-option-sort', section: section
@@ -149,12 +157,14 @@
           assign swatch_priority_applies = false
           assign _spl = swatch_priority_line | split: ','
           for _spt in _spl
-            assign _spn = _spt | strip | downcase
+            assign _spn = _spt | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+            assign _spn = _spn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
             if _spn == blank
               continue
             endif
             for _spov in product_option.values
-              assign _svn = _spov.name | downcase | strip
+              assign _svn = _spov.name | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+              assign _svn = _svn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
               if _svn == _spn
                 assign swatch_priority_applies = true
                 break
@@ -256,7 +266,7 @@
               >
                 <input
                   type="radio"
-                  name="{{ product_option.name | escape }}-{{ product_resource.id }}-swatch"
+                  name="{{ product_option.name | escape }}-{{ swatch_radio_group_suffix }}-swatch"
                   value="{{ product_option_value | escape }}"
                   aria-label="{{ product_option_value.name }}"
                   data-input-id="{{ product_option.position }}-{{ swatch_input_ix }}"
@@ -353,7 +363,7 @@
               >
                 <input
                   type="radio"
-                  name="{{ product_option.name | escape }}-{{ product_resource.id }}-swatch"
+                  name="{{ product_option.name | escape }}-{{ swatch_radio_group_suffix }}-swatch"
                   value="{{ product_option_value | escape }}"
                   aria-label="{{ product_option_value.name }}"
                   data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"

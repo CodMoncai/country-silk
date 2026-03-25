@@ -230,3 +230,5 @@ endfor
 ```
 
 **Collection context:** Inside blocks/snippets that use `closest.product`, the global `collection` may be unset. Pass `current_collection` into `card-context-variant-id` using `collection`, then `closest.collection` as fallback (same pattern as `variant-swatches.liquid`). Pass `scope_collection` into `collection-theme-sku-layout-active` from the same resolved collection so themed layout rules stay on for nested renders.
+
+**Radio groups on product cards:** Use a radio `name` that includes the product id, the owning block id, and (when the same product can appear on multiple cards) the scoped collection id—e.g. `variant-main-picker` suffix `-coll{{ collection.id }}` and `variant-swatches` suffix `-b{{ block.id }}-coll{{ collection.id }}`. Otherwise multiple cards share one HTML radio group and only the first row behaves correctly.

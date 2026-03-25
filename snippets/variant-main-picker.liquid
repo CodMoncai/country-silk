@@ -9,6 +9,16 @@
 {% assign block_settings = block.settings %}
 
 {% liquid
+  assign picker_scope_collection = collection
+  if picker_scope_collection == blank and closest.collection != blank
+    assign picker_scope_collection = closest.collection
+  endif
+  assign picker_radio_name_suffix = block.id | append: '-' | append: product_resource.id
+  if picker_scope_collection != blank and picker_scope_collection.id != blank
+    assign picker_radio_name_suffix = picker_radio_name_suffix | append: '-coll' | append: picker_scope_collection.id
+  endif
+%}
+{% liquid
   assign picker_context_variant = nil
   assign enable_collection_context_variant = enable_collection_context_variant | default: false
   if enable_collection_context_variant
@@ -118,12 +128,14 @@
             assign priority_applies_to_this_option = false
             assign _plist = priority_theme_line | split: ','
             for _pt in _plist
-              assign _pn = _pt | strip | downcase
+              assign _pn = _pt | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+              assign _pn = _pn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
               if _pn == blank
                 continue
               endif
               for _pv in product_option.values
-                assign _vn = _pv.name | downcase | strip
+                assign _vn = _pv.name | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+                assign _vn = _vn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
                 if _vn == _pn
                   assign priority_applies_to_this_option = true
                   break
@@ -209,7 +221,7 @@
                   >
                     <input
                       type="radio"
-                      name="{{ product_option.name | escape }}-{{ block.id }}-{{ product_resource.id }}"
+                      name="{{ product_option.name | escape }}-{{ picker_radio_name_suffix }}"
                       value="{{ product_option_value | escape }}"
                       aria-label="{{ product_option_value.name }}"
                       {% if product_option_value.available == false %}
@@ -311,7 +323,7 @@
                 >
                   <input
                     type="radio"
-                    name="{{ product_option.name | escape }}-{{ block.id }}-{{ product_resource.id }}"
+                    name="{{ product_option.name | escape }}-{{ picker_radio_name_suffix }}"
                     value="{{ product_option_value | escape }}"
                     aria-label="{{ product_option_value.name }}"
                     {% if product_option_value.available == false %}

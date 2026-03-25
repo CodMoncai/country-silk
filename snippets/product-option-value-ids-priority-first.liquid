@@ -11,12 +11,14 @@
 
   assign prio_parts = priority_names_line | strip | split: ','
   for pri_token in prio_parts
-    assign pnorm = pri_token | strip | downcase
+    assign pnorm = pri_token | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+    assign pnorm = pnorm | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
     if pnorm == blank
       continue
     endif
     for pov in product_option.values
-      assign vnorm = pov.name | strip | downcase
+      assign vnorm = pov.name | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+      assign vnorm = vnorm | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
       if vnorm == pnorm
         assign vid = pov.id | append: ''
         assign needle = '|' | append: vid | append: '|'

@@ -27,7 +27,8 @@
   >
     {% render 'variant-swatches',
       product_resource: closest.product,
-      priority_theme_option_values: block.settings.priority_theme_option_values
+      priority_theme_option_values: block.settings.priority_theme_option_values,
+      swatch_block_id: block.id
     %}
   </product-swatches>
 {% endif %}

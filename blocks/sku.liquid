@@ -3,17 +3,26 @@
   assign product_resource = closest.product
   assign selected_variant = product_resource.selected_or_first_available_variant
   if template.name != 'product'
+    assign _sku_ctx_collection = collection
+    if _sku_ctx_collection == blank and closest.collection != blank
+      assign _sku_ctx_collection = closest.collection
+    endif
     capture _card_context_variant_id
-      render 'card-context-variant-id', product: product_resource
+      render 'card-context-variant-id', product: product_resource, current_collection: _sku_ctx_collection
     endcapture
     assign _card_context_variant_id = _card_context_variant_id | strip
     if _card_context_variant_id != ''
-      assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
-      if _card_context_variant_id_num != 0
-        assign _resolved_card_variant = product_resource.variants | find: 'id', _card_context_variant_id_num
-        if _resolved_card_variant != blank
-          assign selected_variant = _resolved_card_variant
+      assign _want_sku_vid = _card_context_variant_id | strip
+      assign _resolved_card_variant = nil
+      for v in product_resource.variants
+        assign _sku_block_vid_s = v.id | append: ''
+        if _sku_block_vid_s == _want_sku_vid
+          assign _resolved_card_variant = v
+          break
         endif
+      endfor
+      if _resolved_card_variant != blank
+        assign selected_variant = _resolved_card_variant
       endif
     endif
   endif

@@ -11,21 +11,29 @@
 {% liquid
   assign picker_context_variant = nil
   assign enable_collection_context_variant = enable_collection_context_variant | default: false
+  assign _picker_ctx_collection = collection
+  if _picker_ctx_collection == blank and closest.collection != blank
+    assign _picker_ctx_collection = closest.collection
+  endif
   if enable_collection_context_variant
     capture _picker_ctx_vid
-      render 'card-context-variant-id', product: product_resource, theme_option_label: block_settings.theme_option_label
+      render 'card-context-variant-id', product: product_resource, theme_option_label: block_settings.theme_option_label, current_collection: _picker_ctx_collection
     endcapture
     assign _picker_ctx_vid = _picker_ctx_vid | strip
     if _picker_ctx_vid != ''
-      assign _picker_ctx_num = _picker_ctx_vid | plus: 0
-      if _picker_ctx_num != 0
-        assign picker_context_variant = product_resource.variants | find: 'id', _picker_ctx_num
-      endif
+      assign _want_picker_vid = _picker_ctx_vid | strip
+      for v in product_resource.variants
+        assign _picker_vid_s = v.id | append: ''
+        if _picker_vid_s == _want_picker_vid
+          assign picker_context_variant = v
+          break
+        endif
+      endfor
     endif
   endif
 %}
 
-{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active' %}{% endcapture %}
+{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active', scope_collection: _picker_ctx_collection %}{% endcapture %}
 {% assign theme_sku_layout_active = false %}
 {% if _theme_sku_layout_flag | strip == '1' %}
   {% assign theme_sku_layout_active = true %}

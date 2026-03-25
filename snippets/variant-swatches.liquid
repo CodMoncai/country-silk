@@ -10,7 +10,13 @@
   {% render 'variant-swatches', product_resource: product %}
 {%- enddoc -%}
 
-{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active' %}{% endcapture %}
+{% liquid
+  assign card_swatches_collection = collection
+  if card_swatches_collection == blank and closest.collection != blank
+    assign card_swatches_collection = closest.collection
+  endif
+%}
+{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active', scope_collection: card_swatches_collection %}{% endcapture %}
 {% assign theme_sku_layout_active = false %}
 {% if _theme_sku_layout_flag | strip == '1' %}
   {% assign theme_sku_layout_active = true %}
@@ -40,26 +46,27 @@
   endif
 
   capture _card_context_variant_id
-    render 'card-context-variant-id', product: product_resource
+    render 'card-context-variant-id', product: product_resource, current_collection: card_swatches_collection
   endcapture
   assign _card_context_variant_id = _card_context_variant_id | strip
   assign card_context_variant = product_resource.selected_or_first_available_variant
   if _card_context_variant_id != ''
-    assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
-    if _card_context_variant_id_num != 0
-      assign _resolved_card_variant = product_resource.variants | find: 'id', _card_context_variant_id_num
-      if _resolved_card_variant != blank
-        assign card_context_variant = _resolved_card_variant
+    assign _resolved_card_variant = nil
+    assign _want_sw_vid = _card_context_variant_id | strip
+    for v in product_resource.variants
+      assign _swid_s = v.id | append: ''
+      if _swid_s == _want_sw_vid
+        assign _resolved_card_variant = v
+        break
       endif
+    endfor
+    if _resolved_card_variant != blank
+      assign card_context_variant = _resolved_card_variant
     endif
   endif
 
   assign card_swatches_theme_option_position = nil
   assign card_swatches_theme_codes = ''
-  assign card_swatches_collection = collection
-  if card_swatches_collection == blank and closest.collection != blank
-    assign card_swatches_collection = closest.collection
-  endif
   if theme_sku_layout_active and card_swatches_collection != blank
     for po in product_resource.options_with_values
       assign _po_nm = po.name | downcase | strip

@@ -13,18 +13,28 @@
   assign block_settings = block.settings
   assign image_sizes = '(min-width: 750px) 50vw, 100vw'
 
+  assign _gallery_ctx_collection = collection
+  if _gallery_ctx_collection == blank and closest.collection != blank
+    assign _gallery_ctx_collection = closest.collection
+  endif
+
   capture _card_context_variant_id
-    render 'card-context-variant-id', product: product
+    render 'card-context-variant-id', product: product, current_collection: _gallery_ctx_collection
   endcapture
   assign _card_context_variant_id = _card_context_variant_id | strip
   assign card_context_variant = product.selected_or_first_available_variant
   if _card_context_variant_id != ''
-    assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
-    if _card_context_variant_id_num != 0
-      assign _resolved_card_variant = product.variants | find: 'id', _card_context_variant_id_num
-      if _resolved_card_variant != blank
-        assign card_context_variant = _resolved_card_variant
+    assign _want_gallery_vid = _card_context_variant_id | strip
+    assign _resolved_card_variant = nil
+    for v in product.variants
+      assign _gallery_vid_s = v.id | append: ''
+      if _gallery_vid_s == _want_gallery_vid
+        assign _resolved_card_variant = v
+        break
       endif
+    endfor
+    if _resolved_card_variant != blank
+      assign card_context_variant = _resolved_card_variant
     endif
   endif
 

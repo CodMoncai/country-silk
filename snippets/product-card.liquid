@@ -36,17 +36,22 @@
 
   # Logic to determine which variant URL to use (matching swatch selection logic + tag-filtered collections)
   capture _card_context_variant_id
-    render 'card-context-variant-id', product: product
+    render 'card-context-variant-id', product: product, current_collection: collection
   endcapture
   assign _card_context_variant_id = _card_context_variant_id | strip
   assign variant_to_link = product.selected_or_first_available_variant
   if _card_context_variant_id != ''
-    assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
-    if _card_context_variant_id_num != 0
-      assign _resolved_card_variant = product.variants | find: 'id', _card_context_variant_id_num
-      if _resolved_card_variant != blank
-        assign variant_to_link = _resolved_card_variant
+    assign _resolved_card_variant = nil
+    assign _want_card_vid = _card_context_variant_id | strip
+    for v in product.variants
+      assign _cid_s = v.id | append: ''
+      if _cid_s == _want_card_vid
+        assign _resolved_card_variant = v
+        break
       endif
+    endfor
+    if _resolved_card_variant != blank
+      assign variant_to_link = _resolved_card_variant
     endif
   endif
 

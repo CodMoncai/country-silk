@@ -16,10 +16,20 @@
   Note: Facet filtering uses collection.filters / search.filters — not current_tags. Tag-only URLs use current_tags.
 
   @param {object} product - Product object (required)
+  @param {object} [current_collection] - Current collection if global collection is unset inside nested renders (pass from product-card).
   @param {string} [theme_option_label] - Comma-separated option names for Theme (same as variant picker), default Theme,Themes
 {%- enddoc -%}
+{% liquid
+  assign _col_scope = current_collection
+  if _col_scope == blank
+    assign _col_scope = collection
+  endif
+  if _col_scope == blank and closest.collection != blank
+    assign _col_scope = closest.collection
+  endif
+%}
 {%- capture _theme_sku_layout_active_capture -%}
-{%- render 'collection-theme-sku-layout-active' -%}
+{%- render 'collection-theme-sku-layout-active', scope_collection: _col_scope -%}
 {%- endcapture -%}
 {%- liquid
   assign theme_sku_layout_active = false
@@ -38,10 +48,7 @@
   if product.selected_variant and template.name == 'product'
     assign out_variant = product.selected_variant
   elsif theme_sku_layout_active
-    assign ctx_collection = collection
-    if ctx_collection == blank and closest.collection != blank
-      assign ctx_collection = closest.collection
-    endif
+    assign ctx_collection = _col_scope
     if ctx_collection != blank
     assign out_variant = product.selected_or_first_available_variant
     assign found = false
@@ -52,26 +59,18 @@
     endcapture
     assign _theme_sku_variant_id = _theme_sku_variant_id | strip
     if _theme_sku_variant_id != ''
-      assign _theme_sku_variant_id_num = _theme_sku_variant_id | plus: 0
-      if _theme_sku_variant_id_num != 0
-        assign _sku_resolved = product.variants | find: 'id', _theme_sku_variant_id_num
-        if _sku_resolved != blank
-          assign _sku_pick_ok = true
-          comment
-            Suffix codes (e.g. FAS) can match an unrelated variant. For Festive Christmas collections, require options to name that theme so we can fall back to title/handle/theme matching.
-          endcomment
-          if ch_lc contains 'festive' and (ch_lc contains 'christmas' or ch_lc contains 'xmas' or ct_lc contains 'christmas' or ct_lc contains 'xmas')
-            assign _sku_opt_blob = _sku_resolved.option1 | append: ' ' | append: _sku_resolved.option2 | append: ' ' | append: _sku_resolved.option3 | downcase
-            assign _sku_pick_ok = false
-            if _sku_opt_blob contains 'festive' and (_sku_opt_blob contains 'christmas' or _sku_opt_blob contains 'xmas')
-              assign _sku_pick_ok = true
-            endif
-          endif
-          if _sku_pick_ok
-            assign out_variant = _sku_resolved
-            assign found = true
-          endif
+      assign _sku_resolved = nil
+      assign _want_vid = _theme_sku_variant_id | strip
+      for v in product.variants
+        assign _vid_s = v.id | append: ''
+        if _vid_s == _want_vid
+          assign _sku_resolved = v
+          break
         endif
+      endfor
+      if _sku_resolved != blank
+        assign out_variant = _sku_resolved
+        assign found = true
       endif
     endif
     comment
@@ -354,6 +353,8 @@
         endunless
       endif
     endunless
+    else
+      assign out_variant = product.selected_or_first_available_variant
     endif
   elsif storefront_filters_active
     if product.selected_variant

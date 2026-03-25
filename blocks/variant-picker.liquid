@@ -3,9 +3,13 @@
   if request.visual_preview_mode and product_resource == blank
     assign product_resource = collections.all.products.first
   endif
+  assign _variant_picker_scope_collection = collection
+  if _variant_picker_scope_collection == blank and closest.collection != blank
+    assign _variant_picker_scope_collection = closest.collection
+  endif
 -%}
 
-{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active' %}{% endcapture %}
+{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active', scope_collection: _variant_picker_scope_collection %}{% endcapture %}
 {% liquid
   assign enable_collection_context_variant = false
   if _theme_sku_layout_flag | strip == '1'

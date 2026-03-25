@@ -1,24 +1,28 @@
 {%- doc -%}
-  Outputs "1" when Country Silk collection theme SKU rules should run (variant order, default variant on cards, etc.).
+  Outputs "1" when Country Silk collection theme SKU rules should apply (card variant, picker order, etc.).
 
-  Matches the alternate collection template from templates/collection.collections-theme.json:
-  - template.suffix is "collections-theme", or
-  - template.name contains "collections-theme" (e.g. collection.collections-theme)
+  Active when a collection reference exists and:
+  - request.page_type is collection, except the non-theme collection template, OR
+  - template is the collections-theme alternate (suffix / name).
 
-  Requires a current collection (global or closest.collection).
-
-  Used instead of request.page_type alone so only this template gets behavior, not collection.all-products or other alternates.
+  @param {object} [scope_collection] - Collection to use when global collection is unset (e.g. pass from parent snippet).
 {%- enddoc -%}
 {%- liquid
   assign col = collection
+  if col == blank and scope_collection != blank
+    assign col = scope_collection
+  endif
   if col == blank and closest.collection != blank
     assign col = closest.collection
   endif
+
   assign active = false
   if col != blank
-    if template.suffix == 'collections-theme'
+    if template.name contains 'non-theme-collection'
+      assign active = false
+    elsif request.page_type == 'collection'
       assign active = true
-    elsif template.name contains 'collections-theme'
+    elsif template.suffix == 'collections-theme' or template.name contains 'collections-theme'
       assign active = true
     endif
   endif

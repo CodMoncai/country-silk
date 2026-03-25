@@ -26,18 +26,27 @@
   endif
 
   if resource_type == 'product' and settings.transition_to_main_product
+    assign _rc_ctx_collection = collection
+    if _rc_ctx_collection == blank and closest.collection != blank
+      assign _rc_ctx_collection = closest.collection
+    endif
     capture card_context_variant_id_str
-      render 'card-context-variant-id', product: resource
+      render 'card-context-variant-id', product: resource, current_collection: _rc_ctx_collection
     endcapture
     assign card_context_variant_id_str = card_context_variant_id_str | strip
     assign card_ctx_variant = resource.selected_or_first_available_variant
     if card_context_variant_id_str != ''
-      assign card_context_variant_id_num = card_context_variant_id_str | plus: 0
-      if card_context_variant_id_num != 0
-        assign resolved_ctx_variant = resource.variants | find: 'id', card_context_variant_id_num
-        if resolved_ctx_variant != blank
-          assign card_ctx_variant = resolved_ctx_variant
+      assign _want_rc_vid = card_context_variant_id_str | strip
+      assign resolved_ctx_variant = nil
+      for v in resource.variants
+        assign _rc_vid_s = v.id | append: ''
+        if _rc_vid_s == _want_rc_vid
+          assign resolved_ctx_variant = v
+          break
         endif
+      endfor
+      if resolved_ctx_variant != blank
+        assign card_ctx_variant = resolved_ctx_variant
       endif
     endif
     assign featured_media_url = card_ctx_variant.featured_image | image_url: width: image_width

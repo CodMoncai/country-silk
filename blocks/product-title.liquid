@@ -5,18 +5,27 @@
 {% else %}
   {% liquid
     assign product_title = '<p>' | append: closest.product.title | append: '</p>'
+    assign _title_ctx_collection = collection
+    if _title_ctx_collection == blank and closest.collection != blank
+      assign _title_ctx_collection = closest.collection
+    endif
     capture _card_context_variant_id
-      render 'card-context-variant-id', product: closest.product
+      render 'card-context-variant-id', product: closest.product, current_collection: _title_ctx_collection
     endcapture
     assign _card_context_variant_id = _card_context_variant_id | strip
     assign card_context_variant = closest.product.selected_or_first_available_variant
     if _card_context_variant_id != ''
-      assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
-      if _card_context_variant_id_num != 0
-        assign _resolved = closest.product.variants | find: 'id', _card_context_variant_id_num
-        if _resolved != blank
-          assign card_context_variant = _resolved
+      assign _want_title_vid = _card_context_variant_id | strip
+      assign _resolved = nil
+      for v in closest.product.variants
+        assign _title_vid_s = v.id | append: ''
+        if _title_vid_s == _want_title_vid
+          assign _resolved = v
+          break
         endif
+      endfor
+      if _resolved != blank
+        assign card_context_variant = _resolved
       endif
     endif
   %}

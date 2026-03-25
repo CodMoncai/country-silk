@@ -8,18 +8,28 @@
     assign product = closest.product
   endif
 
+  assign _srpc_ctx_collection = collection
+  if _srpc_ctx_collection == blank and closest.collection != blank
+    assign _srpc_ctx_collection = closest.collection
+  endif
+
   capture _card_context_variant_id
-    render 'card-context-variant-id', product: product, theme_option_label: section.settings.theme_option_label
+    render 'card-context-variant-id', product: product, theme_option_label: section.settings.theme_option_label, current_collection: _srpc_ctx_collection
   endcapture
   assign _card_context_variant_id = _card_context_variant_id | strip
   assign card_context_variant = product.selected_or_first_available_variant
   if _card_context_variant_id != ''
-    assign _card_context_variant_id_num = _card_context_variant_id | plus: 0
-    if _card_context_variant_id_num != 0
-      assign _resolved_card_variant = product.variants | find: 'id', _card_context_variant_id_num
-      if _resolved_card_variant != blank
-        assign card_context_variant = _resolved_card_variant
+    assign _want_srpc_vid = _card_context_variant_id | strip
+    assign _resolved_card_variant = nil
+    for v in product.variants
+      assign _srpc_vid_s = v.id | append: ''
+      if _srpc_vid_s == _want_srpc_vid
+        assign _resolved_card_variant = v
+        break
       endif
+    endfor
+    if _resolved_card_variant != blank
+      assign card_context_variant = _resolved_card_variant
     endif
   endif
 

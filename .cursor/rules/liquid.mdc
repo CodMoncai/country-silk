@@ -208,3 +208,25 @@ For props that are relatively straightforward, prefer to inline the liquid inste
 - No need to scroll up and down to find variable definitions
 - Reduces cognitive load in larger components
 - Makes the code more maintainable
+
+---
+
+## Variant ID lookup (product cards / `card-context-variant-id`)
+
+Do not use `product.variants | find: 'id', id | plus: 0` with IDs from `card-context-variant-id` or other captures. Coercing large Shopify GIDs through numeric filters can fail to match, so price, gallery, title, quick-add, and picker fall back to the wrong variant.
+
+**Do:** compare string forms in a loop:
+
+```liquid
+assign _want = captured_variant_id | strip
+assign _resolved = nil
+for v in product.variants
+  assign _vid_s = v.id | append: ''
+  if _vid_s == _want
+    assign _resolved = v
+    break
+  endif
+endfor
+```
+
+**Collection context:** Inside blocks/snippets that use `closest.product`, the global `collection` may be unset. Pass `current_collection` into `card-context-variant-id` using `collection`, then `closest.collection` as fallback (same pattern as `variant-swatches.liquid`). Pass `scope_collection` into `collection-theme-sku-layout-active` from the same resolved collection so themed layout rules stay on for nested renders.

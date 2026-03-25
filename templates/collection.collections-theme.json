@@ -417,7 +417,7 @@
                 "variant_style": "buttons",
                 "show_swatches": true,
                 "theme_option_label": "Theme",
-                "priority_theme_option_values": "Enchanted Christmas",
+                "priority_theme_option_values": "Cozy Christmas",
                 "theme_swatches_metafield_namespace": "custom",
                 "theme_swatches_metafield_key": "theme_swatches",
                 "alignment": "center",
@@ -432,6 +432,7 @@
               "type": "swatches",
               "name": "t:names.swatches",
               "settings": {
+                "priority_theme_option_values": "",
                 "product_swatches_alignment": "flex-start",
                 "product_swatches_alignment_mobile": "flex-start",
                 "hide_padding": false,

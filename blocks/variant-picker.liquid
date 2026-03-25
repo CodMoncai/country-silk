@@ -5,9 +5,10 @@
   endif
 -%}
 
+{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active' %}{% endcapture %}
 {% liquid
   assign enable_collection_context_variant = false
-  if request.page_type == 'collection'
+  if _theme_sku_layout_flag | strip == '1'
     assign enable_collection_context_variant = true
   endif
 %}

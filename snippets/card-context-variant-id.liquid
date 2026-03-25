@@ -3,7 +3,7 @@
 
   Priority:
   1. product.selected_variant on product pages only.
-  2. On collection templates: Theme + collection title/handle matching runs first (even if facet filters are active), so
+  2. On collection.collections-theme template: Theme + collection title/handle matching runs first (even if facet filters are active), so
      Collection title/handle "Emerald … Christmas" is aligned with Theme "Enchanted … Christmas" when "christmas" is present
      (common URL/handle typo). If no match, variant.matched applies.
   3. Search (or non-collection) when facet filters active: product.selected_variant if set, else variant.matched logic.
@@ -18,7 +18,14 @@
   @param {object} product - Product object (required)
   @param {string} [theme_option_label] - Comma-separated option names for Theme (same as variant picker), default Theme,Themes
 {%- enddoc -%}
+{%- capture _theme_sku_layout_active_capture -%}
+{%- render 'collection-theme-sku-layout-active' -%}
+{%- endcapture -%}
 {%- liquid
+  assign theme_sku_layout_active = false
+  if _theme_sku_layout_active_capture | strip == '1'
+    assign theme_sku_layout_active = true
+  endif
   capture storefront_filters_active_capture
     render 'storefront-filters-active'
   endcapture
@@ -30,13 +37,18 @@
 
   if product.selected_variant and template.name == 'product'
     assign out_variant = product.selected_variant
-  elsif request.page_type == 'collection' and collection != blank
+  elsif theme_sku_layout_active
+    assign ctx_collection = collection
+    if ctx_collection == blank and closest.collection != blank
+      assign ctx_collection = closest.collection
+    endif
+    if ctx_collection != blank
     assign out_variant = product.selected_or_first_available_variant
     assign found = false
-    assign ch_lc = collection.handle | downcase
-    assign ct_lc = collection.title | downcase | strip
+    assign ch_lc = ctx_collection.handle | downcase
+    assign ct_lc = ctx_collection.title | downcase | strip
     capture _theme_sku_variant_id
-      render 'collection-theme-variant-by-sku', product: product, collection: collection
+      render 'collection-theme-variant-by-sku', product: product, collection: ctx_collection
     endcapture
     assign _theme_sku_variant_id = _theme_sku_variant_id | strip
     if _theme_sku_variant_id != ''
@@ -65,13 +77,13 @@
     comment
       Normalize echnated/enchated so collection "Echnated …" matches variant "Enchated …" without breaking words like "technician".
     endcomment
-    assign col_title_key = collection.title | downcase | strip | replace: 'echnated', 'enchated'
-    assign col_handle = collection.handle | replace: 'echnated', 'enchated'
-    assign col_title_handleized = collection.title | handleize | replace: 'echnated', 'enchated'
-    assign col_cmp = collection.title | downcase | strip
+    assign col_title_key = ctx_collection.title | downcase | strip | replace: 'echnated', 'enchated'
+    assign col_handle = ctx_collection.handle | replace: 'echnated', 'enchated'
+    assign col_title_handleized = ctx_collection.title | handleize | replace: 'echnated', 'enchated'
+    assign col_cmp = ctx_collection.title | downcase | strip
     assign col_cmp = col_cmp | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
     assign handle_cmp = col_handle | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
-    assign col_h_cmp = collection.title | handleize | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
+    assign col_h_cmp = ctx_collection.title | handleize | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
     comment
       Shop often uses /collections/emerald-christmas while the variant Theme is "Enchanted Christmas". Align only when "christmas" is present so unrelated "Emerald" products are unaffected.
     endcomment
@@ -342,6 +354,7 @@
         endunless
       endif
     endunless
+    endif
   elsif storefront_filters_active
     if product.selected_variant
       assign out_variant = product.selected_variant

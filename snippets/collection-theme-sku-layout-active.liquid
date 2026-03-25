@@ -1,0 +1,26 @@
+{%- doc -%}
+  Outputs "1" when Country Silk collection theme SKU rules should run (variant order, default variant on cards, etc.).
+
+  Matches the alternate collection template from templates/collection.collections-theme.json:
+  - template.suffix is "collections-theme", or
+  - template.name contains "collections-theme" (e.g. collection.collections-theme)
+
+  Requires a current collection (global or closest.collection).
+
+  Used instead of request.page_type alone so only this template gets behavior, not collection.all-products or other alternates.
+{%- enddoc -%}
+{%- liquid
+  assign col = collection
+  if col == blank and closest.collection != blank
+    assign col = closest.collection
+  endif
+  assign active = false
+  if col != blank
+    if template.suffix == 'collections-theme'
+      assign active = true
+    elsif template.name contains 'collections-theme'
+      assign active = true
+    endif
+  endif
+-%}
+{%- if active -%}1{%- endif -%}

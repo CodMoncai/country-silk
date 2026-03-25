@@ -25,6 +25,12 @@
   endif
 %}
 
+{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active' %}{% endcapture %}
+{% assign theme_sku_layout_active = false %}
+{% if _theme_sku_layout_flag | strip == '1' %}
+  {% assign theme_sku_layout_active = true %}
+{% endif %}
+
 {% unless product_resource.has_only_default_variant %}
   {% liquid
     assign button_background_brightness = section.settings.color_scheme.settings.foreground | color_brightness
@@ -120,7 +126,7 @@
           if picker_sort_collection == blank and closest.collection != blank
             assign picker_sort_collection = closest.collection
           endif
-          if request.page_type == 'collection' and picker_sort_collection != blank and sort_this_option_by_theme_sku
+          if theme_sku_layout_active and picker_sort_collection != blank and sort_this_option_by_theme_sku
             capture theme_codes_line_for_sort
               render 'collection-theme-variant-codes', collection: picker_sort_collection
             endcapture

@@ -10,6 +10,12 @@
   {% render 'variant-swatches', product_resource: product %}
 {%- enddoc -%}
 
+{% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active' %}{% endcapture %}
+{% assign theme_sku_layout_active = false %}
+{% if _theme_sku_layout_flag | strip == '1' %}
+  {% assign theme_sku_layout_active = true %}
+{% endif %}
+
 {% liquid
   # Allow pre-selection of a swatch if there is a selected variant
   # product.selected_variant is automatically set in filtered collection, filtered search and some unfiltered search contexts based on result relevance.
@@ -54,7 +60,7 @@
   if card_swatches_collection == blank and closest.collection != blank
     assign card_swatches_collection = closest.collection
   endif
-  if request.page_type == 'collection' and card_swatches_collection != blank
+  if theme_sku_layout_active and card_swatches_collection != blank
     for po in product_resource.options_with_values
       assign _po_nm = po.name | downcase | strip
       if _po_nm == 'theme' or _po_nm == 'themes' or _po_nm contains 'theme'

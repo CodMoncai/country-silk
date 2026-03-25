@@ -109,6 +109,27 @@
             endif
           endif
 
+          assign sort_this_option_by_theme_sku = theme_option_matches
+          if sort_this_option_by_theme_sku == false and theme_option_name_normalized contains 'theme'
+            assign sort_this_option_by_theme_sku = true
+          endif
+
+          assign priority_theme_line = block_settings.priority_theme_option_values | default: '' | strip
+          assign apply_priority_value_order = false
+          assign priority_value_ids_ordered = ''
+          if sort_this_option_by_theme_sku and priority_theme_line != blank
+            capture priority_value_ids_ordered
+              render 'product-option-value-ids-priority-first',
+                product_option: product_option,
+                priority_names_line: priority_theme_line,
+                base_ids_pipe: ''
+            endcapture
+            assign priority_value_ids_ordered = priority_value_ids_ordered | strip
+            if priority_value_ids_ordered != blank
+              assign apply_priority_value_order = true
+            endif
+          endif
+
           if variant_style == 'buttons' and settings.variant_button_width == 'equal-width-buttons'
             assign fieldset_id = section.id | append: '-' | append: product_resource.id | append: '-' | append: product_option.name | handleize
             assign option_id_attribute = 'data-option-id="' | append: fieldset_id | append: '"'
@@ -149,106 +170,222 @@
                 <span class="variant-option__swatch-value">{{ swatch_legend_value | escape }}</span>
               {%- endif %}
             </legend>
-            {%- for product_option_value in product_option.values -%}
-              {% if product_option_value.size > longest_value and option_id_attribute %}
-                {% assign longest_value = product_option_value.size %}
-              {% endif %}
-              <label
-                class="variant-option__button-label{% if variant_style == 'swatch' %} variant-option__button-label--has-swatch{% endif %}"
-              >
-                <input
-                  type="radio"
-                  name="{{ product_option.name | escape }}-{{ block.id }}-{{ product_resource.id }}"
-                  value="{{ product_option_value | escape }}"
-                  aria-label="{{ product_option_value.name }}"
-                  {% if product_option_value.available == false %}
-                    aria-disabled="true"
+            {%- if apply_priority_value_order -%}
+              {%- assign _prio_val_parts = priority_value_ids_ordered | split: '|' -%}
+              {%- assign value_input_index = -1 -%}
+              {%- for vid_tok in _prio_val_parts -%}
+                {%- assign vt_s = vid_tok | strip -%}
+                {%- if vt_s == blank -%}
+                  {%- continue -%}
+                {%- endif -%}
+                {%- for product_option_value in product_option.values -%}
+                  {%- assign pov_id_s = product_option_value.id | append: '' -%}
+                  {%- if pov_id_s != vt_s -%}
+                    {%- continue -%}
+                  {%- endif -%}
+                  {%- assign value_input_index = value_input_index | plus: 1 -%}
+                  {% if product_option_value.size > longest_value and option_id_attribute %}
+                    {% assign longest_value = product_option_value.size %}
                   {% endif %}
-                  data-previous-checked="false"
-                  data-fieldset-index="{{ fieldset_index }}"
-                  data-input-index="{{ forloop.index0 }}"
-                  data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
-                  data-option-value-id="{{ product_option_value.id }}"
-                  data-option-available="{{ product_option_value.available }}"
-                  data-connected-product-url="{{ product_option_value.product_url }}"
-                  {% if product_option_value.variant.id %}
-                    data-variant-id="{{ product_option_value.variant.id }}"
-                  {% endif %}
-                  {% liquid
-                    assign option_featured_media = product_option_value.variant.featured_media
-                    if option_featured_media == blank and product_option_value.product_url
-                      assign option_featured_media = product_option_value.variant.product.featured_media
-                    endif
-                  %}
-                  {% if option_featured_media %}
-                    data-option-media-id="{{ option_featured_media.id }}"
-                  {% endif %}
-                  {% liquid
-                    assign picker_input_checked = product_option_value.selected
-                    if picker_input_checked == false and picker_context_variant != blank
-                      assign ctx_opt_for_picker = ''
-                      case opt_pos_num
-                        when 1
-                          assign ctx_opt_for_picker = picker_context_variant.option1
-                        when 2
-                          assign ctx_opt_for_picker = picker_context_variant.option2
-                        when 3
-                          assign ctx_opt_for_picker = picker_context_variant.option3
-                      endcase
-                      if ctx_opt_for_picker == product_option_value.name
-                        assign picker_input_checked = true
-                      endif
-                    endif
-                  %}
-                  {% if picker_input_checked %}
-                    data-current-checked="true"
-                    checked
-                  {% else %}
-                    data-current-checked="false"
-                  {% endif %}
-                >
-                {% if variant_style == 'swatch' %}
-                  {% liquid
-                    assign featured_media = product_option_value.variant.featured_media
-
-                    # If the variant has no featured media, and we have a combined listing product, then fall back to
-                    # using the featured media of the child product that is linked to this option value.
-                    if featured_media == blank and product_option_value.product_url
-                      assign featured_media = product_option_value.variant.product.featured_media
-                    endif
-                  %}
-
-                  {% if use_theme_metafield_swatches %}
-                    {% render 'variant-theme-swatch',
-                      theme_entries: theme_entries,
-                      theme_swatches_is_list: theme_swatches_is_list,
-                      product_option_value: product_option_value,
-                      mode: 'unscaled'
-                    %}
-                  {% else %}
-                    {% render 'swatch',
-                      swatch: product_option_value.swatch,
-                      variant_image: featured_media,
-                      mode: 'unscaled'
-                    %}
-                  {% endif %}
-                {% else %}
-                  {% if product_option_value.available == true %}
-                    <span
-                      class="variant-option__button-label__pill"
-                      data-key="variant-option-pill"
-                    ></span>
-                  {% endif %}
-                  <span
-                    class="variant-option__button-label__text"
-                    data-key="variant-option-text"
+                  <label
+                    class="variant-option__button-label{% if variant_style == 'swatch' %} variant-option__button-label--has-swatch{% endif %}"
                   >
-                    {{- product_option_value | escape -}}
-                  </span>
+                    <input
+                      type="radio"
+                      name="{{ product_option.name | escape }}-{{ block.id }}-{{ product_resource.id }}"
+                      value="{{ product_option_value | escape }}"
+                      aria-label="{{ product_option_value.name }}"
+                      {% if product_option_value.available == false %}
+                        aria-disabled="true"
+                      {% endif %}
+                      data-previous-checked="false"
+                      data-fieldset-index="{{ fieldset_index }}"
+                      data-input-index="{{ value_input_index }}"
+                      data-input-id="{{ product_option.position }}-{{ value_input_index }}"
+                      data-option-value-id="{{ product_option_value.id }}"
+                      data-option-available="{{ product_option_value.available }}"
+                      data-connected-product-url="{{ product_option_value.product_url }}"
+                      {% if product_option_value.variant.id %}
+                        data-variant-id="{{ product_option_value.variant.id }}"
+                      {% endif %}
+                      {% liquid
+                        assign option_featured_media = product_option_value.variant.featured_media
+                        if option_featured_media == blank and product_option_value.product_url
+                          assign option_featured_media = product_option_value.variant.product.featured_media
+                        endif
+                      %}
+                      {% if option_featured_media %}
+                        data-option-media-id="{{ option_featured_media.id }}"
+                      {% endif %}
+                      {% liquid
+                        assign picker_input_checked = product_option_value.selected
+                        if picker_input_checked == false and picker_context_variant != blank
+                          assign ctx_opt_for_picker = ''
+                          case opt_pos_num
+                            when 1
+                              assign ctx_opt_for_picker = picker_context_variant.option1
+                            when 2
+                              assign ctx_opt_for_picker = picker_context_variant.option2
+                            when 3
+                              assign ctx_opt_for_picker = picker_context_variant.option3
+                          endcase
+                          if ctx_opt_for_picker == product_option_value.name
+                            assign picker_input_checked = true
+                          endif
+                        endif
+                      %}
+                      {% if picker_input_checked %}
+                        data-current-checked="true"
+                        checked
+                      {% else %}
+                        data-current-checked="false"
+                      {% endif %}
+                    >
+                    {% if variant_style == 'swatch' %}
+                      {% liquid
+                        assign featured_media = product_option_value.variant.featured_media
+
+                        # If the variant has no featured media, and we have a combined listing product, then fall back to
+                        # using the featured media of the child product that is linked to this option value.
+                        if featured_media == blank and product_option_value.product_url
+                          assign featured_media = product_option_value.variant.product.featured_media
+                        endif
+                      %}
+
+                      {% if use_theme_metafield_swatches %}
+                        {% render 'variant-theme-swatch',
+                          theme_entries: theme_entries,
+                          theme_swatches_is_list: theme_swatches_is_list,
+                          product_option_value: product_option_value,
+                          mode: 'unscaled'
+                        %}
+                      {% else %}
+                        {% render 'swatch',
+                          swatch: product_option_value.swatch,
+                          variant_image: featured_media,
+                          mode: 'unscaled'
+                        %}
+                      {% endif %}
+                    {% else %}
+                      {% if product_option_value.available == true %}
+                        <span
+                          class="variant-option__button-label__pill"
+                          data-key="variant-option-pill"
+                        ></span>
+                      {% endif %}
+                      <span
+                        class="variant-option__button-label__text"
+                        data-key="variant-option-text"
+                      >
+                        {{- product_option_value | escape -}}
+                      </span>
+                    {% endif %}
+                    {% render 'strikethrough-variant', product_option: product_option_value %}
+                  </label>
+                {%- endfor -%}
+              {%- endfor -%}
+            {%- else -%}
+              {%- for product_option_value in product_option.values -%}
+                {% if product_option_value.size > longest_value and option_id_attribute %}
+                  {% assign longest_value = product_option_value.size %}
                 {% endif %}
-                {% render 'strikethrough-variant', product_option: product_option_value %}
-              </label>
-            {%- endfor -%}
+                <label
+                  class="variant-option__button-label{% if variant_style == 'swatch' %} variant-option__button-label--has-swatch{% endif %}"
+                >
+                  <input
+                    type="radio"
+                    name="{{ product_option.name | escape }}-{{ block.id }}-{{ product_resource.id }}"
+                    value="{{ product_option_value | escape }}"
+                    aria-label="{{ product_option_value.name }}"
+                    {% if product_option_value.available == false %}
+                      aria-disabled="true"
+                    {% endif %}
+                    data-previous-checked="false"
+                    data-fieldset-index="{{ fieldset_index }}"
+                    data-input-index="{{ forloop.index0 }}"
+                    data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
+                    data-option-value-id="{{ product_option_value.id }}"
+                    data-option-available="{{ product_option_value.available }}"
+                    data-connected-product-url="{{ product_option_value.product_url }}"
+                    {% if product_option_value.variant.id %}
+                      data-variant-id="{{ product_option_value.variant.id }}"
+                    {% endif %}
+                    {% liquid
+                      assign option_featured_media = product_option_value.variant.featured_media
+                      if option_featured_media == blank and product_option_value.product_url
+                        assign option_featured_media = product_option_value.variant.product.featured_media
+                      endif
+                    %}
+                    {% if option_featured_media %}
+                      data-option-media-id="{{ option_featured_media.id }}"
+                    {% endif %}
+                    {% liquid
+                      assign picker_input_checked = product_option_value.selected
+                      if picker_input_checked == false and picker_context_variant != blank
+                        assign ctx_opt_for_picker = ''
+                        case opt_pos_num
+                          when 1
+                            assign ctx_opt_for_picker = picker_context_variant.option1
+                          when 2
+                            assign ctx_opt_for_picker = picker_context_variant.option2
+                          when 3
+                            assign ctx_opt_for_picker = picker_context_variant.option3
+                        endcase
+                        if ctx_opt_for_picker == product_option_value.name
+                          assign picker_input_checked = true
+                        endif
+                      endif
+                    %}
+                    {% if picker_input_checked %}
+                      data-current-checked="true"
+                      checked
+                    {% else %}
+                      data-current-checked="false"
+                    {% endif %}
+                  >
+                  {% if variant_style == 'swatch' %}
+                    {% liquid
+                      assign featured_media = product_option_value.variant.featured_media
+
+                      # If the variant has no featured media, and we have a combined listing product, then fall back to
+                      # using the featured media of the child product that is linked to this option value.
+                      if featured_media == blank and product_option_value.product_url
+                        assign featured_media = product_option_value.variant.product.featured_media
+                      endif
+                    %}
+
+                    {% if use_theme_metafield_swatches %}
+                      {% render 'variant-theme-swatch',
+                        theme_entries: theme_entries,
+                        theme_swatches_is_list: theme_swatches_is_list,
+                        product_option_value: product_option_value,
+                        mode: 'unscaled'
+                      %}
+                    {% else %}
+                      {% render 'swatch',
+                        swatch: product_option_value.swatch,
+                        variant_image: featured_media,
+                        mode: 'unscaled'
+                      %}
+                    {% endif %}
+                  {% else %}
+                    {% if product_option_value.available == true %}
+                      <span
+                        class="variant-option__button-label__pill"
+                        data-key="variant-option-pill"
+                      ></span>
+                    {% endif %}
+                    <span
+                      class="variant-option__button-label__text"
+                      data-key="variant-option-text"
+                    >
+                      {{- product_option_value | escape -}}
+                    </span>
+                  {% endif %}
+                  {% render 'strikethrough-variant', product_option: product_option_value %}
+                </label>
+              {%- endfor -%}
+            {%- endif -%}
             {% if option_id_attribute %}
               {% style %}
                 [data-option-id="{{ fieldset_id }}"] {
@@ -287,41 +424,92 @@
                 name="options[{{ product_option.name | escape }}]"
                 class="variant-option__select"
               >
-                {%- for product_option_value in product_option.values -%}
-                  {% liquid
-                    assign picker_option_selected = product_option_value.selected
-                    if picker_option_selected == false and picker_context_variant != blank
-                      assign ctx_opt_for_select = ''
-                      case opt_pos_num
-                        when 1
-                          assign ctx_opt_for_select = picker_context_variant.option1
-                        when 2
-                          assign ctx_opt_for_select = picker_context_variant.option2
-                        when 3
-                          assign ctx_opt_for_select = picker_context_variant.option3
-                      endcase
-                      if ctx_opt_for_select == product_option_value.name
-                        assign picker_option_selected = true
+                {%- if apply_priority_value_order -%}
+                  {%- assign _prio_dd_parts = priority_value_ids_ordered | split: '|' -%}
+                  {%- assign value_input_index_dd = -1 -%}
+                  {%- for vid_dd in _prio_dd_parts -%}
+                    {%- assign vt_dd = vid_dd | strip -%}
+                    {%- if vt_dd == blank -%}
+                      {%- continue -%}
+                    {%- endif -%}
+                    {%- for product_option_value in product_option.values -%}
+                      {%- assign pov_dd = product_option_value.id | append: '' -%}
+                      {%- if pov_dd != vt_dd -%}
+                        {%- continue -%}
+                      {%- endif -%}
+                      {%- assign value_input_index_dd = value_input_index_dd | plus: 1 -%}
+                      {% liquid
+                        assign picker_option_selected = product_option_value.selected
+                        if picker_option_selected == false and picker_context_variant != blank
+                          assign ctx_opt_for_select = ''
+                          case opt_pos_num
+                            when 1
+                              assign ctx_opt_for_select = picker_context_variant.option1
+                            when 2
+                              assign ctx_opt_for_select = picker_context_variant.option2
+                            when 3
+                              assign ctx_opt_for_select = picker_context_variant.option3
+                          endcase
+                          if ctx_opt_for_select == product_option_value.name
+                            assign picker_option_selected = true
+                          endif
+                        endif
+                      %}
+                      <option
+                        value="{{ product_option_value | escape }}"
+                        data-input-id="{{ product_option.position }}-{{ value_input_index_dd }}"
+                        data-option-value-id="{{ product_option_value.id }}"
+                        data-variant-id="{{ product_option_value.variant.id }}"
+                        data-connected-product-url="{{ product_option_value.product_url }}"
+                        {% if picker_option_selected %}
+                          selected="selected"
+                        {% endif %}
+                      >
+                        {% if product_option_value.available == false %}
+                          {{ product_option_value | escape }} - {{ 'content.unavailable' | t }}
+                        {% else %}
+                          {{ product_option_value | escape }}
+                        {% endif %}
+                      </option>
+                    {%- endfor -%}
+                  {%- endfor -%}
+                {%- else -%}
+                  {%- for product_option_value in product_option.values -%}
+                    {% liquid
+                      assign picker_option_selected = product_option_value.selected
+                      if picker_option_selected == false and picker_context_variant != blank
+                        assign ctx_opt_for_select = ''
+                        case opt_pos_num
+                          when 1
+                            assign ctx_opt_for_select = picker_context_variant.option1
+                          when 2
+                            assign ctx_opt_for_select = picker_context_variant.option2
+                          when 3
+                            assign ctx_opt_for_select = picker_context_variant.option3
+                        endcase
+                        if ctx_opt_for_select == product_option_value.name
+                          assign picker_option_selected = true
+                        endif
                       endif
-                    endif
-                  %}
-                  <option
-                    value="{{ product_option_value | escape }}"
-                    data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
-                    data-option-value-id="{{ product_option_value.id }}"
-                    data-variant-id="{{ product_option_value.variant.id }}"
-                    data-connected-product-url="{{ product_option_value.product_url }}"
-                    {% if picker_option_selected %}
-                      selected="selected"
-                    {% endif %}
-                  >
-                    {% if product_option_value.available == false %}
-                      {{ product_option_value | escape }} - {{ 'content.unavailable' | t }}
-                    {% else %}
-                      {{ product_option_value | escape }}
-                    {% endif %}
-                  </option>
-                {%- endfor -%}
+                    %}
+                    <option
+                      value="{{ product_option_value | escape }}"
+                      data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
+                      data-option-value-id="{{ product_option_value.id }}"
+                      data-variant-id="{{ product_option_value.variant.id }}"
+                      data-connected-product-url="{{ product_option_value.product_url }}"
+                      {% if picker_option_selected %}
+                        selected="selected"
+                      {% endif %}
+                    >
+                      {% if product_option_value.available == false %}
+                        {{ product_option_value | escape }} - {{ 'content.unavailable' | t }}
+                      {% else %}
+                        {{ product_option_value | escape }}
+                      {% endif %}
+                    </option>
+                  {%- endfor -%}
+                {%- endif -%}
               </select>
               <svg
                 aria-hidden="true"

@@ -109,6 +109,7 @@
     "policies": "Policies",
     "popover": "Popover",
     "popover_position": "Popover position",
+    "priority_theme_option_values_header": "Theme value order",
     "popup": "Popup",
     "product_media": "Product media",
     "product_page": "Product page",
@@ -242,6 +243,7 @@
     "media_type_info": "Features are populated from your menu links",
     "quote_request_email": "Email address that receives quote requests",
     "breadcrumb_home_label": "Leave blank to use the default “Home” label from your language file.",
+    "priority_theme_option_values": "Applies to the Theme option (see Theme option name). List value names in the order they should appear first, separated by commas. Matching is case-insensitive. Unlisted values keep Shopify’s default order after the listed ones.",
     "theme_option_label": "Comma-separated option names to treat as theme swatches (case-insensitive), e.g. Theme,Themes. Must match your product option name exactly.",
     "theme_swatches_metafield_key": "Product metafield: list of metaobjects. Namespace and key must match a definition you create in Settings → Custom data."
   },
@@ -1049,6 +1051,7 @@
     "product_type": "Product type",
     "products": "Products",
     "products_per_page": "Products per page",
+    "priority_theme_option_values": "Theme values shown first",
     "product_custom_property": {
       "heading": "Heading",
       "description": "Description",

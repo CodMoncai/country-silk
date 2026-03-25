@@ -1,0 +1,56 @@
+{%- doc -%}
+  Reorders option value IDs so named values appear first, then the rest in base order.
+
+  @param {object} product_option - Option with values
+  @param {string} priority_names_line - Comma-separated value names (case-insensitive)
+  @param {string} [base_ids_pipe] - Pipe-separated IDs; if blank, uses product_option.values order
+{%- enddoc -%}
+{%- liquid
+  assign result_ids = ''
+  assign used_boundary = '|'
+
+  assign prio_parts = priority_names_line | strip | split: ','
+  for pri_token in prio_parts
+    assign pnorm = pri_token | strip | downcase
+    if pnorm == blank
+      continue
+    endif
+    for pov in product_option.values
+      assign vnorm = pov.name | strip | downcase
+      if vnorm == pnorm
+        assign vid = pov.id | append: ''
+        assign needle = '|' | append: vid | append: '|'
+        unless used_boundary contains needle
+          assign result_ids = result_ids | append: '|' | append: vid
+          assign used_boundary = used_boundary | append: vid | append: '|'
+        endunless
+        break
+      endif
+    endfor
+  endfor
+
+  if base_ids_pipe != blank
+    assign base_tokens = base_ids_pipe | strip | split: '|'
+    for bt in base_tokens
+      assign tid = bt | strip
+      if tid == blank
+        continue
+      endif
+      assign needle_b = '|' | append: tid | append: '|'
+      unless used_boundary contains needle_b
+        assign result_ids = result_ids | append: '|' | append: tid
+        assign used_boundary = used_boundary | append: tid | append: '|'
+      endunless
+    endfor
+  else
+    for pov in product_option.values
+      assign vid2 = pov.id | append: ''
+      assign needle2 = '|' | append: vid2 | append: '|'
+      unless used_boundary contains needle2
+        assign result_ids = result_ids | append: '|' | append: vid2
+        assign used_boundary = used_boundary | append: vid2 | append: '|'
+      endunless
+    endfor
+  endif
+-%}
+{{- result_ids -}}

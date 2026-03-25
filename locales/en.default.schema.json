@@ -243,7 +243,7 @@
     "media_type_info": "Features are populated from your menu links",
     "quote_request_email": "Email address that receives quote requests",
     "breadcrumb_home_label": "Leave blank to use the default “Home” label from your language file.",
-    "priority_theme_option_values": "Applies to the Theme option (see Theme option name). List value names in the order they should appear first, separated by commas. Matching is case-insensitive. Unlisted values keep Shopify’s default order after the listed ones.",
+    "priority_theme_option_values": "Use exact option value names from the product admin (same spelling as variant values). Comma-separated or one name per line. Case-insensitive. Collection cards: set on the Swatches block when the card uses swatches; set on Variant picker when the card uses that block. Unlisted values keep their relative order after the listed ones.",
     "theme_option_label": "Comma-separated option names to treat as theme swatches (case-insensitive), e.g. Theme,Themes. Must match your product option name exactly.",
     "theme_swatches_metafield_key": "Product metafield: list of metaobjects. Namespace and key must match a definition you create in Settings → Custom data."
   },

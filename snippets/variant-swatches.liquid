@@ -5,15 +5,21 @@
 
   @param {object} product_resource - The product object, which contains variants and options.
   @param {boolean} [has_option_selected] - Whether to render the swatches in a pre-selected state.
+  @param {string} [priority_theme_option_values] - Comma-separated Theme value names to show first (same as Variant picker block).
 
   @example
-  {% render 'variant-swatches', product_resource: product %}
+    {% render 'variant-swatches', product_resource: product %}
 {%- enddoc -%}
 
 {% liquid
   assign card_swatches_collection = collection
   if card_swatches_collection == blank and closest.collection != blank
     assign card_swatches_collection = closest.collection
+  endif
+  assign swatch_priority_line = priority_theme_option_values | default: '' | strip
+  if swatch_priority_line != blank
+    assign swatch_priority_line = swatch_priority_line | split: '
+' | join: ','
   endif
   capture collection_card_variant_option_sort
     render 'resolve-collection-card-variant-option-sort', section: section
@@ -131,6 +137,40 @@
                 product: product_resource,
                 product_option: product_option,
                 codes_line: card_swatches_theme_codes
+            endcapture
+            assign card_swatches_value_order = card_swatches_value_order | strip
+            if card_swatches_value_order != blank
+              assign apply_card_swatches_sku_order = true
+            endif
+          endif
+        endif
+
+        if swatch_priority_line != blank
+          assign swatch_priority_applies = false
+          assign _spl = swatch_priority_line | split: ','
+          for _spt in _spl
+            assign _spn = _spt | strip | downcase
+            if _spn == blank
+              continue
+            endif
+            for _spov in product_option.values
+              assign _svn = _spov.name | downcase | strip
+              if _svn == _spn
+                assign swatch_priority_applies = true
+                break
+              endif
+            endfor
+            if swatch_priority_applies
+              break
+            endif
+          endfor
+          if swatch_priority_applies
+            assign _sw_base_pipe = card_swatches_value_order
+            capture card_swatches_value_order
+              render 'product-option-value-ids-priority-first',
+                product_option: product_option,
+                priority_names_line: swatch_priority_line,
+                base_ids_pipe: _sw_base_pipe
             endcapture
             assign card_swatches_value_order = card_swatches_value_order | strip
             if card_swatches_value_order != blank

@@ -25,7 +25,10 @@
     "
     {{ block.shopify_attributes }}
   >
-    {% render 'variant-swatches', product_resource: closest.product %}
+    {% render 'variant-swatches',
+      product_resource: closest.product,
+      priority_theme_option_values: block.settings.priority_theme_option_values
+    %}
   </product-swatches>
 {% endif %}
 
@@ -104,6 +107,16 @@
     {
       "type": "paragraph",
       "content": "t:content.resource_reference_product_swatches"
+    },
+    {
+      "type": "header",
+      "content": "t:content.priority_theme_option_values_header"
+    },
+    {
+      "type": "textarea",
+      "id": "priority_theme_option_values",
+      "label": "t:settings.priority_theme_option_values",
+      "info": "t:info.priority_theme_option_values"
     },
     {
       "type": "select",

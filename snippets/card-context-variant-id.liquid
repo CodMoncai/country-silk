@@ -4,7 +4,8 @@
   Priority:
   1. product.selected_variant on product pages only.
   2. On collection templates: Theme + collection title/handle matching runs first (even if facet filters are active), so
-     e.g. /collections/emerald-christmas picks the Emerald Christmas theme variant. If no match, variant.matched applies.
+     Collection title/handle "Emerald … Christmas" is aligned with Theme "Enchanted … Christmas" when "christmas" is present
+     (common URL/handle typo). If no match, variant.matched applies.
   3. Search (or non-collection) when facet filters active: product.selected_variant if set, else variant.matched logic.
   4. Legacy tag URLs: current_tags matched against option1–option3, then variant title
   5. product.selected_or_first_available_variant
@@ -43,6 +44,18 @@
     assign col_cmp = col_cmp | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
     assign handle_cmp = col_handle | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
     assign col_h_cmp = collection.title | handleize | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
+    comment
+      Shop often uses /collections/emerald-christmas while the variant Theme is "Enchanted Christmas". Align only when "christmas" is present so unrelated "Emerald" products are unaffected.
+    endcomment
+    if col_cmp contains 'christmas'
+      assign col_cmp = col_cmp | replace: 'emerald christmas', 'enchanted christmas'
+    endif
+    if handle_cmp contains 'christmas'
+      assign handle_cmp = handle_cmp | replace: 'emerald-christmas', 'enchanted-christmas'
+    endif
+    if col_h_cmp contains 'christmas'
+      assign col_h_cmp = col_h_cmp | replace: 'emerald-christmas', 'enchanted-christmas'
+    endif
     assign theme_option_label_param = theme_option_label | default: 'Theme,Themes' | strip
     if theme_option_label_param == blank
       assign theme_option_label_param = 'Theme,Themes'
@@ -62,6 +75,15 @@
         break
       endif
     endfor
+    if theme_product_option == blank
+      for product_option in product.options_with_values
+        assign opt_nm = product_option.name | downcase | strip
+        if opt_nm contains 'theme'
+          assign theme_product_option = product_option
+          break
+        endif
+      endfor
+    endif
     if theme_product_option == blank and product.options.size == 1
       assign theme_product_option = product.options_with_values.first
     endif
@@ -77,6 +99,12 @@
             assign vo = vo_raw | downcase | strip
             assign vo = vo | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
             assign vo_h = vo_raw | handleize | replace: 'ehnchanted', 'enchanted' | replace: 'ehchanted', 'enchanted' | replace: 'echnated', 'enchanted' | replace: 'enchated', 'enchanted'
+            if vo contains 'christmas'
+              assign vo = vo | replace: 'emerald christmas', 'enchanted christmas'
+            endif
+            if vo_h contains 'christmas'
+              assign vo_h = vo_h | replace: 'emerald-christmas', 'enchanted-christmas'
+            endif
             assign matched_theme = false
             if vo.size >= 2
               if col_cmp contains vo

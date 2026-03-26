@@ -46,9 +46,13 @@ export default class VariantPicker extends Component {
     this.addEventListener('change', this.variantChanged.bind(this));
     this.#resizeObserver.observe(this);
 
-    // Collection cards: optionally auto-select the first priority Theme value on initial page load.
-    // This is intentionally limited to product cards (not product pages) to avoid overriding deep-linked variants.
-    this.#autoSelectPriorityThemeOnLoad();
+    // Collection cards: pathname handle (e.g. /collections/enchanted-christmas → "Enchanted Christmas") takes
+    // precedence over priority Theme list when it matches a Theme option value on each card.
+    const pathApplied = this.#autoSelectThemeFromCollectionPathname();
+    if (!pathApplied) {
+      // Optionally auto-select the first priority Theme value on initial page load.
+      this.#autoSelectPriorityThemeOnLoad();
+    }
   }
 
   disconnectedCallback() {
@@ -70,6 +74,130 @@ export default class VariantPicker extends Component {
     };
   }
 
+  /** @param {string | null | undefined} s */
+  #normalizeThemeText(s) {
+    return (s || '')
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .replace(/[\u200B\u200C\u200D\uFEFF]/g, '');
+  }
+
+  /** Labels for the Theme option (section setting), normalized for comparison. */
+  #getThemeOptionLabelCandidatesNormalized() {
+    const raw = this.#readPriorityConfig().themeOptionLabels;
+    return raw
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .map((t) => this.#normalizeThemeText(t));
+  }
+
+  /**
+   * Segment after `/collections/` in the URL, as display text: hyphens → spaces, title-cased words.
+   * Empty when not on a collection URL or handle is meaningless (e.g. `all`).
+   */
+  #collectionPathThemeDisplayLabel() {
+    try {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      const idx = parts.indexOf('collections');
+      if (idx < 0 || idx >= parts.length - 1) return '';
+      const slug = parts[idx + 1];
+      if (!slug || slug === 'all') return '';
+      const spaced = slug.replace(/-/g, ' ').trim();
+      if (!spaced) return '';
+      return spaced
+        .split(/\s+/)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    } catch {
+      return '';
+    }
+  }
+
+  /** @returns {HTMLFieldSetElement | undefined} */
+  #findThemeFieldsetElement() {
+    const themeLabelCandidates = this.#getThemeOptionLabelCandidatesNormalized();
+    const fieldsets = /** @type {HTMLFieldSetElement[]} */ (this.refs.fieldsets || []);
+    return fieldsets.find((fs) => {
+      const legend = fs.querySelector('legend');
+      if (!legend) return false;
+      const legendText = (legend.childNodes?.[0]?.textContent || legend.textContent || '').trim();
+      return themeLabelCandidates.includes(this.#normalizeThemeText(legendText));
+    });
+  }
+
+  /** @returns {HTMLSelectElement | null} */
+  #findThemeSelectElement() {
+    const themeLabelCandidates = this.#getThemeOptionLabelCandidatesNormalized();
+    const wrappers = this.querySelectorAll('.variant-option--dropdowns');
+    for (const wrap of wrappers) {
+      const lab = wrap.querySelector(':scope > label');
+      if (!lab) continue;
+      const labelText = (lab.textContent || '').trim();
+      if (themeLabelCandidates.includes(this.#normalizeThemeText(labelText))) {
+        const sel = wrap.querySelector('select.variant-option__select');
+        if (sel instanceof HTMLSelectElement) return sel;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Select Theme radio or dropdown option matching `wantedNormalized`, using existing change/update paths.
+   * @param {string} wantedNormalized
+   * @returns {boolean} True if the value is already selected or selection was applied.
+   */
+  #selectThemeIfMatching(wantedNormalized) {
+    const themeFieldset = this.#findThemeFieldsetElement();
+    if (themeFieldset) {
+      const inputs = Array.from(themeFieldset.querySelectorAll('input[type="radio"]'));
+      const target = inputs.find((input) => {
+        const label = this.#normalizeThemeText(input.getAttribute('aria-label') || input.value);
+        const disabled = input.getAttribute('aria-disabled') === 'true' || input.disabled;
+        return !disabled && label === wantedNormalized;
+      });
+      if (!target) return false;
+      if (target.checked) return true;
+      target.click();
+      return true;
+    }
+
+    const selectEl = this.#findThemeSelectElement();
+    if (selectEl) {
+      const opt = Array.from(selectEl.options).find(
+        (o) => !o.disabled && this.#normalizeThemeText(o.value) === wantedNormalized,
+      );
+      if (!opt) return false;
+      if (this.#normalizeThemeText(selectEl.value) === wantedNormalized) return true;
+      selectEl.value = opt.value;
+      selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Auto-select Theme from collection URL handle on product cards (e.g. enchanted-christmas → Enchanted Christmas).
+   * @returns {boolean} True when pathname produced a label and Theme control exists for that value.
+   */
+  #autoSelectThemeFromCollectionPathname() {
+    if (!this.closest('product-card')) return false;
+    if (this.closest('quick-add-dialog')) return false;
+    if (this.dataset.templateProductMatch === 'true') return false;
+    if (this.dataset.autoCollectionPathThemeApplied === 'true') return false;
+
+    const displayLabel = this.#collectionPathThemeDisplayLabel();
+    if (!displayLabel) return false;
+
+    const wanted = this.#normalizeThemeText(displayLabel);
+    const ok = this.#selectThemeIfMatching(wanted);
+    if (ok) this.dataset.autoCollectionPathThemeApplied = 'true';
+    return ok;
+  }
+
   /**
    * Auto-select the first priority Theme on load for collection product cards.
    * Runs once per element; safe if no priority/theme option exists.
@@ -83,17 +211,8 @@ export default class VariantPicker extends Component {
 
     const cfg = this.#readPriorityConfig();
     const priorityLine = cfg.priorityThemeLine;
-    const themeLabelsRaw = cfg.themeOptionLabels;
 
     if (!priorityLine) return;
-
-    const normalize = (s) =>
-      (s || '')
-        .toString()
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, ' ')
-        .replace(/[\u200B\u200C\u200D\uFEFF]/g, '');
 
     const priorityFirst = priorityLine
       .split(',')
@@ -102,41 +221,10 @@ export default class VariantPicker extends Component {
 
     if (!priorityFirst) return;
 
-    const themeLabelCandidates = themeLabelsRaw
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean)
-      .map(normalize);
+    const wanted = this.#normalizeThemeText(priorityFirst);
+    if (!this.#selectThemeIfMatching(wanted)) return;
 
-    const fieldsets = /** @type {HTMLFieldSetElement[]} */ (this.refs.fieldsets || []);
-    const themeFieldset = fieldsets.find((fs) => {
-      const legend = fs.querySelector('legend');
-      if (!legend) return false;
-      // Legend contains option name + maybe selected value span; take first line token.
-      const legendText = (legend.childNodes?.[0]?.textContent || legend.textContent || '').trim();
-      return themeLabelCandidates.includes(normalize(legendText));
-    });
-
-    if (!themeFieldset) return;
-
-    const wanted = normalize(priorityFirst);
-    const inputs = Array.from(themeFieldset.querySelectorAll('input[type="radio"]'));
-    const target = inputs.find((input) => {
-      const label = normalize(input.getAttribute('aria-label') || input.value);
-      const disabled = input.getAttribute('aria-disabled') === 'true' || input.disabled;
-      return !disabled && label === wanted;
-    });
-
-    if (!target) return;
-    if (target.checked) {
-      this.dataset.autoPriorityThemeApplied = 'true';
-      return;
-    }
-
-    // Mark before clicking to avoid loops during morph.
     this.dataset.autoPriorityThemeApplied = 'true';
-    // Click to trigger existing change/fetch logic (combined listing, pricing, etc.).
-    target.click();
   }
 
   /**

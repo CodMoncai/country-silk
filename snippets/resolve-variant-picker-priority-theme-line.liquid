@@ -14,7 +14,7 @@
     endif
     if b.type == 'variant-picker'
       capture out
-        render 'priority-theme-line-from-settings', settings: b.settings
+        render 'priority-theme-line-from-settings', picker_settings: b.settings
       endcapture
       assign out = out | strip
       if out != blank
@@ -28,7 +28,7 @@
         endif
         if c.type == 'variant-picker'
           capture out
-            render 'priority-theme-line-from-settings', settings: c.settings
+            render 'priority-theme-line-from-settings', picker_settings: c.settings
           endcapture
           assign out = out | strip
           if out != blank
@@ -42,7 +42,7 @@
             endif
             if d.type == 'variant-picker'
               capture out
-                render 'priority-theme-line-from-settings', settings: d.settings
+                render 'priority-theme-line-from-settings', picker_settings: d.settings
               endcapture
               assign out = out | strip
               if out != blank
@@ -56,7 +56,7 @@
                 endif
                 if e.type == 'variant-picker'
                   capture out
-                    render 'priority-theme-line-from-settings', settings: e.settings
+                    render 'priority-theme-line-from-settings', picker_settings: e.settings
                   endcapture
                   assign out = out | strip
                   if out != blank
@@ -73,7 +73,7 @@
   endunless
   if out == blank
     capture out
-      render 'priority-theme-line-from-settings', settings: section.settings
+      render 'priority-theme-line-from-settings', picker_settings: section.settings
     endcapture
     assign out = out | strip
   endif

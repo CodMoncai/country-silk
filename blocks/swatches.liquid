@@ -1,7 +1,7 @@
 {%- liquid
   assign block_settings = block.settings
   capture swatch_priority_for_render
-    render 'priority-theme-line-from-settings', settings: block.settings
+    render 'priority-theme-line-from-settings', picker_settings: block.settings
   endcapture
   assign swatch_priority_for_render = swatch_priority_for_render | strip
   if swatch_priority_for_render == blank

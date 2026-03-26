@@ -11,7 +11,7 @@
 {% liquid
   # Theme value order: checkboxes on variant-picker / section-rendering; collection section fallback via resolve.
   capture priority_theme_names_line
-    render 'priority-theme-line-from-settings', settings: block_settings
+    render 'priority-theme-line-from-settings', picker_settings: block_settings
   endcapture
   assign priority_theme_names_line = priority_theme_names_line | strip
   assign priority_theme_names_line = priority_theme_names_line | replace: '​', ''

@@ -65,8 +65,9 @@ export default class VariantPicker extends Component {
 
     const priorityLine = (this.dataset.priorityThemeLine || '').trim();
     const debug = (this.dataset.priorityThemeDebug || '').trim();
+    const datasetKeys = Object.keys(this.dataset || {}).sort().join(', ');
     // Avoid blocking if unset.
-    window.alert(`Theme value order: ${priorityLine || '(blank)'}\n${debug || ''}`);
+    window.alert(`Theme value order: ${priorityLine || '(blank)'}\nDebug: ${debug || '(missing)'}\nDataset keys: ${datasetKeys}`);
   }
 
   /**

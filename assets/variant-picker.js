@@ -64,8 +64,9 @@ export default class VariantPicker extends Component {
     window.__csPriorityThemeAlerted = true;
 
     const priorityLine = (this.dataset.priorityThemeLine || '').trim();
+    const debug = (this.dataset.priorityThemeDebug || '').trim();
     // Avoid blocking if unset.
-    window.alert(`Theme value order: ${priorityLine || '(blank)'}`);
+    window.alert(`Theme value order: ${priorityLine || '(blank)'}\n${debug || ''}`);
   }
 
   /**

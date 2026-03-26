@@ -25,6 +25,82 @@
     assign priority_theme_names_line = priority_theme_names_line | split: '
 ' | join: ','
   endif
+
+  capture _priority_theme_debug
+    echo 'block=['
+    if block_settings.priority_theme_enchanted_christmas
+      echo 'Enchanted Christmas;'
+    endif
+    if block_settings.priority_theme_emerald_christmas
+      echo 'Emerald Christmas;'
+    endif
+    if block_settings.priority_theme_festive_christmas
+      echo 'Festive Christmas;'
+    endif
+    if block_settings.priority_theme_traditional_christmas
+      echo 'Traditional Christmas;'
+    endif
+    if block_settings.priority_theme_traditional
+      echo 'Traditional;'
+    endif
+    if block_settings.priority_theme_cozy_christmas
+      echo 'Cozy Christmas;'
+    endif
+    if block_settings.priority_theme_candy
+      echo 'Candy;'
+    endif
+    if block_settings.priority_theme_peppermint
+      echo 'Peppermint;'
+    endif
+    if block_settings.priority_theme_specials
+      echo 'Specials;'
+    endif
+    if block_settings.priority_theme_ruby_red_christmas
+      echo 'Ruby Red Christmas;'
+    endif
+    if block_settings.priority_theme_non_theme
+      echo 'Non Theme;'
+    endif
+    echo ']'
+
+    if section != blank
+      echo ' section=['
+      if section.settings.priority_theme_enchanted_christmas
+        echo 'Enchanted Christmas;'
+      endif
+      if section.settings.priority_theme_emerald_christmas
+        echo 'Emerald Christmas;'
+      endif
+      if section.settings.priority_theme_festive_christmas
+        echo 'Festive Christmas;'
+      endif
+      if section.settings.priority_theme_traditional_christmas
+        echo 'Traditional Christmas;'
+      endif
+      if section.settings.priority_theme_traditional
+        echo 'Traditional;'
+      endif
+      if section.settings.priority_theme_cozy_christmas
+        echo 'Cozy Christmas;'
+      endif
+      if section.settings.priority_theme_candy
+        echo 'Candy;'
+      endif
+      if section.settings.priority_theme_peppermint
+        echo 'Peppermint;'
+      endif
+      if section.settings.priority_theme_specials
+        echo 'Specials;'
+      endif
+      if section.settings.priority_theme_ruby_red_christmas
+        echo 'Ruby Red Christmas;'
+      endif
+      if section.settings.priority_theme_non_theme
+        echo 'Non Theme;'
+      endif
+      echo ']'
+    endif
+  endcapture
 %}
 {% liquid
   assign picker_scope_collection = collection
@@ -71,6 +147,7 @@
     data-product-url="{{ product_resource.url }}"
     data-priority-theme-line="{{ priority_theme_names_line | escape }}"
     data-theme-option-labels="{{ block_settings.theme_option_label | default: 'Theme,Themes' | strip | escape }}"
+    data-priority-theme-debug="{{ _priority_theme_debug | strip | escape }}"
     ref="mainVariantPicker"
     {% if product.id == product_resource.id %}
       data-template-product-match="true"

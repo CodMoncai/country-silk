@@ -13,7 +13,10 @@
       break
     endif
     if b.type == 'variant-picker'
-      assign out = b.settings.priority_theme_option_values | default: '' | strip
+      capture out
+        render 'priority-theme-line-from-settings', settings: b.settings
+      endcapture
+      assign out = out | strip
       if out != blank
         assign done = true
       endif
@@ -24,7 +27,10 @@
           break
         endif
         if c.type == 'variant-picker'
-          assign out = c.settings.priority_theme_option_values | default: '' | strip
+          capture out
+            render 'priority-theme-line-from-settings', settings: c.settings
+          endcapture
+          assign out = out | strip
           if out != blank
             assign done = true
           endif
@@ -35,7 +41,10 @@
               break
             endif
             if d.type == 'variant-picker'
-              assign out = d.settings.priority_theme_option_values | default: '' | strip
+              capture out
+                render 'priority-theme-line-from-settings', settings: d.settings
+              endcapture
+              assign out = out | strip
               if out != blank
                 assign done = true
               endif
@@ -46,7 +55,10 @@
                   break
                 endif
                 if e.type == 'variant-picker'
-                  assign out = e.settings.priority_theme_option_values | default: '' | strip
+                  capture out
+                    render 'priority-theme-line-from-settings', settings: e.settings
+                  endcapture
+                  assign out = out | strip
                   if out != blank
                     assign done = true
                   endif
@@ -59,8 +71,11 @@
     endunless
   endfor
   endunless
-  if out == blank and section.settings.priority_theme_option_values != blank
-    assign out = section.settings.priority_theme_option_values | strip
+  if out == blank
+    capture out
+      render 'priority-theme-line-from-settings', settings: section.settings
+    endcapture
+    assign out = out | strip
   endif
 -%}
 {{- out -}}

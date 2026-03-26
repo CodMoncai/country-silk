@@ -9,9 +9,11 @@
 {% assign block_settings = block.settings %}
 
 {% liquid
-  # Theme value order: variant-picker block has this setting; section-rendering-product-card passes `section` as `block`
-  # and only exposes matching settings — without a fallback, priority is blank on Section Rendering API responses.
-  assign priority_theme_names_line = block_settings.priority_theme_option_values | default: '' | strip
+  # Theme value order: checkboxes on variant-picker / section-rendering; collection section fallback via resolve.
+  capture priority_theme_names_line
+    render 'priority-theme-line-from-settings', settings: block_settings
+  endcapture
+  assign priority_theme_names_line = priority_theme_names_line | strip
   assign priority_theme_names_line = priority_theme_names_line | replace: '​', ''
   if priority_theme_names_line == blank and section != blank
     capture priority_theme_names_line

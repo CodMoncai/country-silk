@@ -417,7 +417,7 @@
                 "variant_style": "buttons",
                 "show_swatches": true,
                 "theme_option_label": "Theme",
-                "priority_theme_option_values": "Candy",
+                "priority_theme_candy": true,
                 "theme_swatches_metafield_namespace": "{{ closest.product.metafields.custom.theme_swatch | metafield_text: field: 'theme_option_value' }}",
                 "theme_swatches_metafield_key": "theme_swatches{{ closest.product.metafields.custom.theme_swatch | metafield_text: field: 'theme_option_value' }}",
                 "alignment": "center",
@@ -432,7 +432,6 @@
               "type": "swatches",
               "name": "t:names.swatches",
               "settings": {
-                "priority_theme_option_values": "",
                 "product_swatches_alignment": "flex-start",
                 "product_swatches_alignment_mobile": "flex-start",
                 "hide_padding": false,
@@ -500,7 +499,7 @@
         "color_scheme": "scheme-1",
         "padding-block-start": 0,
         "padding-block-end": 32,
-        "priority_theme_option_values": "Candy"
+        "priority_theme_candy": true
       }
     },
     "section_r3UWmR": {

@@ -1,0 +1,79 @@
+{%- doc -%}
+  Builds comma-separated Theme priority names from checkbox settings (`priority_theme_*`).
+  Order matches the fixed sequence in the theme editor. Falls back to legacy
+  `priority_theme_option_values` when no checkboxes are checked (migration / edge cases).
+  @param {object} settings - `block.settings` or `section.settings`
+{%- enddoc -%}
+{% liquid
+  assign line = ''
+  if settings.priority_theme_enchanted_christmas
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Enchanted Christmas'
+  endif
+  if settings.priority_theme_emerald_christmas
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Emerald Christmas'
+  endif
+  if settings.priority_theme_festive_christmas
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Festive Christmas'
+  endif
+  if settings.priority_theme_traditional_christmas
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Traditional Christmas'
+  endif
+  if settings.priority_theme_traditional
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Traditional'
+  endif
+  if settings.priority_theme_cozy_christmas
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Cozy Christmas'
+  endif
+  if settings.priority_theme_candy
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Candy'
+  endif
+  if settings.priority_theme_peppermint
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Peppermint'
+  endif
+  if settings.priority_theme_specials
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Specials'
+  endif
+  if settings.priority_theme_ruby_red_christmas
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Ruby Red Christmas'
+  endif
+  if settings.priority_theme_non_theme
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Non Theme'
+  endif
+  if line == blank
+    assign line = settings.priority_theme_option_values | default: '' | strip
+  endif
+-%}
+{{- line -}}

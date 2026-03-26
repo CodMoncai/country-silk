@@ -1,6 +1,9 @@
 {%- liquid
   assign block_settings = block.settings
-  assign swatch_priority_for_render = block.settings.priority_theme_option_values | default: '' | strip
+  capture swatch_priority_for_render
+    render 'priority-theme-line-from-settings', settings: block.settings
+  endcapture
+  assign swatch_priority_for_render = swatch_priority_for_render | strip
   if swatch_priority_for_render == blank
     capture swatch_priority_for_render
       render 'resolve-variant-picker-priority-theme-line', section: section
@@ -121,10 +124,78 @@
       "content": "t:content.priority_theme_option_values_header"
     },
     {
-      "type": "textarea",
-      "id": "priority_theme_option_values",
-      "label": "t:settings.priority_theme_option_values",
-      "info": "t:info.priority_theme_option_values_swatches"
+      "type": "paragraph",
+      "content": "t:info.priority_theme_option_values_swatches"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:info.priority_theme_checkbox_group_intro"
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_enchanted_christmas",
+      "label": "t:settings.priority_theme_enchanted_christmas",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_emerald_christmas",
+      "label": "t:settings.priority_theme_emerald_christmas",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_festive_christmas",
+      "label": "t:settings.priority_theme_festive_christmas",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_traditional_christmas",
+      "label": "t:settings.priority_theme_traditional_christmas",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_traditional",
+      "label": "t:settings.priority_theme_traditional",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_cozy_christmas",
+      "label": "t:settings.priority_theme_cozy_christmas",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_candy",
+      "label": "t:settings.priority_theme_candy",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_peppermint",
+      "label": "t:settings.priority_theme_peppermint",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_specials",
+      "label": "t:settings.priority_theme_specials",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_ruby_red_christmas",
+      "label": "t:settings.priority_theme_ruby_red_christmas",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "priority_theme_non_theme",
+      "label": "t:settings.priority_theme_non_theme",
+      "default": false
     },
     {
       "type": "select",

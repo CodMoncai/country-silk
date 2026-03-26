@@ -190,8 +190,6 @@
                 "variant_style": "buttons",
                 "show_swatches": true,
                 "theme_option_label": "Theme,Themes",
-                "priority_theme_traditional_christmas": true,
-                "priority_theme_traditional": true,
                 "theme_swatches_metafield_namespace": "custom",
                 "theme_swatches_metafield_key": "theme_swatches",
                 "alignment": "left",
@@ -271,9 +269,7 @@
         "padding-inline-end": 0,
         "color_scheme": "scheme-abc92be0-8516-44d9-bcd1-feae2168ea52",
         "padding-block-start": 0,
-        "padding-block-end": 32,
-        "priority_theme_traditional_christmas": true,
-        "priority_theme_traditional": true
+        "padding-block-end": 32
       }
     }
   },

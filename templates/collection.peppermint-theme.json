@@ -417,7 +417,6 @@
                 "variant_style": "buttons",
                 "show_swatches": true,
                 "theme_option_label": "Theme",
-                "priority_theme_peppermint": true,
                 "theme_swatches_metafield_namespace": "custom",
                 "theme_swatches_metafield_key": "theme_swatches",
                 "alignment": "center",
@@ -498,8 +497,7 @@
         "padding-inline-end": 0,
         "color_scheme": "scheme-1",
         "padding-block-start": 0,
-        "padding-block-end": 32,
-        "priority_theme_peppermint": true
+        "padding-block-end": 32
       }
     },
     "section_r3UWmR": {

@@ -26,6 +26,10 @@
       assign line = line | append: ','
     endif
     assign line = line | append: 'Festive Christmas'
+    if line != ''
+      assign line = line | append: ','
+    endif
+    assign line = line | append: 'Festive Chistmas'
   endif
   if picker_settings.priority_theme_traditional_christmas
     if line != ''

@@ -80,7 +80,7 @@
     "variant_swatch_radius": 32,
     "variant_button_border_width": 1,
     "variant_button_radius": 14,
-    "variant_button_width": "equal-width-buttons",
+    "variant_button_width": "default-width-buttons",
     "button_font_weight_secondary": "default",
     "content_for_index": [],
     "blocks": {
@@ -88,17 +88,6 @@
         "type": "shopify://apps/variant-image-wizard-swatch/blocks/app-embed/66205c03-f474-4e2c-b275-0a2806eeac16",
         "disabled": false,
         "settings": {}
-      },
-      "6810584612362904079": {
-        "type": "shopify://apps/findter-custom-filter-search/blocks/search-filters-core/bf706e6d-709f-4687-a2e2-1fbe1b007cc7",
-        "disabled": false,
-        "settings": {
-          "search_input_selector": "[name=q]",
-          "link_no_results": "shopify://collections/all",
-          "collection_grid_selector": "",
-          "search_result_selector": "",
-          "custom_css": ""
-        }
       }
     },
     "color_schemes": {

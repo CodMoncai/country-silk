@@ -412,7 +412,9 @@
           "tree-toppers",
           "trees-and-pine",
           "wall-decor",
-          "closeout"
+          "closeout",
+          "halloween",
+          "valentines"
         ],
         "layout_type": "grid",
         "carousel_on_mobile": false,

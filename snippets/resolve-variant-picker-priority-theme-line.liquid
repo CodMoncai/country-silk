@@ -6,6 +6,7 @@
 {%- enddoc -%}
 {%- liquid
   assign out = ''
+  unless section == blank
   assign done = false
   for b in section.blocks
     if done
@@ -57,5 +58,6 @@
       endfor
     endunless
   endfor
+  endunless
 -%}
 {{- out -}}

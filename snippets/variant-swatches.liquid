@@ -33,6 +33,10 @@
     render 'resolve-collection-card-variant-option-sort', section: section
   endcapture
   assign collection_card_variant_option_sort = collection_card_variant_option_sort | strip
+  capture _picker_theme_label_for_swatches
+    render 'resolve-variant-picker-theme-option-label', section: section
+  endcapture
+  assign picker_theme_label_for_swatches = _picker_theme_label_for_swatches | strip
 %}
 {% capture _theme_sku_layout_flag %}{% render 'collection-theme-sku-layout-active', scope_collection: card_swatches_collection %}{% endcapture %}
 {% assign theme_sku_layout_active = false %}
@@ -155,25 +159,36 @@
 
         if swatch_priority_line != blank
           assign swatch_priority_applies = false
-          assign _spl = swatch_priority_line | split: ','
-          for _spt in _spl
-            assign _spn = _spt | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
-            assign _spn = _spn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
-            if _spn == blank
-              continue
-            endif
-            for _spov in product_option.values
-              assign _svn = _spov.name | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
-              assign _svn = _svn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
-              if _svn == _spn
-                assign swatch_priority_applies = true
-                break
-              endif
-            endfor
-            if swatch_priority_applies
+          assign _sw_po_norm = product_option.name | strip | downcase
+          assign _sw_label_candidates = picker_theme_label_for_swatches | split: ','
+          for _sw_lc in _sw_label_candidates
+            assign _sw_ln = _sw_lc | strip | downcase
+            if _sw_ln != blank and _sw_po_norm == _sw_ln
+              assign swatch_priority_applies = true
               break
             endif
           endfor
+          unless swatch_priority_applies
+            assign _spl = swatch_priority_line | split: ','
+            for _spt in _spl
+              assign _spn = _spt | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+              assign _spn = _spn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
+              if _spn == blank
+                continue
+              endif
+              for _spov in product_option.values
+                assign _svn = _spov.name | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+                assign _svn = _svn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
+                if _svn == _spn
+                  assign swatch_priority_applies = true
+                  break
+                endif
+              endfor
+              if swatch_priority_applies
+                break
+              endif
+            endfor
+          endunless
           if swatch_priority_applies
             assign _sw_base_pipe = card_swatches_value_order
             capture card_swatches_value_order

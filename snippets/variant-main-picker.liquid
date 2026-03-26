@@ -103,7 +103,7 @@
             endif
           endif
           assign use_theme_metafield_swatches = false
-          assign theme_option_name_normalized = product_option.name | downcase
+          assign theme_option_name_normalized = product_option.name | strip | downcase
           assign theme_option_matches = false
           assign theme_label_candidates = theme_label | split: ','
           for theme_label_part in theme_label_candidates
@@ -126,25 +126,29 @@
           assign priority_value_ids_ordered = ''
           if priority_theme_line != blank
             assign priority_applies_to_this_option = false
-            assign _plist = priority_theme_line | split: ','
-            for _pt in _plist
-              assign _pn = _pt | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
-              assign _pn = _pn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
-              if _pn == blank
-                continue
-              endif
-              for _pv in product_option.values
-                assign _vn = _pv.name | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
-                assign _vn = _vn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
-                if _vn == _pn
-                  assign priority_applies_to_this_option = true
+            if theme_option_matches
+              assign priority_applies_to_this_option = true
+            else
+              assign _plist = priority_theme_line | split: ','
+              for _pt in _plist
+                assign _pn = _pt | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+                assign _pn = _pn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
+                if _pn == blank
+                  continue
+                endif
+                for _pv in product_option.values
+                  assign _vn = _pv.name | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+                  assign _vn = _vn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
+                  if _vn == _pn
+                    assign priority_applies_to_this_option = true
+                    break
+                  endif
+                endfor
+                if priority_applies_to_this_option
                   break
                 endif
               endfor
-              if priority_applies_to_this_option
-                break
-              endif
-            endfor
+            endif
             if priority_applies_to_this_option
               capture priority_value_ids_ordered
                 render 'product-option-value-ids-priority-first',

@@ -1,0 +1,66 @@
+{%- doc -%}
+  Returns `theme_option_label` from the first `variant-picker` in the section block tree
+  (same traversal as resolve-variant-picker-priority-theme-line). Falls back to "Theme,Themes".
+  @param {object} section - Current section
+{%- enddoc -%}
+{%- liquid
+  assign out = 'Theme,Themes'
+  unless section == blank
+    assign out = ''
+    assign done = false
+    for b in section.blocks
+      if done
+        break
+      endif
+      if b.type == 'variant-picker'
+        assign out = b.settings.theme_option_label | default: '' | strip
+        if out != blank
+          assign done = true
+        endif
+      endif
+      unless done
+        for c in b.blocks
+          if done
+            break
+          endif
+          if c.type == 'variant-picker'
+            assign out = c.settings.theme_option_label | default: '' | strip
+            if out != blank
+              assign done = true
+            endif
+          endif
+          unless done
+            for d in c.blocks
+              if done
+                break
+              endif
+              if d.type == 'variant-picker'
+                assign out = d.settings.theme_option_label | default: '' | strip
+                if out != blank
+                  assign done = true
+                endif
+              endif
+              unless done
+                for e in d.blocks
+                  if done
+                    break
+                  endif
+                  if e.type == 'variant-picker'
+                    assign out = e.settings.theme_option_label | default: '' | strip
+                    if out != blank
+                      assign done = true
+                    endif
+                  endif
+                endfor
+              endunless
+            endfor
+          endunless
+        endfor
+      endunless
+    endfor
+    if out == blank
+      assign out = 'Theme,Themes'
+    endif
+  endunless
+-%}
+{{- out -}}

@@ -245,6 +245,7 @@
     "breadcrumb_home_label": "Leave blank to use the default “Home” label from your language file.",
     "priority_theme_option_values": "Use exact option value names from the product admin (same spelling as variant values). Comma-separated or one name per line. Case-insensitive. When the product or collection card also has a Swatches block, you can enter the list only here; the swatch row will reuse it when its Theme value order is left blank. Unlisted values keep their relative order after the listed ones.",
     "priority_theme_option_values_swatches": "Optional. Leave blank to reuse Theme value order from the Variant picker block on the same card (recommended). Enter values here only to override the swatch row. Same format: exact option value names, comma or one per line, case-insensitive.",
+    "priority_theme_option_values_section_rendering": "Same list as Theme value order on the Variant picker block. Required for product cards that update via Section Rendering (swatch change, quick add): the live theme’s Product card rendering section must include this list or fetched HTML will drop custom order.",
     "theme_option_label": "Comma-separated option names to treat as theme swatches (case-insensitive), e.g. Theme,Themes. Must match your product option name exactly.",
     "theme_swatches_metafield_key": "Product metafield: list of metaobjects. Namespace and key must match a definition you create in Settings → Custom data."
   },

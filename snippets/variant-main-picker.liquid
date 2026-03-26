@@ -9,6 +9,22 @@
 {% assign block_settings = block.settings %}
 
 {% liquid
+  # Theme value order: variant-picker block has this setting; section-rendering-product-card passes `section` as `block`
+  # and only exposes matching settings — without a fallback, priority is blank on Section Rendering API responses.
+  assign priority_theme_names_line = block_settings.priority_theme_option_values | default: '' | strip
+  assign priority_theme_names_line = priority_theme_names_line | replace: '​', ''
+  if priority_theme_names_line == blank and section != blank
+    capture priority_theme_names_line
+      render 'resolve-variant-picker-priority-theme-line', section: section
+    endcapture
+    assign priority_theme_names_line = priority_theme_names_line | strip
+  endif
+  if priority_theme_names_line != blank
+    assign priority_theme_names_line = priority_theme_names_line | split: '
+' | join: ','
+  endif
+%}
+{% liquid
   assign picker_scope_collection = collection
   if picker_scope_collection == blank and closest.collection != blank
     assign picker_scope_collection = closest.collection
@@ -119,9 +135,7 @@
             endif
           endif
 
-          assign priority_theme_line = block_settings.priority_theme_option_values | default: '' | strip
-          assign priority_theme_line = priority_theme_line | split: '
-' | join: ','
+          assign priority_theme_line = priority_theme_names_line
           assign apply_priority_value_order = false
           assign priority_value_ids_ordered = ''
           if priority_theme_line != blank
@@ -131,13 +145,15 @@
             else
               assign _plist = priority_theme_line | split: ','
               for _pt in _plist
-                assign _pn = _pt | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+                assign _pn = _pt | strip | downcase | replace: ' ', ' ' | replace: '​', ''
+                assign _pn = _pn | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
                 assign _pn = _pn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
                 if _pn == blank
                   continue
                 endif
                 for _pv in product_option.values
-                  assign _vn = _pv.name | strip | downcase | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
+                  assign _vn = _pv.name | strip | downcase | replace: ' ', ' ' | replace: '​', ''
+                  assign _vn = _vn | replace: '’', "'" | replace: '‘', "'" | replace: '′', "'"
                   assign _vn = _vn | replace: '–', '-' | replace: '—', '-' | replace: '&amp;', '&'
                   if _vn == _pn
                     assign priority_applies_to_this_option = true

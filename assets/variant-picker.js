@@ -46,6 +46,8 @@ export default class VariantPicker extends Component {
     this.addEventListener('change', this.variantChanged.bind(this));
     this.#resizeObserver.observe(this);
 
+    this.#debugAlertPriorityThemeLineOnce();
+
     // Collection cards: optionally auto-select the first priority Theme value on initial page load.
     // This is intentionally limited to product cards (not product pages) to avoid overriding deep-linked variants.
     this.#autoSelectPriorityThemeOnLoad();
@@ -54,6 +56,16 @@ export default class VariantPicker extends Component {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.#resizeObserver.disconnect();
+  }
+
+  #debugAlertPriorityThemeLineOnce() {
+    // Debug aid: show Theme value order on first picker only.
+    if (window.__csPriorityThemeAlerted) return;
+    window.__csPriorityThemeAlerted = true;
+
+    const priorityLine = (this.dataset.priorityThemeLine || '').trim();
+    // Avoid blocking if unset.
+    window.alert(`Theme value order: ${priorityLine || '(blank)'}`);
   }
 
   /**

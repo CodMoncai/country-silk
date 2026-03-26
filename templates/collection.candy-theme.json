@@ -428,7 +428,7 @@
                 "priority_theme_specials": false,
                 "priority_theme_ruby_red_christmas": false,
                 "priority_theme_non_theme": false,
-                "theme_swatches_metafield_namespace": "Candy",
+                "theme_swatches_metafield_namespace": "{{ closest.product.metafields.custom.theme_swatch | metafield_text: field: 'theme_option_value' }}",
                 "theme_swatches_metafield_key": "{{ closest.product.metafields.custom.theme_swatch | metafield_text: field: 'theme_option_value' }}",
                 "alignment": "center",
                 "padding-block-start": 0,

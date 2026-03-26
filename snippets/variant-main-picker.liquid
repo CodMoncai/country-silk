@@ -69,6 +69,8 @@
     data-product-id="{{ product_resource.id }}"
     data-block-id="{{ block.id }}"
     data-product-url="{{ product_resource.url }}"
+    data-priority-theme-line="{{ priority_theme_names_line | escape }}"
+    data-theme-option-labels="{{ block_settings.theme_option_label | default: 'Theme,Themes' | strip | escape }}"
     ref="mainVariantPicker"
     {% if product.id == product_resource.id %}
       data-template-product-match="true"

@@ -45,11 +45,83 @@ export default class VariantPicker extends Component {
 
     this.addEventListener('change', this.variantChanged.bind(this));
     this.#resizeObserver.observe(this);
+
+    // Collection cards: optionally auto-select the first priority Theme value on initial page load.
+    // This is intentionally limited to product cards (not product pages) to avoid overriding deep-linked variants.
+    this.#autoSelectPriorityThemeOnLoad();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.#resizeObserver.disconnect();
+  }
+
+  /**
+   * Auto-select the first priority Theme on load for collection product cards.
+   * Runs once per element; safe if no priority/theme option exists.
+   */
+  #autoSelectPriorityThemeOnLoad() {
+    // Only apply to product cards (collection grid). Avoid product pages, quick add, and dialogs.
+    if (!this.closest('product-card')) return;
+    if (this.closest('quick-add-dialog')) return;
+    if (this.dataset.templateProductMatch === 'true') return;
+    if (this.dataset.autoPriorityThemeApplied === 'true') return;
+
+    const priorityLine = (this.dataset.priorityThemeLine || '').trim();
+    const themeLabelsRaw = (this.dataset.themeOptionLabels || 'Theme,Themes').trim();
+
+    if (!priorityLine) return;
+
+    const normalize = (s) =>
+      (s || '')
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .replace(/[\u200B\u200C\u200D\uFEFF]/g, '');
+
+    const priorityFirst = priorityLine
+      .split(',')
+      .map((p) => p.trim())
+      .filter(Boolean)[0];
+
+    if (!priorityFirst) return;
+
+    const themeLabelCandidates = themeLabelsRaw
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .map(normalize);
+
+    const fieldsets = /** @type {HTMLFieldSetElement[]} */ (this.refs.fieldsets || []);
+    const themeFieldset = fieldsets.find((fs) => {
+      const legend = fs.querySelector('legend');
+      if (!legend) return false;
+      // Legend contains option name + maybe selected value span; take first line token.
+      const legendText = (legend.childNodes?.[0]?.textContent || legend.textContent || '').trim();
+      return themeLabelCandidates.includes(normalize(legendText));
+    });
+
+    if (!themeFieldset) return;
+
+    const wanted = normalize(priorityFirst);
+    const inputs = Array.from(themeFieldset.querySelectorAll('input[type="radio"]'));
+    const target = inputs.find((input) => {
+      const label = normalize(input.getAttribute('aria-label') || input.value);
+      const disabled = input.getAttribute('aria-disabled') === 'true' || input.disabled;
+      return !disabled && label === wanted;
+    });
+
+    if (!target) return;
+    if (target.checked) {
+      this.dataset.autoPriorityThemeApplied = 'true';
+      return;
+    }
+
+    // Mark before clicking to avoid loops during morph.
+    this.dataset.autoPriorityThemeApplied = 'true';
+    // Click to trigger existing change/fetch logic (combined listing, pricing, etc.).
+    target.click();
   }
 
   /**

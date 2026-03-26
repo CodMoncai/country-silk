@@ -59,5 +59,8 @@
     endunless
   endfor
   endunless
+  if out == blank and section.settings.priority_theme_option_values != blank
+    assign out = section.settings.priority_theme_option_values | strip
+  endif
 -%}
 {{- out -}}

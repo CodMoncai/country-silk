@@ -46,8 +46,6 @@ export default class VariantPicker extends Component {
     this.addEventListener('change', this.variantChanged.bind(this));
     this.#resizeObserver.observe(this);
 
-    this.#debugAlertPriorityThemeLineOnce();
-
     // Collection cards: optionally auto-select the first priority Theme value on initial page load.
     // This is intentionally limited to product cards (not product pages) to avoid overriding deep-linked variants.
     this.#autoSelectPriorityThemeOnLoad();
@@ -68,25 +66,8 @@ export default class VariantPicker extends Component {
     const hd = this.dataset ?? {};
     return {
       priorityThemeLine: String(fd.priorityThemeLine || hd.priorityThemeLine || '').trim(),
-      priorityThemeDebug: String(fd.priorityThemeDebug || hd.priorityThemeDebug || '').trim(),
       themeOptionLabels: String(fd.themeOptionLabels || hd.themeOptionLabels || 'Theme,Themes').trim(),
-      formDatasetKeys: Object.keys(fd).sort().join(', '),
-      hostDatasetKeys: Object.keys(hd).sort().join(', '),
     };
-  }
-
-  #debugAlertPriorityThemeLineOnce() {
-    // Debug aid: show Theme value order on first picker only.
-    if (window.__csPriorityThemeAlerted) return;
-    window.__csPriorityThemeAlerted = true;
-
-    const cfg = this.#readPriorityConfig();
-    window.alert(
-      `Theme value order: ${cfg.priorityThemeLine || '(blank)'}\n` +
-        `Debug: ${cfg.priorityThemeDebug || '(missing)'}\n` +
-        `Form dataset keys: ${cfg.formDatasetKeys || '(no form)'}\n` +
-        `Host dataset keys: ${cfg.hostDatasetKeys || '(none)'}`
-    );
   }
 
   /**

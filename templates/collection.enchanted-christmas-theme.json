@@ -479,6 +479,7 @@
                 "priority_theme_specials": false,
                 "priority_theme_ruby_red_christmas": false,
                 "priority_theme_non_theme": false,
+                "priority_theme_option_values": "Enchanted Christmas",
                 "theme_swatches_metafield_namespace": "custom",
                 "theme_swatches_metafield_key": "theme_swatches",
                 "alignment": "left",

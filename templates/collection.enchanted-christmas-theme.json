@@ -468,7 +468,7 @@
                 "variant_style": "buttons",
                 "show_swatches": true,
                 "theme_option_label": "Theme,Themes",
-                "priority_theme_enchanted_christmas": false,
+                "priority_theme_enchanted_christmas": true,
                 "priority_theme_emerald_christmas": false,
                 "priority_theme_festive_christmas": false,
                 "priority_theme_traditional_christmas": false,

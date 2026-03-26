@@ -157,7 +157,12 @@
       data-shopify-visual-preview
     {% endif %}
   >
-    <form class="variant-picker__form">
+    <form
+      class="variant-picker__form"
+      data-priority-theme-line="{{ priority_theme_names_line | escape }}"
+      data-theme-option-labels="{{ block_settings.theme_option_label | default: 'Theme,Themes' | strip | escape }}"
+      data-priority-theme-debug="{{ _priority_theme_debug | strip | escape }}"
+    >
       {%- for product_option in product_resource.options_with_values -%}
         {%- liquid
           assign option_id_attribute = ''

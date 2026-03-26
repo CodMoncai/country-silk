@@ -58,16 +58,35 @@ export default class VariantPicker extends Component {
     this.#resizeObserver.disconnect();
   }
 
+  /**
+   * Priority Theme config is output on both `<variant-picker>` and inner `<form>`.
+   * Some storefronts lose host `data-*` on the custom element; the form stays in sync with Liquid.
+   */
+  #readPriorityConfig() {
+    const form = this.querySelector('form.variant-picker__form');
+    const fd = form?.dataset ?? {};
+    const hd = this.dataset ?? {};
+    return {
+      priorityThemeLine: String(fd.priorityThemeLine || hd.priorityThemeLine || '').trim(),
+      priorityThemeDebug: String(fd.priorityThemeDebug || hd.priorityThemeDebug || '').trim(),
+      themeOptionLabels: String(fd.themeOptionLabels || hd.themeOptionLabels || 'Theme,Themes').trim(),
+      formDatasetKeys: Object.keys(fd).sort().join(', '),
+      hostDatasetKeys: Object.keys(hd).sort().join(', '),
+    };
+  }
+
   #debugAlertPriorityThemeLineOnce() {
     // Debug aid: show Theme value order on first picker only.
     if (window.__csPriorityThemeAlerted) return;
     window.__csPriorityThemeAlerted = true;
 
-    const priorityLine = (this.dataset.priorityThemeLine || '').trim();
-    const debug = (this.dataset.priorityThemeDebug || '').trim();
-    const datasetKeys = Object.keys(this.dataset || {}).sort().join(', ');
-    // Avoid blocking if unset.
-    window.alert(`Theme value order: ${priorityLine || '(blank)'}\nDebug: ${debug || '(missing)'}\nDataset keys: ${datasetKeys}`);
+    const cfg = this.#readPriorityConfig();
+    window.alert(
+      `Theme value order: ${cfg.priorityThemeLine || '(blank)'}\n` +
+        `Debug: ${cfg.priorityThemeDebug || '(missing)'}\n` +
+        `Form dataset keys: ${cfg.formDatasetKeys || '(no form)'}\n` +
+        `Host dataset keys: ${cfg.hostDatasetKeys || '(none)'}`
+    );
   }
 
   /**
@@ -81,8 +100,9 @@ export default class VariantPicker extends Component {
     if (this.dataset.templateProductMatch === 'true') return;
     if (this.dataset.autoPriorityThemeApplied === 'true') return;
 
-    const priorityLine = (this.dataset.priorityThemeLine || '').trim();
-    const themeLabelsRaw = (this.dataset.themeOptionLabels || 'Theme,Themes').trim();
+    const cfg = this.#readPriorityConfig();
+    const priorityLine = cfg.priorityThemeLine;
+    const themeLabelsRaw = cfg.themeOptionLabels;
 
     if (!priorityLine) return;
 

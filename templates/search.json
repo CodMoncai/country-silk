@@ -160,12 +160,72 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "variant_picker_taqNtA": {
+              "type": "variant-picker",
+              "name": "t:names.product_variant_picker",
+              "settings": {
+                "variant_style": "buttons",
+                "show_swatches": true,
+                "theme_option_label": "Theme,Themes",
+                "priority_theme_enchanted_christmas": false,
+                "priority_theme_emerald_christmas": false,
+                "priority_theme_festive_christmas": false,
+                "priority_theme_traditional_christmas": false,
+                "priority_theme_traditional": false,
+                "priority_theme_cozy_christmas": false,
+                "priority_theme_candy": false,
+                "priority_theme_peppermint": false,
+                "priority_theme_specials": false,
+                "priority_theme_ruby_red_christmas": false,
+                "priority_theme_non_theme": false,
+                "theme_swatches_metafield_namespace": "custom",
+                "theme_swatches_metafield_key": "theme_swatches",
+                "alignment": "left",
+                "padding-block-start": 0,
+                "padding-block-end": 8,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "buy_buttons_qQQFBH": {
+              "type": "buy-buttons",
+              "name": "t:names.product_buy_buttons",
+              "settings": {
+                "stacking": false,
+                "show_pickup_availability": true,
+                "gift_card_form": true,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "quantity": {
+                  "type": "quantity",
+                  "static": true,
+                  "settings": {},
+                  "blocks": {}
+                },
+                "add-to-cart": {
+                  "type": "add-to-cart",
+                  "static": true,
+                  "settings": {
+                    "style_class": "button-secondary"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": []
             }
           },
           "block_order": [
             "product_card_gallery_cFExAi",
             "product_title_j7qXTx",
-            "price_fYkUgG"
+            "price_fYkUgG",
+            "variant_picker_taqNtA",
+            "buy_buttons_qQQFBH"
           ]
         }
       },

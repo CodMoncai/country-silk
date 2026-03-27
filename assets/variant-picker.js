@@ -116,6 +116,34 @@ export default class VariantPicker extends Component {
     }
   }
 
+  /**
+   * Normalized Theme value candidates derived from collection handle.
+   * Supports per-collection fallbacks (e.g. `traditional-christmas` → also allow `Traditional`).
+   * @returns {string[]}
+   */
+  #collectionPathThemeWantedCandidatesNormalized() {
+    try {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      const idx = parts.indexOf('collections');
+      if (idx < 0 || idx >= parts.length - 1) return [];
+      const slug = parts[idx + 1];
+      if (!slug || slug === 'all') return [];
+
+      const display = this.#collectionPathThemeDisplayLabel();
+      const candidates = [];
+      if (display) candidates.push(this.#normalizeThemeText(display));
+
+      if (slug === 'traditional-christmas') {
+        candidates.push(this.#normalizeThemeText('Traditional'));
+      }
+
+      // De-dupe while preserving order.
+      return Array.from(new Set(candidates)).filter(Boolean);
+    } catch {
+      return [];
+    }
+  }
+
   /** @returns {HTMLFieldSetElement | undefined} */
   #findThemeFieldsetElement() {
     const themeLabelCandidates = this.#getThemeOptionLabelCandidatesNormalized();
@@ -189,11 +217,10 @@ export default class VariantPicker extends Component {
     if (this.dataset.templateProductMatch === 'true') return false;
     if (this.dataset.autoCollectionPathThemeApplied === 'true') return false;
 
-    const displayLabel = this.#collectionPathThemeDisplayLabel();
-    if (!displayLabel) return false;
+    const wantedCandidates = this.#collectionPathThemeWantedCandidatesNormalized();
+    if (!wantedCandidates.length) return false;
 
-    const wanted = this.#normalizeThemeText(displayLabel);
-    const ok = this.#selectThemeIfMatching(wanted);
+    const ok = wantedCandidates.some((wanted) => this.#selectThemeIfMatching(wanted));
     if (ok) this.dataset.autoCollectionPathThemeApplied = 'true';
     return ok;
   }

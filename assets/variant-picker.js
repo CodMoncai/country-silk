@@ -137,6 +137,10 @@ export default class VariantPicker extends Component {
         candidates.push(this.#normalizeThemeText('Traditional'));
       }
 
+      if (slug === 'emerald-christmas') {
+        candidates.push(this.#normalizeThemeText('Gold White'));
+      }
+
       // De-dupe while preserving order.
       return Array.from(new Set(candidates)).filter(Boolean);
     } catch {

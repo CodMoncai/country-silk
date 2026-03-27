@@ -9,13 +9,103 @@
  */
 {
   "sections": {
+    "c5dad8a4-c8d9-4389-8e0f-7d2e78a2a52d": {
+      "type": "main-page",
+      "settings": {
+        "content_direction": "column",
+        "gap": 12,
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "hero_PbLxAY": {
+      "type": "hero",
+      "blocks": {
+        "text_4fbMtL": {
+          "type": "text",
+          "settings": {
+            "text": "<h1>Customer Application</h1>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "type_preset": "h1",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_4fbMtL"
+      ],
+      "name": "t:names.hero",
+      "settings": {
+        "media_type_1": "image",
+        "image_1": "shopify://shop_images/CONTACT_US_BANNER.jpg",
+        "video_1_external_url": "",
+        "media_type_2": "image",
+        "video_2_external_url": "",
+        "stack_media_on_mobile": false,
+        "custom_mobile_media": false,
+        "media_type_1_mobile": "image",
+        "video_1_mobile_external_url": "",
+        "media_type_2_mobile": "image",
+        "video_2_mobile_external_url": "",
+        "link": "",
+        "open_in_new_tab": false,
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_width": "page-width",
+        "section_height": "medium",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5",
+        "toggle_overlay": true,
+        "overlay_color": "#00000026",
+        "overlay_style": "gradient",
+        "gradient_direction": "to top",
+        "blurred_reflection": false,
+        "reflection_opacity": 75,
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
     "forms": {
       "type": "apps",
       "blocks": {
         "54ef365e-6ece-4e82-a92e-0e595b906946": {
           "type": "shopify://apps/forms/blocks/inline/8744a304-fcb1-4347-b211-bb6b4759a76a",
           "settings": {
-            "form_id": "930690"
+            "form_id": "930690",
+            "text_color": "#202020",
+            "button_background_color": "#202020",
+            "button_label_color": "#ffffff",
+            "links_color": "#1878b9",
+            "errors_color": "#e02229",
+            "text_alignment": "center",
+            "form_alignment": "center",
+            "padding_top": 0,
+            "padding_bottom": 24,
+            "padding_right": 0,
+            "padding_left": 0
           }
         }
       },
@@ -23,14 +113,11 @@
         "54ef365e-6ece-4e82-a92e-0e595b906946"
       ],
       "settings": {}
-    },
-    "c5dad8a4-c8d9-4389-8e0f-7d2e78a2a52d": {
-      "type": "main-page",
-      "settings": {}
     }
   },
   "order": [
     "c5dad8a4-c8d9-4389-8e0f-7d2e78a2a52d",
+    "hero_PbLxAY",
     "forms"
   ]
 }

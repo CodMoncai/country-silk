@@ -212,6 +212,26 @@
               },
               "blocks": {}
             },
+            "sku_ErphJW": {
+              "type": "sku",
+              "name": "t:names.product_sku",
+              "settings": {
+                "type_preset": "",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "color": "var(--color-foreground)",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "price_EzJzMm": {
               "type": "price",
               "settings": {
@@ -252,6 +272,7 @@
                 "priority_theme_specials": false,
                 "priority_theme_ruby_red_christmas": false,
                 "priority_theme_non_theme": false,
+                "priority_theme_option_values": "",
                 "theme_swatches_metafield_namespace": "custom",
                 "theme_swatches_metafield_key": "theme_swatches",
                 "alignment": "left",
@@ -277,6 +298,7 @@
                 "priority_theme_specials": false,
                 "priority_theme_ruby_red_christmas": false,
                 "priority_theme_non_theme": false,
+                "priority_theme_option_values": "",
                 "product_swatches_alignment": "center",
                 "product_swatches_alignment_mobile": "center",
                 "hide_padding": false,
@@ -321,6 +343,7 @@
           "block_order": [
             "card-gallery",
             "product_title_4nY4eT",
+            "sku_ErphJW",
             "price_EzJzMm",
             "variant_picker_mLDqpm",
             "swatches",

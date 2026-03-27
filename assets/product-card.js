@@ -23,6 +23,22 @@ export class ProductCard extends Component {
     return this.refs.productCardLink.href;
   }
 
+  #ensureVariantPickerSpacerOnCollectionCards() {
+    // Only on collection pages.
+    if (!window.location.pathname.includes('/collections/')) return;
+    if (this.closest('quick-add-dialog')) return;
+
+    // Only when the core <variant-picker> tag is not present.
+    if (this.querySelector('variant-picker')) return;
+
+    if (this.querySelector('[data-variant-picker-empty-spacer="true"]')) return;
+
+    const spacer = document.createElement('div');
+    spacer.dataset.variantPickerEmptySpacer = 'true';
+    spacer.style.height = '8em';
+    this.appendChild(spacer);
+  }
+
   /**
    * Gets the currently selected variant ID from the product card
    * @returns {string | null} The variant ID or null if none selected
@@ -79,6 +95,8 @@ export class ProductCard extends Component {
     mediaQueryLarge.addEventListener('change', this.#handleQuickAdd);
 
     this.addEventListener('click', this.navigateToProduct);
+
+    this.#ensureVariantPickerSpacerOnCollectionCards();
 
     // Preload the next image on the slideshow to avoid white flashes on previewImage
     setTimeout(() => {

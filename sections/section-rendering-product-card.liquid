@@ -48,23 +48,7 @@
     assign url = product.url
   endunless
 
-  assign variant_skus_for_json = product.variants | map: 'sku' | compact
-  assign apply_lowest_variant_sku = false
-  if template.name != 'product'
-    assign apply_lowest_variant_sku = true
-  endif
-  assign has_any_variant_sku = false
-  for v in product.variants
-    if v.sku != blank
-      assign has_any_variant_sku = true
-      break
-    endif
-  endfor
-
   assign sku = card_context_variant.sku
-  if apply_lowest_variant_sku and has_any_variant_sku
-    assign sku = variant_skus_for_json | sort | first
-  endif
 %}
 
 {%- if settings.transition_to_main_product -%}
@@ -97,13 +81,9 @@
 
     <product-sku-component
       data-product-id="{{ product.id }}"
-      {% if apply_lowest_variant_sku %}
-        data-apply-lowest-variant-sku="true"
-        data-variant-skus="{{ variant_skus_for_json | json | escape }}"
-      {% endif %}
-      style="{% if sku == blank and has_any_variant_sku == false %}display: none;{% else %}display: block;{% endif %}"
+      style="{% if sku == blank %}display: none;{% else %}display: block;{% endif %}"
     >
-      {% render 'sku', product_resource: product, sku: sku %}
+      {% render 'sku', product_resource: product %}
     </product-sku-component>
   </a>
 </product-card>

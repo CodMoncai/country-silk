@@ -4160,3 +4160,7 @@ text-component {
 .add-to-cart-text {
   text-transform: uppercase !important;
 }
+
+.collection-wrapper .variant-picker {
+  height: 8em !important;
+}

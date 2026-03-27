@@ -36,6 +36,12 @@ export class ProductCard extends Component {
     const spacer = document.createElement('div');
     spacer.dataset.variantPickerEmptySpacer = 'true';
     spacer.style.height = '8em';
+    const buyButtons = this.querySelector('.buy-buttons-block');
+    if (buyButtons?.parentNode) {
+      buyButtons.parentNode.insertBefore(spacer, buyButtons);
+      return;
+    }
+
     this.appendChild(spacer);
   }
 

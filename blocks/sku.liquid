@@ -1,6 +1,18 @@
 {%- liquid
   assign block_settings = block.settings
   assign product_resource = closest.product
+  assign variant_skus_for_json = product_resource.variants | map: 'sku' | compact
+  assign apply_lowest_variant_sku = false
+  if template.name != 'product'
+    assign apply_lowest_variant_sku = true
+  endif
+  assign has_any_variant_sku = false
+  for v in product_resource.variants
+    if v.sku != blank
+      assign has_any_variant_sku = true
+      break
+    endif
+  endfor
   assign selected_variant = product_resource.selected_or_first_available_variant
   if template.name != 'product'
     assign _sku_ctx_collection = collection
@@ -27,6 +39,9 @@
     endif
   endif
   assign sku = selected_variant.sku
+  if apply_lowest_variant_sku and has_any_variant_sku
+    assign sku = variant_skus_for_json | sort | first
+  endif
 -%}
 
 {% liquid
@@ -62,8 +77,12 @@
 <product-sku-component
   class="text-block {{ text_block_classes }} text-{{ block_settings.alignment }} {{ block_settings.type_preset | default: 'paragraph' }} spacing-style"
   data-product-id="{{ product_resource.id }}"
+  {% if apply_lowest_variant_sku %}
+    data-apply-lowest-variant-sku="true"
+    data-variant-skus="{{ variant_skus_for_json | json | escape }}"
+  {% endif %}
   style="
-    {% if sku == blank %}
+    {% if sku == blank and has_any_variant_sku == false %}
       display: none;
     {% else %}
       display: block;
@@ -74,7 +93,7 @@
   "
   {{ block.shopify_attributes }}
 >
-  {% render 'sku', product_resource: product_resource %}
+  {% render 'sku', product_resource: product_resource, sku: sku %}
 </product-sku-component>
 
 {% schema %}

@@ -3,10 +3,11 @@
   It is used in the sku block.
 
   @param {product} product_resource - The product to render
+  @param {string} [sku] - Optional displayed SKU (e.g. collection card context or lowest sorted). Falls back to selected or first available variant.
 {%- enddoc -%}
 
 {%- liquid
-  assign sku = product_resource.selected_or_first_available_variant.sku
+  assign sku_display = sku | default: product_resource.selected_or_first_available_variant.sku
 -%}
 
 <div ref="skuContainer">
@@ -15,6 +16,6 @@
     ref="sku"
     data-testid="product-sku"
   >
-    {{- sku -}}
+    {{- sku_display -}}
   </span>
 </div>

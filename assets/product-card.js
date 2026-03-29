@@ -6,6 +6,83 @@ import { ThemeEvents, VariantSelectedEvent, VariantUpdateEvent, SlideshowSelectE
 import { morph } from '@theme/morph';
 
 /**
+ * @param {HTMLElement} card
+ */
+function removeVariantPickerEmptySpacer(card) {
+  for (const el of card.querySelectorAll('[data-variant-picker-empty-spacer="true"]')) {
+    el.remove();
+  }
+}
+
+/**
+ * @param {HTMLElement} card
+ */
+function insertVariantPickerEmptySpacer(card) {
+  if (card.querySelector('variant-picker')) return;
+  if (card.querySelector('[data-variant-picker-empty-spacer="true"]')) return;
+
+  const spacer = document.createElement('div');
+  spacer.dataset.variantPickerEmptySpacer = 'true';
+  spacer.style.height = '8em';
+  const buyButtons = card.querySelector('.buy-buttons-block');
+  if (buyButtons?.parentNode) {
+    buyButtons.parentNode.insertBefore(spacer, buyButtons);
+    return;
+  }
+
+  card.appendChild(spacer);
+}
+
+/**
+ * Product cards in collection grid DOM order (each `li.product-grid__item` holds one card).
+ * @returns {HTMLElement[]}
+ */
+function getCollectionResultsProductCards() {
+  const root =
+    document.querySelector('results-list.product-grid-container') ??
+    document.querySelector('results-list.section.product-grid-container') ??
+    document.querySelector('results-list');
+  if (!root) return [];
+
+  /** @type {HTMLElement[]} */
+  const cards = [];
+  for (const li of root.querySelectorAll(':scope li.product-grid__item')) {
+    const card = li.querySelector('product-card');
+    if (!(card instanceof HTMLElement)) continue;
+    if (card.closest('quick-add-dialog')) continue;
+    cards.push(card);
+  }
+  return cards;
+}
+
+function refreshCollectionVariantPickerSpacers() {
+  if (!window.location.pathname.includes('/collections/')) {
+    for (const card of document.querySelectorAll('product-card')) {
+      removeVariantPickerEmptySpacer(card);
+    }
+    return;
+  }
+
+  const cards = getCollectionResultsProductCards();
+  for (let i = 0; i < cards.length; i += 3) {
+    const chunk = cards.slice(i, i + 3);
+    const anyVariantPickerInChunk = chunk.some((c) => c.querySelector('variant-picker'));
+
+    for (const card of chunk) {
+      removeVariantPickerEmptySpacer(card);
+      if (!anyVariantPickerInChunk) continue;
+      if (!card.querySelector('variant-picker')) {
+        insertVariantPickerEmptySpacer(card);
+      }
+    }
+  }
+}
+
+const scheduleCollectionVariantPickerSpacerRefresh = debounce(() => {
+  refreshCollectionVariantPickerSpacers();
+}, 32);
+
+/**
  * A custom element that displays a product card.
  *
  * @typedef {object} Refs
@@ -21,28 +98,6 @@ export class ProductCard extends Component {
 
   get productPageUrl() {
     return this.refs.productCardLink.href;
-  }
-
-  #ensureVariantPickerSpacerOnCollectionCards() {
-    // Only on collection pages.
-    if (!window.location.pathname.includes('/collections/')) return;
-    if (this.closest('quick-add-dialog')) return;
-
-    // Only when the core <variant-picker> tag is not present.
-    if (this.querySelector('variant-picker')) return;
-
-    if (this.querySelector('[data-variant-picker-empty-spacer="true"]')) return;
-
-    const spacer = document.createElement('div');
-    spacer.dataset.variantPickerEmptySpacer = 'true';
-    spacer.style.height = '8em';
-    const buyButtons = this.querySelector('.buy-buttons-block');
-    if (buyButtons?.parentNode) {
-      buyButtons.parentNode.insertBefore(spacer, buyButtons);
-      return;
-    }
-
-    this.appendChild(spacer);
   }
 
   /**
@@ -102,7 +157,7 @@ export class ProductCard extends Component {
 
     this.addEventListener('click', this.navigateToProduct);
 
-    this.#ensureVariantPickerSpacerOnCollectionCards();
+    scheduleCollectionVariantPickerSpacerRefresh();
 
     // Preload the next image on the slideshow to avoid white flashes on previewImage
     setTimeout(() => {

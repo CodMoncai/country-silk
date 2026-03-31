@@ -2212,13 +2212,6 @@ product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
   text-decoration-thickness: 1.5px;
 }
 
-.price--rlp {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: min(0.85em, var(--font-paragraph--size));
-  color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
-}
-
 .card-gallery {
   position: relative;
 }

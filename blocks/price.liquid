@@ -95,9 +95,9 @@
     {%- if _rlp_only_cents > 0 -%}
       <div class="product-price__rlp-only">
         {%- if settings.currency_code_enabled_product_pages -%}
-          <span class="price price--rlp caption">{{ 'content.rlp' | t }}: {{ _rlp_only_cents | money_with_currency }}</span>
+          <span class="price">{{ _rlp_only_cents | money_with_currency }}</span>
         {%- else -%}
-          <span class="price price--rlp caption">{{ 'content.rlp' | t }}: {{ _rlp_only_cents | money }}</span>
+          <span class="price">{{ _rlp_only_cents | money }}</span>
         {%- endif -%}
       </div>
     {%- endif -%}

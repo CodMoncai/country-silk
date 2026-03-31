@@ -110,7 +110,16 @@
 {% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
 <div ref="priceContainer">
   {% if can_show_pricing != blank %}
-    {% if has_volume_pricing %}
+    {%- if has_rlp_display and rlp_cents_display > 0 -%}
+      {%- liquid
+        if use_currency
+          assign rlp_formatted = rlp_cents_display | money_with_currency
+        else
+          assign rlp_formatted = rlp_cents_display | money
+        endif
+      -%}
+      <span class="price">{{ rlp_formatted }}</span>
+    {%- elsif has_volume_pricing -%}
       {% comment %} Volume pricing display {% endcomment %}
       {% if show_compare_price %}
         <span role="group">
@@ -158,17 +167,17 @@
       {% render 'unit-price', price: unit_price, measurement: selected_variant.unit_price_measurement %}
     {%- endif -%}
   {% endif %}
-  {%- if has_rlp_display and rlp_cents_display > 0 -%}
+  {%- if has_rlp_display and rlp_cents_display > 0 and can_show_pricing == blank -%}
     {%- liquid
       if use_currency
-        assign rlp_formatted = rlp_cents_display | money_with_currency
+        assign rlp_formatted_guest = rlp_cents_display | money_with_currency
       else
-        assign rlp_formatted = rlp_cents_display | money
+        assign rlp_formatted_guest = rlp_cents_display | money
       endif
     -%}
-    <span class="price price--rlp caption">{{ 'content.rlp' | t }}: {{ rlp_formatted }}</span>
+    <span class="price">{{ rlp_formatted_guest }}</span>
   {%- endif -%}
 </div>
-{%- if can_show_pricing != blank and has_volume_pricing -%}
+{%- if can_show_pricing != blank and has_volume_pricing and has_rlp_display == false -%}
   <small class="volume-pricing-note">{{ 'content.volume_pricing_available' | t }}</small>
 {%- endif -%}

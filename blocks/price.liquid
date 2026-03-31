@@ -16,8 +16,8 @@
   assign display_price = selected_variant.price
   assign rlp_cents = nil
   assign show_rlp_flag = false
-
-  if show_rlp_raw == true or show_rlp_raw == 'true' or show_rlp_raw == '1'
+  assign show_rlp_str = show_rlp_raw | append: '' | strip | downcase
+  if show_rlp_raw == true or show_rlp_str == 'true' or show_rlp_str == '1' or show_rlp_str == 'yes'
     assign show_rlp_flag = true
   endif
 
@@ -32,15 +32,27 @@
       assign rlp_cents = selected_variant.metafields.custom.rlp_price.value
     endif
     if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = selected_variant.metafields.custom.recommended_list_price.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = selected_variant.metafields.custom.list_price.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
       assign rlp_cents = product_resource.metafields.custom.rlp.value
     endif
     if rlp_cents == blank or rlp_cents <= 0
       assign rlp_cents = product_resource.metafields.custom.rlp_price.value
     endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = product_resource.metafields.custom.recommended_list_price.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = product_resource.metafields.custom.list_price.value
+    endif
     if rlp_cents != blank and rlp_cents > 0
       assign display_price = rlp_cents
     endif
-  elsif show_rlp_raw != blank and show_rlp_raw != false and show_rlp_raw != 'false' and show_rlp_raw != '0' and show_rlp_raw != true and show_rlp_raw != 'true' and show_rlp_raw != '1'
+  elsif show_rlp_raw != blank and show_rlp_raw != false and show_rlp_str != 'false' and show_rlp_str != '0' and show_rlp_str != 'no' and show_rlp_raw != true and show_rlp_str != 'true' and show_rlp_str != '1' and show_rlp_str != 'yes'
     assign display_price = show_rlp_raw
   endif
 -%}
@@ -79,7 +91,7 @@
   class="text-block {{ text_block_classes }} text-{{ block_settings.alignment }} {{ block_settings.type_preset | default: 'paragraph' }} spacing-style"
   data-block-id="{{ block.id }}"
   data-product-id="{{ product_resource.id }}"
-  data-variant-price="{{ selected_variant.price }}"
+  data-variant-price="{{ display_price }}"
   data-currency="{{ cart.currency.iso_code }}"
   style="
     {% render 'typography-style', settings: block_settings %}

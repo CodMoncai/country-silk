@@ -1,10 +1,11 @@
 {%- doc -%}
-  Resolves display unit price (cents) for a variant using custom.show_rlp rules.
+  When custom.show_rlp is true, display unit price from custom.rlp (variant first, then product).
+  Otherwise use the variant selling price.
 
   @param {variant} variant - Variant to price
-  @param {product} product - Parent product (for product-level metafields)
+  @param {product} product - Parent product (product-level custom.rlp fallback)
 
-  Outputs: "CENTS,FLAG" — FLAG is 1 when RLP override applied, else 0.
+  Outputs: "CENTS,FLAG" — FLAG is 1 when custom.rlp is used, else 0.
 {%- enddoc -%}
 {%- liquid
   assign v = variant
@@ -33,40 +34,14 @@
   endif
 
   if show_rlp_flag
-    if v.compare_at_price != blank and v.compare_at_price > 0
-      assign rlp_cents = v.compare_at_price
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = v.metafields.custom.rlp.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = v.metafields.custom.rlp_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = v.metafields.custom.recommended_list_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = v.metafields.custom.list_price.value
-    endif
+    assign rlp_cents = v.metafields.custom.rlp.value
     if rlp_cents == blank or rlp_cents <= 0
       assign rlp_cents = p.metafields.custom.rlp.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = p.metafields.custom.rlp_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = p.metafields.custom.recommended_list_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = p.metafields.custom.list_price.value
     endif
     if rlp_cents != blank and rlp_cents > 0
       assign out_cents = rlp_cents
       assign rlp_applied = 1
     endif
-  elsif show_rlp_raw != blank and show_rlp_raw != false and show_rlp_str != 'false' and show_rlp_str != '0' and show_rlp_str != 'no' and show_rlp_raw != true and show_rlp_str != 'true' and show_rlp_str != '1' and show_rlp_str != 'yes'
-    assign out_cents = show_rlp_raw
-    assign rlp_applied = 1
   endif
 -%}
 {{- out_cents -}},{{- rlp_applied -}}

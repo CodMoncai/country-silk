@@ -2,8 +2,11 @@
   When custom.show_rlp is true, display unit price from custom.rlp (variant first, then product).
   Otherwise use the variant selling price.
 
+  show_rlp: enabled if custom.show_rlp is true on the variant OR the product (either can turn RLP on).
+  rlp: variant custom.rlp when set, else product. Values are normalized to cents for money, number_decimal (dollars), and text.
+
   @param {variant} variant - Variant to price
-  @param {product} product - Parent product (product-level custom.rlp fallback)
+  @param {product} product - Parent product (product-level fallback)
 
   Outputs: "CENTS,FLAG" — FLAG is 1 when custom.rlp is used, else 0.
 {%- enddoc -%}
@@ -12,32 +15,100 @@
   assign p = product
   assign variant_price = v.price
 
-  assign show_rlp_raw = v.metafields.custom.show_rlp.value
-  if show_rlp_raw == blank
-    assign show_rlp_raw = v.metafields.custom.show_rlp
+  assign v_show_mf = v.metafields.custom.show_rlp
+  assign p_show_mf = p.metafields.custom.show_rlp
+
+  assign v_show_raw = nil
+  if v_show_mf != blank
+    assign v_show_raw = v_show_mf.value
+    if v_show_raw == blank
+      assign v_show_raw = v_show_mf
+    endif
   endif
-  if show_rlp_raw == blank
-    assign show_rlp_raw = p.metafields.custom.show_rlp.value
-    if show_rlp_raw == blank
-      assign show_rlp_raw = p.metafields.custom.show_rlp
+
+  assign p_show_raw = nil
+  if p_show_mf != blank
+    assign p_show_raw = p_show_mf.value
+    if p_show_raw == blank
+      assign p_show_raw = p_show_mf
     endif
   endif
 
   assign out_cents = variant_price
   assign rlp_applied = 0
-  assign rlp_cents = nil
   assign show_rlp_flag = false
-  assign show_rlp_str = show_rlp_raw | append: '' | strip | downcase
 
-  if show_rlp_raw == true or show_rlp_str == 'true' or show_rlp_str == '1' or show_rlp_str == 'yes'
+  assign v_show_str = v_show_raw | append: '' | strip | downcase
+  assign p_show_str = p_show_raw | append: '' | strip | downcase
+
+  assign v_show_true = false
+  if v_show_raw == true or v_show_str == 'true' or v_show_str == '1' or v_show_str == 'yes'
+    assign v_show_true = true
+  endif
+
+  assign p_show_true = false
+  if p_show_raw == true or p_show_str == 'true' or p_show_str == '1' or p_show_str == 'yes'
+    assign p_show_true = true
+  endif
+
+  if v_show_true or p_show_true
     assign show_rlp_flag = true
   endif
 
   if show_rlp_flag
-    assign rlp_cents = v.metafields.custom.rlp.value
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = p.metafields.custom.rlp.value
+    assign rlp_mf = nil
+    assign rlp_raw = nil
+    assign mf_type = ''
+
+    assign v_rlp_mf = v.metafields.custom.rlp
+    assign p_rlp_mf = p.metafields.custom.rlp
+
+    if v_rlp_mf != blank
+      assign rlp_raw = v_rlp_mf.value
+      if rlp_raw == blank
+        assign rlp_raw = v_rlp_mf
+      endif
+      assign rlp_test = rlp_raw | append: '' | strip
+      if rlp_test != ''
+        assign rlp_mf = v_rlp_mf
+        assign mf_type = v_rlp_mf.type | default: ''
+      endif
     endif
+
+    if rlp_mf == blank and p_rlp_mf != blank
+      assign rlp_raw = p_rlp_mf.value
+      if rlp_raw == blank
+        assign rlp_raw = p_rlp_mf
+      endif
+      assign rlp_test = rlp_raw | append: '' | strip
+      if rlp_test != ''
+        assign rlp_mf = p_rlp_mf
+        assign mf_type = p_rlp_mf.type | default: ''
+      endif
+    endif
+
+    assign rlp_cents = nil
+    if rlp_mf != blank and rlp_raw != blank
+      if mf_type == 'money'
+        assign rlp_cents = rlp_raw | plus: 0
+      elsif mf_type == 'number_decimal'
+        assign rlp_cents = rlp_raw | times: 100 | round
+      elsif mf_type == 'number_integer'
+        assign rlp_cents = rlp_raw | plus: 0
+      elsif mf_type == 'single_line_text_field'
+        assign cleaned = rlp_raw | strip | replace: '$', '' | replace: ',', ''
+        assign rlp_cents = cleaned | times: 100 | round
+      else
+        assign rlp_num = rlp_raw | plus: 0
+        assign rlp_as_string = rlp_raw | append: ''
+        if rlp_as_string contains '.'
+          assign rlp_cents = rlp_num | times: 100 | round
+        else
+          assign rlp_cents = rlp_num
+        endif
+      endif
+    endif
+
     if rlp_cents != blank and rlp_cents > 0
       assign out_cents = rlp_cents
       assign rlp_applied = 1

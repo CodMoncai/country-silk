@@ -2,59 +2,11 @@
   assign block_settings = block.settings
   assign product_resource = closest.product
   assign selected_variant = product_resource.selected_or_first_available_variant
-  assign show_rlp_raw = selected_variant.metafields.custom.show_rlp.value
-  if show_rlp_raw == blank
-    assign show_rlp_raw = selected_variant.metafields.custom.show_rlp
-  endif
-  if show_rlp_raw == blank
-    assign show_rlp_raw = product_resource.metafields.custom.show_rlp.value
-    if show_rlp_raw == blank
-      assign show_rlp_raw = product_resource.metafields.custom.show_rlp
-    endif
-  endif
-
-  assign display_price = selected_variant.price
-  assign rlp_cents = nil
-  assign show_rlp_flag = false
-  assign show_rlp_str = show_rlp_raw | append: '' | strip | downcase
-  if show_rlp_raw == true or show_rlp_str == 'true' or show_rlp_str == '1' or show_rlp_str == 'yes'
-    assign show_rlp_flag = true
-  endif
-
-  if show_rlp_flag
-    if selected_variant.compare_at_price != blank and selected_variant.compare_at_price > 0
-      assign rlp_cents = selected_variant.compare_at_price
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = selected_variant.metafields.custom.rlp.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = selected_variant.metafields.custom.rlp_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = selected_variant.metafields.custom.recommended_list_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = selected_variant.metafields.custom.list_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = product_resource.metafields.custom.rlp.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = product_resource.metafields.custom.rlp_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = product_resource.metafields.custom.recommended_list_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = product_resource.metafields.custom.list_price.value
-    endif
-    if rlp_cents != blank and rlp_cents > 0
-      assign display_price = rlp_cents
-    endif
-  elsif show_rlp_raw != blank and show_rlp_raw != false and show_rlp_str != 'false' and show_rlp_str != '0' and show_rlp_str != 'no' and show_rlp_raw != true and show_rlp_str != 'true' and show_rlp_str != '1' and show_rlp_str != 'yes'
-    assign display_price = show_rlp_raw
-  endif
+  capture _rlp_line
+    render 'rlp-variant-unit-cents', variant: selected_variant, product: product_resource
+  endcapture
+  assign _rlp_parts = _rlp_line | strip | split: ','
+  assign display_price = _rlp_parts[0] | strip | plus: 0
 -%}
 
 {% liquid
@@ -91,6 +43,7 @@
   class="text-block {{ text_block_classes }} text-{{ block_settings.alignment }} {{ block_settings.type_preset | default: 'paragraph' }} spacing-style"
   data-block-id="{{ block.id }}"
   data-product-id="{{ product_resource.id }}"
+  data-initial-variant-id="{{ selected_variant.id }}"
   data-variant-price="{{ display_price }}"
   data-currency="{{ cart.currency.iso_code }}"
   style="
@@ -100,6 +53,13 @@
   "
   {{ block.shopify_attributes }}
 >
+  <script type="application/json" data-variant-unit-cents-map>
+    {
+    {%- for v in product_resource.variants -%}
+      "{{ v.id }}": {% capture _rlp_map_c %}{% render 'rlp-variant-unit-cents', variant: v, product: product_resource %}{% endcapture %}{% assign _rlp_map_seg = _rlp_map_c | strip | split: ',' %}{{ _rlp_map_seg[0] | strip }}{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+    }
+  </script>
   {% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
   {% if can_show_pricing != blank %}
     <div class="product-price__row">

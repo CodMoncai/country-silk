@@ -37,64 +37,14 @@
   endif
   assign variant_price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
-  assign show_rlp_raw = selected_variant.metafields.custom.show_rlp.value
-  if show_rlp_raw == blank
-    assign show_rlp_raw = selected_variant.metafields.custom.show_rlp
-  endif
-  if show_rlp_raw == blank
-    assign show_rlp_raw = product_resource.metafields.custom.show_rlp.value
-    if show_rlp_raw == blank
-      assign show_rlp_raw = product_resource.metafields.custom.show_rlp
-    endif
-  endif
-
+  capture _rlp_line
+    render 'rlp-variant-unit-cents', variant: selected_variant, product: product_resource
+  endcapture
+  assign _rlp_parts = _rlp_line | strip | split: ','
+  assign price = _rlp_parts[0] | strip | plus: 0
   assign has_rlp_override = false
-  assign price = variant_price
-  assign rlp_cents = nil
-  assign show_rlp_flag = false
-  assign show_rlp_str = show_rlp_raw | append: '' | strip | downcase
-  if show_rlp_raw == true or show_rlp_str == 'true' or show_rlp_str == '1' or show_rlp_str == 'yes'
-    assign show_rlp_flag = true
-  endif
-
-  if show_rlp_flag
-    if selected_variant.compare_at_price != blank and selected_variant.compare_at_price > 0
-      assign rlp_cents = selected_variant.compare_at_price
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = selected_variant.metafields.custom.rlp.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = selected_variant.metafields.custom.rlp_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = selected_variant.metafields.custom.recommended_list_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = selected_variant.metafields.custom.list_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = product_resource.metafields.custom.rlp.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = product_resource.metafields.custom.rlp_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = product_resource.metafields.custom.recommended_list_price.value
-    endif
-    if rlp_cents == blank or rlp_cents <= 0
-      assign rlp_cents = product_resource.metafields.custom.list_price.value
-    endif
-    if rlp_cents != blank and rlp_cents > 0
-      assign has_rlp_override = true
-      assign price = rlp_cents
-    endif
-  elsif show_rlp_raw != blank and show_rlp_raw != false and show_rlp_str != 'false' and show_rlp_str != '0' and show_rlp_str != 'no' and show_rlp_raw != true and show_rlp_str != 'true' and show_rlp_str != '1' and show_rlp_str != 'yes'
-    comment
-      Money-typed custom.show_rlp: value is cents (integer).
-    endcomment
+  if _rlp_parts[1] == '1'
     assign has_rlp_override = true
-    assign price = show_rlp_raw
   endif
 
   assign show_compare_price = false

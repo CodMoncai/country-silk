@@ -11,9 +11,54 @@ import { ThemeEvents, VariantUpdateEvent } from '@theme/events';
 class ProductPrice extends HTMLElement {
   #abortController = new AbortController();
 
+  /** @type {Record<string, number> | null} */
+  #variantUnitCentsMap = null;
+
+  /**
+   * @param {ParentNode | null} root
+   * @returns {Record<string, number> | null}
+   */
+  #parseVariantUnitCentsMap(root) {
+    if (!root) return null;
+    const el = root.querySelector('script[data-variant-unit-cents-map]');
+    if (!el?.textContent) return null;
+    try {
+      const parsed = JSON.parse(el.textContent.trim());
+      if (parsed && typeof parsed === 'object') {
+        return /** @type {Record<string, number>} */ (parsed);
+      }
+    } catch {
+      // no-op
+    }
+    return null;
+  }
+
+  /** @returns {number} */
+  #displayUnitCents() {
+    const map = this.#variantUnitCentsMap;
+    const id = this.dataset.activeVariantId ?? this.dataset.initialVariantId;
+    if (map && id != null && Object.prototype.hasOwnProperty.call(map, id)) {
+      const cents = map[id];
+      if (typeof cents === 'number' && !Number.isNaN(cents)) {
+        return cents;
+      }
+    }
+    return parseInt(this.dataset.variantPrice, 10);
+  }
+
   connectedCallback() {
     const closestSection = this.closest('.shopify-section, dialog');
     if (!closestSection) return;
+
+    this.#variantUnitCentsMap = this.#parseVariantUnitCentsMap(this);
+    if (this.dataset.initialVariantId) {
+      this.dataset.activeVariantId = this.dataset.initialVariantId;
+    }
+    const initialCents = this.#displayUnitCents();
+    if (!Number.isNaN(initialCents)) {
+      this.dataset.variantPrice = String(initialCents);
+    }
+
     const { signal } = this.#abortController;
     closestSection.addEventListener(ThemeEvents.variantUpdate, this.updatePrice);
     document.addEventListener(ThemeEvents.quantitySelectorUpdate, this.#updateTotal, { signal });
@@ -67,7 +112,7 @@ class ProductPrice extends HTMLElement {
   #updateTotal = () => {
     const totalEl = this.querySelector('[ref="totalPrice"]');
     if (!totalEl) return;
-    const priceCents = parseInt(this.dataset.variantPrice, 10);
+    const priceCents = this.#displayUnitCents();
     if (Number.isNaN(priceCents)) return;
     const quantity = this.#getQuantity();
     const totalCents = quantity * priceCents;
@@ -89,12 +134,30 @@ class ProductPrice extends HTMLElement {
     const newProductPrice = event.detail.data.html.querySelector(`product-price[data-block-id="${this.dataset.blockId}"]`);
     if (!newProductPrice) return;
 
+    const newMap = this.#parseVariantUnitCentsMap(newProductPrice);
+    if (newMap) {
+      this.#variantUnitCentsMap = newMap;
+    }
+
+    if (event.detail.resource?.id != null) {
+      this.dataset.activeVariantId = String(event.detail.resource.id);
+    }
+
+    if (newProductPrice.dataset.initialVariantId) {
+      this.dataset.initialVariantId = newProductPrice.dataset.initialVariantId;
+    }
+
     // Sync variant price and currency for total calculation
     if (newProductPrice.dataset.variantPrice) {
       this.dataset.variantPrice = newProductPrice.dataset.variantPrice;
     }
     if (newProductPrice.dataset.currency) {
       this.dataset.currency = newProductPrice.dataset.currency;
+    }
+
+    const resolvedCents = this.#displayUnitCents();
+    if (!Number.isNaN(resolvedCents)) {
+      this.dataset.variantPrice = String(resolvedCents);
     }
 
     // Update price container

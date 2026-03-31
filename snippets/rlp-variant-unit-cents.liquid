@@ -1,0 +1,72 @@
+{%- doc -%}
+  Resolves display unit price (cents) for a variant using custom.show_rlp rules.
+
+  @param {variant} variant - Variant to price
+  @param {product} product - Parent product (for product-level metafields)
+
+  Outputs: "CENTS,FLAG" — FLAG is 1 when RLP override applied, else 0.
+{%- enddoc -%}
+{%- liquid
+  assign v = variant
+  assign p = product
+  assign variant_price = v.price
+
+  assign show_rlp_raw = v.metafields.custom.show_rlp.value
+  if show_rlp_raw == blank
+    assign show_rlp_raw = v.metafields.custom.show_rlp
+  endif
+  if show_rlp_raw == blank
+    assign show_rlp_raw = p.metafields.custom.show_rlp.value
+    if show_rlp_raw == blank
+      assign show_rlp_raw = p.metafields.custom.show_rlp
+    endif
+  endif
+
+  assign out_cents = variant_price
+  assign rlp_applied = 0
+  assign rlp_cents = nil
+  assign show_rlp_flag = false
+  assign show_rlp_str = show_rlp_raw | append: '' | strip | downcase
+
+  if show_rlp_raw == true or show_rlp_str == 'true' or show_rlp_str == '1' or show_rlp_str == 'yes'
+    assign show_rlp_flag = true
+  endif
+
+  if show_rlp_flag
+    if v.compare_at_price != blank and v.compare_at_price > 0
+      assign rlp_cents = v.compare_at_price
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = v.metafields.custom.rlp.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = v.metafields.custom.rlp_price.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = v.metafields.custom.recommended_list_price.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = v.metafields.custom.list_price.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = p.metafields.custom.rlp.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = p.metafields.custom.rlp_price.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = p.metafields.custom.recommended_list_price.value
+    endif
+    if rlp_cents == blank or rlp_cents <= 0
+      assign rlp_cents = p.metafields.custom.list_price.value
+    endif
+    if rlp_cents != blank and rlp_cents > 0
+      assign out_cents = rlp_cents
+      assign rlp_applied = 1
+    endif
+  elsif show_rlp_raw != blank and show_rlp_raw != false and show_rlp_str != 'false' and show_rlp_str != '0' and show_rlp_str != 'no' and show_rlp_raw != true and show_rlp_str != 'true' and show_rlp_str != '1' and show_rlp_str != 'yes'
+    assign out_cents = show_rlp_raw
+    assign rlp_applied = 1
+  endif
+-%}
+{{- out_cents -}},{{- rlp_applied -}}

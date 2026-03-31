@@ -1,19 +1,15 @@
 {%- doc -%}
-  When custom.show_rlp is true, display unit price from custom.rlp (variant first, then product).
-  Otherwise use the variant selling price.
+  Resolves custom.rlp when custom.show_rlp is true (variant OR product).
 
-  show_rlp: enabled if custom.show_rlp is true on the variant OR the product (either can turn RLP on).
-  rlp: variant custom.rlp when set, else product. Values are normalized to cents for money, number_decimal (dollars), and text.
+  Money metafields use a Money drop: `| append: ''` is often empty — we stringify with
+  capture/echo so cents parse reliably.
 
-  @param {variant} variant - Variant to price
-  @param {product} product - Parent product (product-level fallback)
-
-  Outputs: "CENTS,FLAG" — FLAG is 1 when custom.rlp is used, else 0.
+  Outputs: "FLAG,CENTS" — FLAG 1 when RLP is resolved, CENTS integer (0 when inactive).
+  Payable amount is always variant.price in the parent snippet / JSON map.
 {%- enddoc -%}
 {%- liquid
   assign v = variant
   assign p = product
-  assign variant_price = v.price
 
   assign v_show_mf = v.metafields.custom.show_rlp
   assign p_show_mf = p.metafields.custom.show_rlp
@@ -34,8 +30,8 @@
     endif
   endif
 
-  assign out_cents = variant_price
   assign rlp_applied = 0
+  assign rlp_out = 0
   assign show_rlp_flag = false
 
   assign v_show_str = v_show_raw | append: '' | strip | downcase
@@ -56,63 +52,88 @@
   endif
 
   if show_rlp_flag
-    assign rlp_mf = nil
-    assign rlp_raw = nil
-    assign mf_type = ''
-
-    assign v_rlp_mf = v.metafields.custom.rlp
-    assign p_rlp_mf = p.metafields.custom.rlp
-
-    if v_rlp_mf != blank
-      assign rlp_raw = v_rlp_mf.value
-      if rlp_raw == blank
-        assign rlp_raw = v_rlp_mf
-      endif
-      assign rlp_test = rlp_raw | append: '' | strip
-      if rlp_test != ''
-        assign rlp_mf = v_rlp_mf
-        assign mf_type = v_rlp_mf.type | default: ''
-      endif
-    endif
-
-    if rlp_mf == blank and p_rlp_mf != blank
-      assign rlp_raw = p_rlp_mf.value
-      if rlp_raw == blank
-        assign rlp_raw = p_rlp_mf
-      endif
-      assign rlp_test = rlp_raw | append: '' | strip
-      if rlp_test != ''
-        assign rlp_mf = p_rlp_mf
-        assign mf_type = p_rlp_mf.type | default: ''
-      endif
-    endif
-
     assign rlp_cents = nil
-    if rlp_mf != blank and rlp_raw != blank
-      if mf_type == 'money'
-        assign rlp_cents = rlp_raw | plus: 0
-      elsif mf_type == 'number_decimal'
-        assign rlp_cents = rlp_raw | times: 100 | round
-      elsif mf_type == 'number_integer'
-        assign rlp_cents = rlp_raw | plus: 0
-      elsif mf_type == 'single_line_text_field'
-        assign cleaned = rlp_raw | strip | replace: '$', '' | replace: ',', ''
-        assign rlp_cents = cleaned | times: 100 | round
+
+    if v.metafields.custom.rlp != blank
+      assign mf_v = v.metafields.custom.rlp
+      assign raw_v = mf_v.value
+      if raw_v == blank
+        assign raw_v = mf_v
+      endif
+      assign t_v = mf_v.type | default: ''
+
+      if t_v == 'money'
+        capture cap_v
+          echo raw_v
+        endcapture
+        assign rlp_cents = cap_v | strip | plus: 0
+      elsif t_v == 'number_decimal'
+        assign rlp_cents = raw_v | times: 100 | round
+      elsif t_v == 'number_integer'
+        assign rlp_cents = raw_v | plus: 0
+      elsif t_v == 'single_line_text_field'
+        assign cleaned_v = raw_v | strip | replace: '$', '' | replace: ',', ''
+        assign rlp_cents = cleaned_v | times: 100 | round
       else
-        assign rlp_num = rlp_raw | plus: 0
-        assign rlp_as_string = rlp_raw | append: ''
-        if rlp_as_string contains '.'
-          assign rlp_cents = rlp_num | times: 100 | round
+        assign rlp_num_v = raw_v | plus: 0
+        capture cap_else_v
+          echo raw_v
+        endcapture
+        assign str_v = cap_else_v | strip
+        if str_v == ''
+          assign str_v = raw_v | append: ''
+        endif
+        if str_v contains '.'
+          assign rlp_cents = rlp_num_v | times: 100 | round
         else
-          assign rlp_cents = rlp_num
+          assign rlp_cents = rlp_num_v
+        endif
+      endif
+    endif
+
+    if rlp_cents == blank or rlp_cents <= 0
+      if p.metafields.custom.rlp != blank
+        assign mf_p = p.metafields.custom.rlp
+        assign raw_p = mf_p.value
+        if raw_p == blank
+          assign raw_p = mf_p
+        endif
+        assign t_p = mf_p.type | default: ''
+
+        if t_p == 'money'
+          capture cap_p
+            echo raw_p
+          endcapture
+          assign rlp_cents = cap_p | strip | plus: 0
+        elsif t_p == 'number_decimal'
+          assign rlp_cents = raw_p | times: 100 | round
+        elsif t_p == 'number_integer'
+          assign rlp_cents = raw_p | plus: 0
+        elsif t_p == 'single_line_text_field'
+          assign cleaned_p = raw_p | strip | replace: '$', '' | replace: ',', ''
+          assign rlp_cents = cleaned_p | times: 100 | round
+        else
+          assign rlp_num_p = raw_p | plus: 0
+          capture cap_else_p
+            echo raw_p
+          endcapture
+          assign str_p = cap_else_p | strip
+          if str_p == ''
+            assign str_p = raw_p | append: ''
+          endif
+          if str_p contains '.'
+            assign rlp_cents = rlp_num_p | times: 100 | round
+          else
+            assign rlp_cents = rlp_num_p
+          endif
         endif
       endif
     endif
 
     if rlp_cents != blank and rlp_cents > 0
-      assign out_cents = rlp_cents
       assign rlp_applied = 1
+      assign rlp_out = rlp_cents
     endif
   endif
 -%}
-{{- out_cents -}},{{- rlp_applied -}}
+{{- rlp_applied -}},{{- rlp_out -}}

@@ -2,11 +2,6 @@
   assign block_settings = block.settings
   assign product_resource = closest.product
   assign selected_variant = product_resource.selected_or_first_available_variant
-  capture _rlp_line
-    render 'rlp-variant-unit-cents', variant: selected_variant, product: product_resource
-  endcapture
-  assign _rlp_parts = _rlp_line | strip | split: ','
-  assign display_price = _rlp_parts[0] | strip | plus: 0
 -%}
 
 {% liquid
@@ -56,7 +51,7 @@
   <script type="application/json" data-variant-unit-cents-map>
     {
     {%- for v in product_resource.variants -%}
-      "{{ v.id }}": {% capture _rlp_map_c %}{% render 'rlp-variant-unit-cents', variant: v, product: product_resource %}{% endcapture %}{% assign _rlp_map_seg = _rlp_map_c | strip | split: ',' %}{{ _rlp_map_seg[0] | strip }}{% unless forloop.last %},{% endunless %}
+      "{{ v.id }}": {{ v.price }}{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
     }
   </script>
@@ -78,7 +73,7 @@
         <div class="product-price__total-cell" ref="totalPriceContainer">
           <span class="price" ref="totalPrice">
             {%- if selected_variant != blank -%}
-              {{ display_price | money }}
+              {{ selected_variant.price | money }}
             {%- endif -%}
           </span>
         </div>

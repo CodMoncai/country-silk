@@ -37,18 +37,20 @@
   endif
   assign variant_price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
+  assign price = variant_price
   capture _rlp_line
     render 'rlp-variant-unit-cents', variant: selected_variant, product: product_resource
   endcapture
   assign _rlp_parts = _rlp_line | strip | split: ','
-  assign price = _rlp_parts[0] | strip | plus: 0
-  assign has_rlp_override = false
-  if _rlp_parts[1] == '1'
-    assign has_rlp_override = true
+  assign has_rlp_display = false
+  assign rlp_cents_display = 0
+  if _rlp_parts[0] == '1'
+    assign has_rlp_display = true
+    assign rlp_cents_display = _rlp_parts[1] | strip | plus: 0
   endif
 
   assign show_compare_price = false
-  if compare_at_price > variant_price and has_rlp_override == false
+  if compare_at_price > variant_price
     assign show_compare_price = true
   endif
 
@@ -69,17 +71,12 @@
   endif
 
   if is_product_card
-    if has_rlp_override
-      assign price_min = price
-      assign price_max = price
-    else
-      assign price_min = product_resource.price_min
-      assign price_max = product_resource.price_max
-    endif
+    assign price_min = product_resource.price_min
+    assign price_max = product_resource.price_max
     assign has_volume_pricing = product_resource.quantity_price_breaks_configured? | default: false
   else
     # Product page: only use selected variant's pricing
-    if selected_variant.quantity_price_breaks.size > 0 and has_rlp_override == false
+    if selected_variant.quantity_price_breaks.size > 0
       assign has_volume_pricing = true
       assign price_min = selected_variant.quantity_price_breaks.last.price
       assign price_max = selected_variant.price
@@ -125,6 +122,16 @@
         <span class="visually-hidden">{{ 'content.price_range' | t }}&nbsp;</span>
         <span class="price price-range price--large">{{ price_min }} - {{ price_max }}</span>
       </span>
+      {%- if has_rlp_display and rlp_cents_display > 0 -%}
+        {%- liquid
+          if use_currency
+            assign rlp_formatted = rlp_cents_display | money_with_currency
+          else
+            assign rlp_formatted = rlp_cents_display | money
+          endif
+        -%}
+        <span class="price price--rlp caption">{{ 'content.rlp' | t }}: {{ rlp_formatted }}</span>
+      {%- endif -%}
     {% else %}
       {% comment %} Standard pricing display {% endcomment %}
       {% if show_sale_price_first == false and show_compare_price %}
@@ -149,6 +156,16 @@
           <span class="compare-at-price">{{- compare_at_price -}}</span>
         </span>
       {% endif %}
+      {%- if has_rlp_display and rlp_cents_display > 0 -%}
+        {%- liquid
+          if use_currency
+            assign rlp_formatted = rlp_cents_display | money_with_currency
+          else
+            assign rlp_formatted = rlp_cents_display | money
+          endif
+        -%}
+        <span class="price price--rlp caption">{{ 'content.rlp' | t }}: {{ rlp_formatted }}</span>
+      {%- endif -%}
     {% endif %}
     {%- if selected_variant.unit_price and show_unit_price %}
       {%- liquid

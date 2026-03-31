@@ -1,8 +1,8 @@
 {%- doc -%}
-  Resolves custom.rlp when custom.show_rlp is true (variant OR product).
+  Resolves custom.rlp from variant (then product) when the logged-in customer has
+  customer.metafields.custom.show_rlp true. RLP amounts stay on variant/product.
 
-  Money drops: do not use `echo` inside `{% liquid %}` capture — use
-  `{% capture %}{{ value }}{% endcapture %}` so the storefront renders cents reliably.
+  Money drops: stringify with `{% capture %}{{ value }}{% endcapture %}` (not `echo` in liquid).
 
   Outputs: FLAG|CENTS (pipe delimiter). FLAG is 1 when RLP resolves; CENTS is integer.
 {%- enddoc -%}
@@ -10,22 +10,14 @@
   assign v = variant
   assign p = product
 
-  assign v_show_mf = v.metafields.custom.show_rlp
-  assign p_show_mf = p.metafields.custom.show_rlp
-
-  assign v_show_raw = nil
-  if v_show_mf != blank
-    assign v_show_raw = v_show_mf.value
-    if v_show_raw == blank
-      assign v_show_raw = v_show_mf
-    endif
-  endif
-
-  assign p_show_raw = nil
-  if p_show_mf != blank
-    assign p_show_raw = p_show_mf.value
-    if p_show_raw == blank
-      assign p_show_raw = p_show_mf
+  assign show_rlp_raw = nil
+  if customer
+    assign c_show_mf = customer.metafields.custom.show_rlp
+    if c_show_mf != blank
+      assign show_rlp_raw = c_show_mf.value
+      if show_rlp_raw == blank
+        assign show_rlp_raw = c_show_mf
+      endif
     endif
   endif
 
@@ -33,20 +25,8 @@
   assign rlp_out = 0
   assign show_rlp_flag = false
 
-  assign v_show_str = v_show_raw | append: '' | strip | downcase
-  assign p_show_str = p_show_raw | append: '' | strip | downcase
-
-  assign v_show_true = false
-  if v_show_raw == true or v_show_raw == 1 or v_show_str == 'true' or v_show_str == '1' or v_show_str == 'yes'
-    assign v_show_true = true
-  endif
-
-  assign p_show_true = false
-  if p_show_raw == true or p_show_raw == 1 or p_show_str == 'true' or p_show_str == '1' or p_show_str == 'yes'
-    assign p_show_true = true
-  endif
-
-  if v_show_true or p_show_true
+  assign show_rlp_str = show_rlp_raw | append: '' | strip | downcase
+  if show_rlp_raw == true or show_rlp_raw == 1 or show_rlp_str == 'true' or show_rlp_str == '1' or show_rlp_str == 'yes'
     assign show_rlp_flag = true
   endif
 

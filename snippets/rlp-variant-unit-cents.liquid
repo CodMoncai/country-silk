@@ -1,11 +1,10 @@
 {%- doc -%}
   Resolves custom.rlp when custom.show_rlp is true (variant OR product).
 
-  Money metafields use a Money drop: `| append: ''` is often empty — we stringify with
-  capture/echo so cents parse reliably.
+  Money drops: do not use `echo` inside `{% liquid %}` capture — use
+  `{% capture %}{{ value }}{% endcapture %}` so the storefront renders cents reliably.
 
-  Outputs: "FLAG,CENTS" — FLAG 1 when RLP is resolved, CENTS integer (0 when inactive).
-  Payable amount is always variant.price in the parent snippet / JSON map.
+  Outputs: FLAG|CENTS (pipe delimiter). FLAG is 1 when RLP resolves; CENTS is integer.
 {%- enddoc -%}
 {%- liquid
   assign v = variant
@@ -38,12 +37,12 @@
   assign p_show_str = p_show_raw | append: '' | strip | downcase
 
   assign v_show_true = false
-  if v_show_raw == true or v_show_str == 'true' or v_show_str == '1' or v_show_str == 'yes'
+  if v_show_raw == true or v_show_raw == 1 or v_show_str == 'true' or v_show_str == '1' or v_show_str == 'yes'
     assign v_show_true = true
   endif
 
   assign p_show_true = false
-  if p_show_raw == true or p_show_str == 'true' or p_show_str == '1' or p_show_str == 'yes'
+  if p_show_raw == true or p_show_raw == 1 or p_show_str == 'true' or p_show_str == '1' or p_show_str == 'yes'
     assign p_show_true = true
   endif
 
@@ -51,89 +50,84 @@
     assign show_rlp_flag = true
   endif
 
-  if show_rlp_flag
-    assign rlp_cents = nil
-
-    if v.metafields.custom.rlp != blank
-      assign mf_v = v.metafields.custom.rlp
-      assign raw_v = mf_v.value
-      if raw_v == blank
-        assign raw_v = mf_v
-      endif
-      assign t_v = mf_v.type | default: ''
-
-      if t_v == 'money'
-        capture cap_v
-          echo raw_v
-        endcapture
-        assign rlp_cents = cap_v | strip | plus: 0
-      elsif t_v == 'number_decimal'
-        assign rlp_cents = raw_v | times: 100 | round
-      elsif t_v == 'number_integer'
-        assign rlp_cents = raw_v | plus: 0
-      elsif t_v == 'single_line_text_field'
-        assign cleaned_v = raw_v | strip | replace: '$', '' | replace: ',', ''
-        assign rlp_cents = cleaned_v | times: 100 | round
-      else
-        assign rlp_num_v = raw_v | plus: 0
-        capture cap_else_v
-          echo raw_v
-        endcapture
-        assign str_v = cap_else_v | strip
-        if str_v == ''
-          assign str_v = raw_v | append: ''
-        endif
-        if str_v contains '.'
-          assign rlp_cents = rlp_num_v | times: 100 | round
-        else
-          assign rlp_cents = rlp_num_v
-        endif
-      endif
-    endif
-
-    if rlp_cents == blank or rlp_cents <= 0
-      if p.metafields.custom.rlp != blank
-        assign mf_p = p.metafields.custom.rlp
-        assign raw_p = mf_p.value
-        if raw_p == blank
-          assign raw_p = mf_p
-        endif
-        assign t_p = mf_p.type | default: ''
-
-        if t_p == 'money'
-          capture cap_p
-            echo raw_p
-          endcapture
-          assign rlp_cents = cap_p | strip | plus: 0
-        elsif t_p == 'number_decimal'
-          assign rlp_cents = raw_p | times: 100 | round
-        elsif t_p == 'number_integer'
-          assign rlp_cents = raw_p | plus: 0
-        elsif t_p == 'single_line_text_field'
-          assign cleaned_p = raw_p | strip | replace: '$', '' | replace: ',', ''
-          assign rlp_cents = cleaned_p | times: 100 | round
-        else
-          assign rlp_num_p = raw_p | plus: 0
-          capture cap_else_p
-            echo raw_p
-          endcapture
-          assign str_p = cap_else_p | strip
-          if str_p == ''
-            assign str_p = raw_p | append: ''
-          endif
-          if str_p contains '.'
-            assign rlp_cents = rlp_num_p | times: 100 | round
-          else
-            assign rlp_cents = rlp_num_p
-          endif
-        endif
-      endif
-    endif
-
-    if rlp_cents != blank and rlp_cents > 0
-      assign rlp_applied = 1
-      assign rlp_out = rlp_cents
-    endif
-  endif
+  assign rlp_cents = nil
 -%}
-{{- rlp_applied -}},{{- rlp_out -}}
+{%- if show_rlp_flag -%}
+  {%- if v.metafields.custom.rlp != blank -%}
+    {%- assign mf_v = v.metafields.custom.rlp -%}
+    {%- assign raw_v = mf_v.value -%}
+    {%- if raw_v == blank -%}
+      {%- assign raw_v = mf_v -%}
+    {%- endif -%}
+    {%- assign t_v = mf_v.type | default: '' -%}
+    {%- if t_v == 'money' or t_v contains 'money' -%}
+      {%- capture cap_money_v -%}{{ raw_v }}{%- endcapture -%}
+      {%- assign s_v = cap_money_v | strip | replace: '$', '' | replace: ' ', '' | remove: ',' -%}
+      {%- assign rlp_cents = s_v | plus: 0 -%}
+      {%- if rlp_cents == 0 -%}
+        {%- capture cap_mwc_v -%}{{ raw_v | money_without_currency }}{%- endcapture -%}
+        {%- assign clean_v = cap_mwc_v | strip | replace: ',', '.' | replace: ' ', '' -%}
+        {%- assign rlp_cents = clean_v | times: 100 | round -%}
+      {%- endif -%}
+    {%- elsif t_v == 'number_decimal' -%}
+      {%- assign rlp_cents = raw_v | times: 100 | round -%}
+    {%- elsif t_v == 'number_integer' -%}
+      {%- assign rlp_cents = raw_v | plus: 0 -%}
+    {%- elsif t_v == 'single_line_text_field' -%}
+      {%- assign cleaned_v = raw_v | strip | replace: '$', '' | replace: ',', '' -%}
+      {%- assign rlp_cents = cleaned_v | times: 100 | round -%}
+    {%- else -%}
+      {%- capture cap_else_v -%}{{ raw_v }}{%- endcapture -%}
+      {%- assign str_v = cap_else_v | strip | remove: ',' -%}
+      {%- assign num_v = str_v | plus: 0 -%}
+      {%- if str_v contains '.' -%}
+        {%- assign rlp_cents = num_v | times: 100 | round -%}
+      {%- else -%}
+        {%- assign rlp_cents = num_v -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if rlp_cents == blank or rlp_cents <= 0 -%}
+    {%- if p.metafields.custom.rlp != blank -%}
+      {%- assign mf_p = p.metafields.custom.rlp -%}
+      {%- assign raw_p = mf_p.value -%}
+      {%- if raw_p == blank -%}
+        {%- assign raw_p = mf_p -%}
+      {%- endif -%}
+      {%- assign t_p = mf_p.type | default: '' -%}
+      {%- if t_p == 'money' or t_p contains 'money' -%}
+        {%- capture cap_money_p -%}{{ raw_p }}{%- endcapture -%}
+        {%- assign s_p = cap_money_p | strip | replace: '$', '' | replace: ' ', '' | remove: ',' -%}
+        {%- assign rlp_cents = s_p | plus: 0 -%}
+        {%- if rlp_cents == 0 -%}
+          {%- capture cap_mwc_p -%}{{ raw_p | money_without_currency }}{%- endcapture -%}
+          {%- assign clean_p = cap_mwc_p | strip | replace: ',', '.' | replace: ' ', '' -%}
+          {%- assign rlp_cents = clean_p | times: 100 | round -%}
+        {%- endif -%}
+      {%- elsif t_p == 'number_decimal' -%}
+        {%- assign rlp_cents = raw_p | times: 100 | round -%}
+      {%- elsif t_p == 'number_integer' -%}
+        {%- assign rlp_cents = raw_p | plus: 0 -%}
+      {%- elsif t_p == 'single_line_text_field' -%}
+        {%- assign cleaned_p = raw_p | strip | replace: '$', '' | replace: ',', '' -%}
+        {%- assign rlp_cents = cleaned_p | times: 100 | round -%}
+      {%- else -%}
+        {%- capture cap_else_p -%}{{ raw_p }}{%- endcapture -%}
+        {%- assign str_p = cap_else_p | strip | remove: ',' -%}
+        {%- assign num_p = str_p | plus: 0 -%}
+        {%- if str_p contains '.' -%}
+          {%- assign rlp_cents = num_p | times: 100 | round -%}
+        {%- else -%}
+          {%- assign rlp_cents = num_p -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if rlp_cents != blank and rlp_cents > 0 -%}
+    {%- assign rlp_applied = 1 -%}
+    {%- assign rlp_out = rlp_cents -%}
+  {%- endif -%}
+{%- endif -%}
+{{- rlp_applied -}}|{{- rlp_out -}}

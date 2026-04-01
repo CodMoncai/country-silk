@@ -1080,8 +1080,17 @@
     line:last-of-type {
       /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
       clip-path: inset(var(--clip, 0 0 0 0));
-      stroke: rgb(var(--color-variant-text-rgb) / 1);
+      /* Darken vs plain variant text using --color-strikethrough-mix (#000 / #fff from color scheme). Adjust ratio to taste. */
+      /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+      stroke: color-mix(in srgb, rgb(var(--color-variant-text-rgb)) 25%, var(--color-strikethrough-mix) 75%);
     }
+  }
+
+  /* Swatch labels: strikethrough SVG is not under the :not(--has-swatch) rules above */
+  .variant-option__button-label--has-swatch svg.variant-option__strikethrough line {
+    /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+    stroke: color-mix(in srgb, rgb(var(--color-variant-text-rgb)) 25%, var(--color-strikethrough-mix) 75%);
+    stroke-width: var(--options-border-width);
   }
 
   .variant-option__select-wrapper {

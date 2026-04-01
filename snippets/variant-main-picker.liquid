@@ -588,6 +588,7 @@
                         data-option-value-id="{{ product_option_value.id }}"
                         data-variant-id="{{ product_option_value.variant.id }}"
                         data-connected-product-url="{{ product_option_value.product_url }}"
+                        data-option-available="{{ product_option_value.available }}"
                         {% if picker_option_selected %}
                           selected="selected"
                         {% endif %}
@@ -625,6 +626,7 @@
                       data-option-value-id="{{ product_option_value.id }}"
                       data-variant-id="{{ product_option_value.variant.id }}"
                       data-connected-product-url="{{ product_option_value.product_url }}"
+                      data-option-available="{{ product_option_value.available }}"
                       {% if picker_option_selected %}
                         selected="selected"
                       {% endif %}
@@ -1084,6 +1086,15 @@
 
   .variant-option__select-wrapper:hover {
     border-color: var(--color-variant-hover-border);
+  }
+
+  /* Out-of-stock but selected: match selected-variant border (same as checked radios) */
+  .variant-option__select-wrapper:has(.variant-option__select option:checked[data-option-available='false']) {
+    border-color: var(--color-selected-variant-border);
+  }
+
+  .variant-option__select-wrapper:has(.variant-option__select option:checked[data-option-available='false']):hover {
+    border-color: var(--color-selected-variant-hover-border);
   }
 
   .variant-option__select:focus-visible {

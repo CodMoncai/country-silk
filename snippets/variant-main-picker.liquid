@@ -1062,20 +1062,9 @@
     stroke: var(--variant-picker-stroke-color);
   }
 
-  /* Unavailable option strikethrough: <line> elements use stroke (not fill) */
-  .variant-option__button-label:not(.variant-option__button-label--has-swatch) svg.variant-option__strikethrough line {
-    stroke: #d0312d;
-    stroke-width: var(--options-border-width);
-  }
-
   .variant-option__button-label:not(.variant-option__button-label--has-swatch) svg.variant-option__strikethrough line:last-of-type {
     /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
     clip-path: inset(var(--clip, 0 0 0 0));
-  }
-
-  .variant-option__button-label--has-swatch svg.variant-option__strikethrough line {
-    stroke: #d0312d;
-    stroke-width: var(--options-border-width);
   }
 
   .variant-option__select-wrapper {

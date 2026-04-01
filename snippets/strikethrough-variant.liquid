@@ -5,9 +5,23 @@
     class="variant-option__strikethrough"
     fill="none"
   >
-    {% # 25deg %}
-    <line x1="100" y1="0" x2="0" y2="46" vector-effect="non-scaling-stroke" />
+    {% # 25deg — stroke on element so color works even when snippet-level CSS is not bundled %}
+    <line
+      x1="100"
+      y1="0"
+      x2="0"
+      y2="46"
+      vector-effect="non-scaling-stroke"
+      stroke="#D0312D"
+    />
     {% # duplicate line for motion overlay %}
-    <line x1="100" y1="0" x2="0" y2="46" vector-effect="non-scaling-stroke" />
+    <line
+      x1="100"
+      y1="0"
+      x2="0"
+      y2="46"
+      vector-effect="non-scaling-stroke"
+      stroke="#D0312D"
+    />
   </svg>
 {% endunless %}

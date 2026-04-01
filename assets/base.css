@@ -2169,6 +2169,13 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
   border-radius: var(--variant-picker-swatch-radius);
 }
 
+/* Unavailable variant diagonal (strikethrough-variant.liquid). In base.css so it applies on collection
+   cards that only render swatches — variant-main-picker {% stylesheet %} may not load for those trees. */
+svg.variant-option__strikethrough line {
+  stroke: #d0312d;
+  stroke-width: var(--variant-picker-button-border-width, 1px);
+}
+
 .sticky-content {
   position: sticky;
   top: var(--sticky-header-offset, 0);

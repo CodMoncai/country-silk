@@ -2173,7 +2173,7 @@ deferred-media[class] :is(.deferred-media__poster-button img, .deferred-media__p
    cards that only render swatches — variant-main-picker {% stylesheet %} may not load for those trees. */
 svg.variant-option__strikethrough line {
   stroke: #d0312d;
-  stroke-width: var(--variant-picker-button-border-width, 1px);
+  stroke-width: calc(var(--variant-picker-button-border-width, 1px) + 2px);
 }
 
 .sticky-content {

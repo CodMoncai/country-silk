@@ -130,17 +130,9 @@
 %}
 
 {% unless product_resource.has_only_default_variant %}
-  {% liquid
-    assign button_background_brightness = section.settings.color_scheme.settings.foreground | color_brightness
-    if button_background_brightness < 105
-      assign strikethrough_color_mix = '#000'
-    else
-      assign strikethrough_color_mix = '#fff'
-    endif
-  %}
   <variant-picker
     class="variant-picker spacing-style variant-picker--{{ block_settings.alignment }}"
-    style="--color-strikethrough-mix: {{ strikethrough_color_mix }}; {% render 'spacing-style', settings: block_settings %}"
+    style="{% render 'spacing-style', settings: block_settings %}"
     data-section-id="{{ section.id }}"
     data-product-id="{{ product_resource.id }}"
     data-block-id="{{ block.id }}"
@@ -1070,26 +1062,19 @@
     stroke: var(--variant-picker-stroke-color);
   }
 
-  .variant-option__button-label:not(.variant-option__button-label--has-swatch) svg {
-    stroke: var(--color-variant-border);
-
-    line {
-      stroke-width: var(--options-border-width);
-    }
-
-    line:last-of-type {
-      /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-      clip-path: inset(var(--clip, 0 0 0 0));
-      /* Darken vs plain variant text using --color-strikethrough-mix (#000 / #fff from color scheme). Adjust ratio to taste. */
-      /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-      stroke: color-mix(in srgb, rgb(var(--color-variant-text-rgb)) 25%, var(--color-strikethrough-mix) 75%);
-    }
+  /* Unavailable option strikethrough: <line> elements use stroke (not fill) */
+  .variant-option__button-label:not(.variant-option__button-label--has-swatch) svg.variant-option__strikethrough line {
+    stroke: #d0312d;
+    stroke-width: var(--options-border-width);
   }
 
-  /* Swatch labels: strikethrough SVG is not under the :not(--has-swatch) rules above */
-  .variant-option__button-label--has-swatch svg.variant-option__strikethrough line {
+  .variant-option__button-label:not(.variant-option__button-label--has-swatch) svg.variant-option__strikethrough line:last-of-type {
     /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
-    stroke: color-mix(in srgb, rgb(var(--color-variant-text-rgb)) 25%, var(--color-strikethrough-mix) 75%);
+    clip-path: inset(var(--clip, 0 0 0 0));
+  }
+
+  .variant-option__button-label--has-swatch svg.variant-option__strikethrough line {
+    stroke: #d0312d;
     stroke-width: var(--options-border-width);
   }
 

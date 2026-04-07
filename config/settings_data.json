@@ -88,6 +88,11 @@
         "type": "shopify://apps/variant-image-wizard-swatch/blocks/app-embed/66205c03-f474-4e2c-b275-0a2806eeac16",
         "disabled": false,
         "settings": {}
+      },
+      "9118640484735429602": {
+        "type": "shopify://apps/variantify/blocks/variantify_app_embed/70d056e5-ff37-4c58-ba9b-db9f258f17e1",
+        "disabled": false,
+        "settings": {}
       }
     },
     "color_schemes": {

@@ -17,11 +17,43 @@ import { ThemeEvents, VariantUpdateEvent } from '@theme/events';
 class ProductSkuComponent extends Component {
   requiredRefs = ['skuContainer', 'sku'];
 
+  /** Collection URLs where the SKU line shows `data-product-id` instead of variant SKU. */
+  #productIdSkuCollectionHandles = ['shatter-proof-balls'];
+
+  #pathnameMatchesProductIdSkuCollection() {
+    try {
+      const path = window.location.pathname;
+      for (const handle of this.#productIdSkuCollectionHandles) {
+        if (path.includes(`/collections/${handle}`)) {
+          return true;
+        }
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  #applyProductIdAsSkuDisplay() {
+    const id = this.dataset.productId;
+    if (id) {
+      this.style.display = 'block';
+      this.refs.sku.textContent = id;
+    } else {
+      this.style.display = 'none';
+      this.refs.sku.textContent = '';
+    }
+  }
+
   connectedCallback() {
     super.connectedCallback();
     const target = this.closest('[id*="ProductInformation-"], [id*="QuickAdd-"], product-card');
     if (!target) return;
     target.addEventListener(ThemeEvents.variantUpdate, this.updateSku);
+
+    if (this.#pathnameMatchesProductIdSkuCollection()) {
+      this.#applyProductIdAsSkuDisplay();
+    }
   }
 
   disconnectedCallback() {
@@ -41,6 +73,11 @@ class ProductSkuComponent extends Component {
     }
 
     if (event.target instanceof HTMLElement && event.target.dataset.productId !== this.dataset.productId) {
+      return;
+    }
+
+    if (this.#pathnameMatchesProductIdSkuCollection()) {
+      this.#applyProductIdAsSkuDisplay();
       return;
     }
 

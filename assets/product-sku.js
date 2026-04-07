@@ -1,38 +1,6 @@
 import { Component } from '@theme/component';
 import { ThemeEvents, VariantUpdateEvent } from '@theme/events';
 
-/** Collection path segments where each SKU line shows that card’s `data-product-id`. */
-const PRODUCT_ID_AS_SKU_COLLECTION_HANDLES = ['shatter-proof-balls'];
-
-/**
- * @param {string} [pathname]
- */
-function pathnameMatchesProductIdSkuCollection(pathname = window.location.pathname) {
-  try {
-    for (const handle of PRODUCT_ID_AS_SKU_COLLECTION_HANDLES) {
-      if (pathname.includes(`/collections/${handle}`)) {
-        return true;
-      }
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Run after DOM changes so every upgraded instance picks up its own `data-product-id`.
- */
-function syncAllProductSkuComponentsForCollectionProductIds() {
-  if (!pathnameMatchesProductIdSkuCollection()) return;
-
-  for (const el of document.querySelectorAll('product-sku-component')) {
-    if (el instanceof ProductSkuComponent) {
-      el.syncProductIdDisplayForCollectionContext();
-    }
-  }
-}
-
 /**
  * A custom element that displays a product SKU.
  * This component listens for variant update events and updates the SKU display accordingly.
@@ -49,35 +17,11 @@ function syncAllProductSkuComponentsForCollectionProductIds() {
 class ProductSkuComponent extends Component {
   requiredRefs = ['skuContainer', 'sku'];
 
-  #applyProductIdAsSkuDisplay() {
-    const id = this.dataset.productId;
-    if (id) {
-      this.style.display = 'block';
-      this.refs.sku.textContent = id;
-    } else {
-      this.style.display = 'none';
-      this.refs.sku.textContent = '';
-    }
-  }
-
-  /**
-   * For configured collection URLs: show this instance’s `data-product-id` in `span.sku`
-   * (each card has its own component + id).
-   */
-  syncProductIdDisplayForCollectionContext() {
-    if (!pathnameMatchesProductIdSkuCollection()) return;
-    this.#applyProductIdAsSkuDisplay();
-  }
-
   connectedCallback() {
     super.connectedCallback();
-
     const target = this.closest('[id*="ProductInformation-"], [id*="QuickAdd-"], product-card');
-    if (target) {
-      target.addEventListener(ThemeEvents.variantUpdate, this.updateSku);
-    }
-
-    this.syncProductIdDisplayForCollectionContext();
+    if (!target) return;
+    target.addEventListener(ThemeEvents.variantUpdate, this.updateSku);
   }
 
   disconnectedCallback() {
@@ -97,11 +41,6 @@ class ProductSkuComponent extends Component {
     }
 
     if (event.target instanceof HTMLElement && event.target.dataset.productId !== this.dataset.productId) {
-      return;
-    }
-
-    if (pathnameMatchesProductIdSkuCollection()) {
-      this.#applyProductIdAsSkuDisplay();
       return;
     }
 
@@ -125,16 +64,4 @@ class ProductSkuComponent extends Component {
 
 if (!customElements.get('product-sku-component')) {
   customElements.define('product-sku-component', ProductSkuComponent);
-}
-
-if (pathnameMatchesProductIdSkuCollection()) {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', syncAllProductSkuComponentsForCollectionProductIds, {
-      once: true,
-    });
-  } else {
-    syncAllProductSkuComponentsForCollectionProductIds();
-  }
-
-  queueMicrotask(syncAllProductSkuComponentsForCollectionProductIds);
 }

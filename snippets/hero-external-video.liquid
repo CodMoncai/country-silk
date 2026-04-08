@@ -64,6 +64,15 @@
     https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0{% if vimeo_hash != blank %}&h={{ vimeo_hash }}{% endif %}
   {%- endcapture %}
   {% if poster_image != blank %}
+    {%- comment -%}
+      Sibling before the absolute layer: in-flow height from poster aspect (and theme min-height) so the
+      slot is not 0px tall. The iframe wrapper must stay a sibling, not wrap this guard.
+    {%- endcomment -%}
+    <span
+      class="hero__video-deferred-size-guard"
+      style="aspect-ratio: {{ poster_image.aspect_ratio }};"
+      aria-hidden="true"
+    ></span>
     <div
       class="hero__video-iframe-wrapper {{ video_class }} hero__video-iframe-wrapper--deferred"
       data-hero-embed-src="{{ vimeo_embed_src | strip | escape }}"
@@ -104,6 +113,11 @@
     https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0&playsinline=1
   {%- endcapture %}
   {% if poster_image != blank %}
+    <span
+      class="hero__video-deferred-size-guard"
+      style="aspect-ratio: {{ poster_image.aspect_ratio }};"
+      aria-hidden="true"
+    ></span>
     <div
       class="hero__video-iframe-wrapper {{ video_class }} hero__video-iframe-wrapper--deferred"
       data-hero-embed-src="{{ youtube_embed_src | strip | escape }}"

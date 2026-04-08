@@ -854,6 +854,18 @@
     overflow: hidden;
   }
 
+  /* When using CDN thumb / solid placeholder, keep a non-white base if the image fails */
+  .hero__video-external-poster-root--fallback {
+    background-color: #141414;
+  }
+
+  .hero__video-embed-placeholder {
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--hero-external-poster-ar);
+    pointer-events: none;
+  }
+
   .hero__video-poster-inline {
     position: relative;
     z-index: 0;

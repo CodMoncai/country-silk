@@ -4,9 +4,8 @@
   - Vimeo URLs via iframe embed (autoplay, loop, muted)
   - YouTube URLs via iframe embed (autoplay, loop, muted)
 
-  When poster_image is set with YouTube/Vimeo: poster is an in-flow img (fills width + aspect-ratio) and the iframe
-  is injected into an absolutely positioned overlay (see hero section script). This avoids a 0-height box when only
-  absolute children were present.
+  YouTube/Vimeo: always deferred iframe + an in-flow layer (custom poster, YouTube mqdefault thumb, or dark placeholder)
+  so the hero is not empty/white before the embed paints (see hero section script).
 
   @param external_url {string} - The external video URL (Vimeo, YouTube, or direct file)
   @param video_class {string} - CSS class for the video/iframe element
@@ -67,11 +66,11 @@
   {% capture vimeo_embed_src -%}
     https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0{% if vimeo_hash != blank %}&h={{ vimeo_hash }}{% endif %}
   {%- endcapture %}
-  {% if poster_image != blank %}
-    <div
-      class="hero__video-external-poster-root"
-      style="--hero-external-poster-ar: {{ poster_image.aspect_ratio }};"
-    >
+  <div
+    class="hero__video-external-poster-root{% if poster_image == blank %} hero__video-external-poster-root--fallback{% endif %}"
+    style="--hero-external-poster-ar: {% if poster_image != blank %}{{ poster_image.aspect_ratio }}{% else %}1.7777777777777777{% endif %};"
+  >
+    {% if poster_image != blank %}
       {{
         poster_image
         | image_url: width: 1920
@@ -85,39 +84,28 @@
           sizes: '100vw',
           alt: poster_image.alt
       }}
-      <div
-        class="hero__video-iframe-wrapper hero__video-iframe-wrapper--deferred"
-        data-hero-embed-src="{{ vimeo_embed_src | strip | escape }}"
-        data-hero-iframe-class="{{ video_class | escape }}"
-        data-hero-embed-allow="autoplay; fullscreen; picture-in-picture"
-        {% if data_testid != blank %}
-          data-hero-testid="{{ data_testid | escape }}"
-        {% endif %}
-      ></div>
-    </div>
-  {% else %}
-    <div class="hero__video-iframe-wrapper {{ video_class }}">
-      <iframe
-        src="{{ vimeo_embed_src | strip | escape }}"
-        class="hero__video-iframe {{ video_class }}"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowfullscreen
-        title="Hero background video"
-        {% if data_testid != blank %}
-          data-testid="{{ data_testid }}"
-        {% endif %}
-      ></iframe>
-    </div>
-  {% endif %}
+    {% else %}
+      <div class="hero__video-embed-placeholder" aria-hidden="true"></div>
+    {% endif %}
+    <div
+      class="hero__video-iframe-wrapper hero__video-iframe-wrapper--deferred"
+      data-hero-embed-src="{{ vimeo_embed_src | strip | escape }}"
+      data-hero-iframe-class="{{ video_class | escape }}"
+      data-hero-embed-allow="autoplay; fullscreen; picture-in-picture"
+      {% if data_testid != blank %}
+        data-hero-testid="{{ data_testid | escape }}"
+      {% endif %}
+    ></div>
+  </div>
 {% elsif video_type == 'youtube' and video_id != blank %}
   {% capture youtube_embed_src -%}
     https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0&playsinline=1
   {%- endcapture %}
-  {% if poster_image != blank %}
-    <div
-      class="hero__video-external-poster-root"
-      style="--hero-external-poster-ar: {{ poster_image.aspect_ratio }};"
-    >
+  <div
+    class="hero__video-external-poster-root{% if poster_image == blank %} hero__video-external-poster-root--fallback{% endif %}"
+    style="--hero-external-poster-ar: {% if poster_image != blank %}{{ poster_image.aspect_ratio }}{% else %}1.7777777777777777{% endif %};"
+  >
+    {% if poster_image != blank %}
       {{
         poster_image
         | image_url: width: 1920
@@ -131,30 +119,29 @@
           sizes: '100vw',
           alt: poster_image.alt
       }}
-      <div
-        class="hero__video-iframe-wrapper hero__video-iframe-wrapper--deferred"
-        data-hero-embed-src="{{ youtube_embed_src | strip | escape }}"
-        data-hero-iframe-class="{{ video_class | escape }}"
-        data-hero-embed-allow="autoplay; encrypted-media; fullscreen"
-        {% if data_testid != blank %}
-          data-hero-testid="{{ data_testid | escape }}"
-        {% endif %}
-      ></div>
-    </div>
-  {% else %}
-    <div class="hero__video-iframe-wrapper {{ video_class }}">
-      <iframe
-        src="{{ youtube_embed_src | strip | escape }}"
-        class="hero__video-iframe {{ video_class }}"
-        allow="autoplay; encrypted-media; fullscreen"
-        allowfullscreen
-        title="Hero background video"
-        {% if data_testid != blank %}
-          data-testid="{{ data_testid }}"
-        {% endif %}
-      ></iframe>
-    </div>
-  {% endif %}
+    {% else %}
+      {% comment %} 16:9 mqdefault (320×180); avoids a blank iframe while the embed loads {% endcomment %}
+      <img
+        src="https://i.ytimg.com/vi/{{ video_id }}/mqdefault.jpg"
+        class="hero__video-poster-inline"
+        width="320"
+        height="180"
+        loading="eager"
+        fetchpriority="high"
+        sizes="100vw"
+        alt=""
+      >
+    {% endif %}
+    <div
+      class="hero__video-iframe-wrapper hero__video-iframe-wrapper--deferred"
+      data-hero-embed-src="{{ youtube_embed_src | strip | escape }}"
+      data-hero-iframe-class="{{ video_class | escape }}"
+      data-hero-embed-allow="autoplay; encrypted-media; fullscreen"
+      {% if data_testid != blank %}
+        data-hero-testid="{{ data_testid | escape }}"
+      {% endif %}
+    ></div>
+  </div>
 {% else %}
   <video
     autoplay

@@ -771,6 +771,8 @@
     display: grid;
     grid-column: 1 / -1;
     grid-template-columns: repeat(var(--hero-media-count, 1), 1fr);
+    /* One row fills the hero so video/poster children can use height: 100% (auto rows only hug content). */
+    grid-template-rows: 1fr;
   }
 
   .hero--auto .hero__image,
@@ -840,18 +842,38 @@
     }
   }
 
+  .hero__video-wrapper {
+    min-height: 0;
+  }
+
+  /* Fixed/min-height heroes: stretch so external embed poster can fill the slot */
+  .hero:not(.hero--no-blocks-auto-height) .hero__video-wrapper {
+    height: 100%;
+    align-self: stretch;
+  }
+
   .hero__video-wrapper--desktop {
     position: relative;
   }
 
   /*
-    External embed + poster: poster img is in-flow so the block has real height; iframe layer is absolutely
-    positioned on top (injected by script). Replaces the old “only absolute children” pattern that often collapsed.
+    External embed + poster: full-bleed heroes use a cover-style poster + deferred iframe overlay.
+    hero--no-blocks-auto-height keeps an in-flow aspect-ratio poster so the section can size to the image.
   */
   .hero__video-external-poster-root {
     position: relative;
     width: 100%;
     overflow: hidden;
+  }
+
+  .hero:not(.hero--no-blocks-auto-height) .hero__video-external-poster-root {
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .hero.hero--no-blocks-auto-height .hero__video-external-poster-root {
+    height: auto;
+    min-height: 0;
   }
 
   /* When using CDN thumb / solid placeholder, keep a non-white base if the image fails */
@@ -860,21 +882,40 @@
   }
 
   .hero__video-embed-placeholder {
-    display: block;
-    width: 100%;
-    aspect-ratio: var(--hero-external-poster-ar);
     pointer-events: none;
   }
 
+  .hero:not(.hero--no-blocks-auto-height) .hero__video-embed-placeholder {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero.hero--no-blocks-auto-height .hero__video-embed-placeholder {
+    display: block;
+    width: 100%;
+    aspect-ratio: var(--hero-external-poster-ar);
+  }
+
   .hero__video-poster-inline {
-    position: relative;
     z-index: 0;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  .hero:not(.hero--no-blocks-auto-height) .hero__video-poster-inline {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero.hero--no-blocks-auto-height .hero__video-poster-inline {
+    position: relative;
     display: block;
     width: 100%;
     height: auto;
     aspect-ratio: var(--hero-external-poster-ar);
-    object-fit: cover;
-    object-position: center center;
   }
 
   .hero__video-iframe-wrapper--deferred {

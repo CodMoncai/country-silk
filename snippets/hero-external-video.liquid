@@ -63,6 +63,7 @@
 %}
 
 {% if video_type == 'vimeo' and video_id != blank %}
+  <!-- hero-external-video: deferred embed + poster (publish this file with sections/hero.liquid) -->
   {% capture vimeo_embed_src -%}
     https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0{% if vimeo_hash != blank %}&h={{ vimeo_hash }}{% endif %}
   {%- endcapture %}

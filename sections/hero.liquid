@@ -25,6 +25,16 @@
       assign hero_image_1_mobile = parent_collection.featured_image
     endif
   endif
+
+  # External embed poster: theme Image picker first, then hero_image_* (product/collection fallback).
+  assign hero_external_video_poster_1 = section.settings.image_1
+  if hero_external_video_poster_1 == blank
+    assign hero_external_video_poster_1 = hero_image_1
+  endif
+  assign hero_external_video_poster_1_mobile = section.settings.image_1_mobile
+  if hero_external_video_poster_1_mobile == blank
+    assign hero_external_video_poster_1_mobile = hero_image_1_mobile
+  endif
 %}
 
 {% liquid
@@ -208,7 +218,7 @@
           external_url: section.settings.video_1_external_url,
           video_class: media_video_desktop_class,
           data_testid: 'hero-desktop-video-1',
-          poster_image: section.settings.image_1
+          poster_image: hero_external_video_poster_1
         %}
       {%- elsif section.settings.image_1 != blank -%}
         {{
@@ -263,7 +273,7 @@
             external_url: section.settings.video_1_mobile_external_url,
             video_class: 'hero__video hero__video--mobile',
             data_testid: 'hero-mobile-video-1',
-            poster_image: section.settings.image_1_mobile
+            poster_image: hero_external_video_poster_1_mobile
           %}
         {%- elsif section.settings.image_1_mobile != blank -%}
           {{
@@ -687,6 +697,15 @@
         iframe.title = 'Hero background video';
         var testId = wrapper.getAttribute('data-hero-testid');
         if (testId) iframe.setAttribute('data-testid', testId);
+        iframe.style.opacity = '0';
+        var iframeShown = false;
+        function showHeroEmbedIframe() {
+          if (iframeShown) return;
+          iframeShown = true;
+          iframe.style.opacity = '1';
+        }
+        iframe.addEventListener('load', showHeroEmbedIframe);
+        window.setTimeout(showHeroEmbedIframe, 8000);
         wrapper.appendChild(iframe);
       }
 
@@ -825,6 +844,31 @@
     position: relative;
   }
 
+  /*
+    External embed + poster: poster img is in-flow so the block has real height; iframe layer is absolutely
+    positioned on top (injected by script). Replaces the old “only absolute children” pattern that often collapsed.
+  */
+  .hero__video-external-poster-root {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .hero__video-poster-inline {
+    position: relative;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--hero-external-poster-ar);
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  .hero__video-iframe-wrapper--deferred {
+    z-index: 1;
+  }
+
   /* Vimeo/YouTube iframe: fill and cover like native video */
   .hero__video-iframe-wrapper {
     position: absolute;
@@ -832,25 +876,6 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
-  }
-
-  /* In-flow: gives the slot height when inner media is only absolutely positioned (external poster + iframe). */
-  .hero__video-deferred-size-guard {
-    display: block;
-    width: 100%;
-    min-height: 45svh;
-    pointer-events: none;
-  }
-
-  .hero__video-poster-embed {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    z-index: 0;
-    pointer-events: none;
   }
 
   .hero__video-iframe {
@@ -864,6 +889,7 @@
     min-height: 100vh;
     transform: translate(-50%, -50%);
     border: 0;
+    transition: opacity 0.35s ease;
   }
 
   .hero__video-poster--desktop {

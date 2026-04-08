@@ -162,24 +162,37 @@
     assign fetch_priority = 'high'
   endif
 
-  # Full-bleed fallback behind the media grid: same image as the video poster (section Image + product/collection fallbacks).
-  assign hero_media_bg_image = nil
-  assign hero_media_bg_image_mobile = nil
-  unless media_1 == 'image' and media_2 == 'image'
-    if media_1 == 'video' and hero_external_video_poster_1 != blank
-      assign hero_media_bg_image = hero_external_video_poster_1 | image_url: width: 2400
-    elsif media_2 == 'video' and section.settings.image_2 != blank
-      assign hero_media_bg_image = section.settings.image_2 | image_url: width: 2400
+  # Video poster as CSS background on each hero__video-wrapper (desktop / mobile), not the full media grid.
+  assign hero_vw1_desktop_bg = nil
+  assign hero_vw1_mobile_bg = nil
+  if media_1 == 'video' and hero_external_video_poster_1 != blank
+    assign hero_vw1_desktop_bg = hero_external_video_poster_1 | image_url: width: 2400
+    if hero_external_video_poster_1_mobile != blank
+      assign hero_vw1_mobile_bg = hero_external_video_poster_1_mobile | image_url: width: 1600
+    else
+      assign hero_vw1_mobile_bg = hero_vw1_desktop_bg
     endif
-  endunless
-  if section.settings.custom_mobile_media
-    unless media_1_mobile == 'image' and media_2_mobile == 'image'
-      if media_1_mobile == 'video' and hero_external_video_poster_1_mobile != blank
-        assign hero_media_bg_image_mobile = hero_external_video_poster_1_mobile | image_url: width: 1600
-      elsif media_2_mobile == 'video' and section.settings.image_2_mobile != blank
-        assign hero_media_bg_image_mobile = section.settings.image_2_mobile | image_url: width: 1600
-      endif
-    endunless
+  endif
+
+  assign hero_vw1_mobile_only_bg = nil
+  if section.settings.custom_mobile_media and media_count_mobile > 0 and media_1_mobile == 'video' and hero_external_video_poster_1_mobile != blank
+    assign hero_vw1_mobile_only_bg = hero_external_video_poster_1_mobile | image_url: width: 1600
+  endif
+
+  assign hero_vw2_desktop_bg = nil
+  assign hero_vw2_mobile_bg = nil
+  if media_2 == 'video' and section.settings.image_2 != blank
+    assign hero_vw2_desktop_bg = section.settings.image_2 | image_url: width: 2400
+    if section.settings.image_2_mobile != blank
+      assign hero_vw2_mobile_bg = section.settings.image_2_mobile | image_url: width: 1600
+    else
+      assign hero_vw2_mobile_bg = hero_vw2_desktop_bg
+    endif
+  endif
+
+  assign hero_vw2_mobile_only_bg = nil
+  if section.settings.custom_mobile_media and media_count_mobile > 0 and media_2_mobile == 'video' and section.settings.image_2_mobile != blank
+    assign hero_vw2_mobile_only_bg = section.settings.image_2_mobile | image_url: width: 1600
   endif
 %}
 
@@ -232,7 +245,12 @@
   {%- endif -%}
 
   {%- if media_1 == 'video' -%}
-    <div class="{{ video_wrapper_desktop_class }}">
+    <div
+      class="{{ video_wrapper_desktop_class }}"
+      {%- if hero_vw1_desktop_bg != blank -%}
+        style="--hero-video-wrapper-bg: url('{{ hero_vw1_desktop_bg | strip }}');{% if hero_vw1_mobile_bg != blank %} --hero-video-wrapper-bg-mobile: url('{{ hero_vw1_mobile_bg | strip }}');{% endif %}"
+      {%- endif -%}
+    >
       {%- if section.settings.video_1_external_url != blank -%}
         {% render 'hero-external-video',
           external_url: section.settings.video_1_external_url,
@@ -287,7 +305,12 @@
     {%- endif -%}
 
     {%- if media_1_mobile == 'video' -%}
-      <div class="hero__video-wrapper hero__video-wrapper--mobile">
+      <div
+        class="hero__video-wrapper hero__video-wrapper--mobile"
+        {%- if hero_vw1_mobile_only_bg != blank -%}
+          style="--hero-video-wrapper-bg: url('{{ hero_vw1_mobile_only_bg | strip }}'); --hero-video-wrapper-bg-mobile: url('{{ hero_vw1_mobile_only_bg | strip }}');"
+        {%- endif -%}
+      >
         {%- if section.settings.video_1_mobile_external_url != blank -%}
           {% render 'hero-external-video',
             external_url: section.settings.video_1_mobile_external_url,
@@ -374,7 +397,12 @@
   {%- endif -%}
 
   {%- if media_2 == 'video' -%}
-    <div class="{{ video_wrapper_desktop_class }}">
+    <div
+      class="{{ video_wrapper_desktop_class }}"
+      {%- if hero_vw2_desktop_bg != blank -%}
+        style="--hero-video-wrapper-bg: url('{{ hero_vw2_desktop_bg | strip }}');{% if hero_vw2_mobile_bg != blank %} --hero-video-wrapper-bg-mobile: url('{{ hero_vw2_mobile_bg | strip }}');{% endif %}"
+      {%- endif -%}
+    >
       {%- if section.settings.video_2_external_url != blank -%}
         {% render 'hero-external-video',
           external_url: section.settings.video_2_external_url,
@@ -429,7 +457,12 @@
     {%- endif -%}
 
     {%- if media_2_mobile == 'video' -%}
-      <div class="hero__video-wrapper hero__video-wrapper--mobile">
+      <div
+        class="hero__video-wrapper hero__video-wrapper--mobile"
+        {%- if hero_vw2_mobile_only_bg != blank -%}
+          style="--hero-video-wrapper-bg: url('{{ hero_vw2_mobile_only_bg | strip }}'); --hero-video-wrapper-bg-mobile: url('{{ hero_vw2_mobile_only_bg | strip }}');"
+        {%- endif -%}
+      >
         {%- if section.settings.video_2_mobile_external_url != blank -%}
           {% render 'hero-external-video',
             external_url: section.settings.video_2_mobile_external_url,
@@ -661,12 +694,6 @@
         --hero-media-count: {{ media_count }};
         --hero-media-count-mobile: {{ media_count_mobile }};
         {%- if hero_image_1 != blank -%}--hero-media-aspect-ratio: {{ hero_image_1.aspect_ratio }};{% endif %}
-        {%- if hero_media_bg_image != blank -%}
-          --hero-media-bg-image: url('{{ hero_media_bg_image | strip }}');
-        {% endif %}
-        {%- if hero_media_bg_image_mobile != blank -%}
-          --hero-media-bg-image-mobile: url('{{ hero_media_bg_image_mobile | strip }}');
-        {% endif %}
       "
       data-testid="hero-media-wrapper"
     >
@@ -812,17 +839,6 @@
     grid-template-columns: repeat(var(--hero-media-count, 1), 1fr);
     /* One row fills the hero so video/poster children can use height: 100% (auto rows only hug content). */
     grid-template-rows: 1fr;
-    background-color: transparent;
-    background-image: var(--hero-media-bg-image, none);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-  }
-
-  @media screen and (max-width: 749px) {
-    .hero__media-wrapper {
-      background-image: var(--hero-media-bg-image-mobile, var(--hero-media-bg-image, none));
-    }
   }
 
   .hero--auto .hero__image,
@@ -885,6 +901,17 @@
       grid-template-columns: repeat(var(--hero-media-count-mobile, 1), 1fr);
     }
 
+    .hero__video-wrapper--desktop {
+      background-image: var(--hero-video-wrapper-bg-mobile, var(--hero-video-wrapper-bg, none));
+    }
+
+    .hero__video-wrapper--mobile:not(.hero__video-wrapper--desktop) {
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      background-image: var(--hero-video-wrapper-bg-mobile, var(--hero-video-wrapper-bg, none));
+    }
+
     /* Mobile stacking */
     .hero--stack-mobile .hero__media-wrapper {
       grid-template-columns: 1fr;
@@ -904,6 +931,10 @@
 
   .hero__video-wrapper--desktop {
     position: relative;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-image: var(--hero-video-wrapper-bg, none);
   }
 
   /*

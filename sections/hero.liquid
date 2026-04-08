@@ -823,6 +823,7 @@
     border: 0;
   }
 
+  /* Poster must stack above the iframe: iframes paint an opaque surface and hide anything beneath. */
   .hero__video-poster-embed {
     position: absolute;
     inset: 0;
@@ -830,9 +831,9 @@
     height: 100%;
     object-fit: cover;
     object-position: center center;
-    z-index: 0;
+    z-index: 2;
     pointer-events: none;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.45s ease;
   }
 
   .hero__video-iframe-wrapper--loaded .hero__video-poster-embed {

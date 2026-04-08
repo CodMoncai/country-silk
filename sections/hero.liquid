@@ -675,6 +675,16 @@
       var embedSrc = wrapper.getAttribute('data-hero-embed-src');
       if (!embedSrc) return;
 
+      var posterDebugFromLiquid = wrapper.getAttribute('data-hero-poster-debug-url');
+      var posterImg = wrapper.querySelector('img.hero__video-poster-embed');
+      console.log('[Hero poster debug] section {{ section.id }}', {
+        liquidImageUrlAttr: posterDebugFromLiquid || null,
+        imgFound: !!posterImg,
+        imgSrcAttribute: posterImg ? posterImg.getAttribute('src') : null,
+        imgCurrentSrc: posterImg ? posterImg.currentSrc || null : null,
+        imgSrcset: posterImg ? posterImg.getAttribute('srcset') : null,
+      });
+
       function injectIframe() {
         if (wrapper.querySelector('iframe.hero__video-iframe')) return;
         var iframe = document.createElement('iframe');

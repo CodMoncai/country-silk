@@ -77,6 +77,7 @@
       data-hero-embed-src="{{ vimeo_embed_src | strip | escape }}"
       data-hero-iframe-class="{{ video_class | escape }}"
       data-hero-embed-allow="autoplay; fullscreen; picture-in-picture"
+      data-hero-poster-debug-url="{{ poster_image | image_url: width: 1920 | escape }}"
       {% if data_testid != blank %}
         data-hero-testid="{{ data_testid | escape }}"
       {% endif %}
@@ -124,6 +125,7 @@
       data-hero-embed-src="{{ youtube_embed_src | strip | escape }}"
       data-hero-iframe-class="{{ video_class | escape }}"
       data-hero-embed-allow="autoplay; encrypted-media; fullscreen"
+      data-hero-poster-debug-url="{{ poster_image | image_url: width: 1920 | escape }}"
       {% if data_testid != blank %}
         data-hero-testid="{{ data_testid | escape }}"
       {% endif %}

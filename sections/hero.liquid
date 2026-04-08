@@ -1003,6 +1003,7 @@
   .hero:not(.hero--no-blocks-auto-height) .hero__video-embed-placeholder {
     position: absolute;
     inset: 0;
+    z-index: 1;
   }
 
   .hero.hero--no-blocks-auto-height .hero__video-embed-placeholder {
@@ -1012,7 +1013,7 @@
   }
 
   .hero__video-poster-inline {
-    z-index: 0;
+    z-index: 1;
     object-fit: cover;
     object-position: center center;
     opacity: 1;
@@ -1041,7 +1042,8 @@
   }
 
   .hero__video-iframe-wrapper--deferred {
-    z-index: 1;
+    /* Below poster layer so iframe can stay opacity:1 while loading (avoids broken embed/autoplay). */
+    z-index: 0;
   }
 
   /* Vimeo/YouTube iframe: fill and cover like native video */
@@ -1057,19 +1059,13 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    z-index: 1;
+    z-index: 0;
     width: 100vw;
     height: 56.25vw;
     min-width: 177.78vh;
     min-height: 100vh;
     transform: translate(-50%, -50%);
     border: 0;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-  }
-
-  .hero__video-external-poster-root--embed-revealed .hero__video-iframe-wrapper--deferred .hero__video-iframe {
-    opacity: 1;
   }
 
   .hero .hero__media-wrapper video {
@@ -1088,11 +1084,6 @@
     .hero__video-embed-placeholder,
     .hero__video-external-poster-root--fallback {
       transition: none;
-    }
-
-    .hero__video-iframe {
-      transition: none;
-      opacity: 1;
     }
 
     .hero__video-external-poster-root--embed-revealed .hero__video-poster-inline,

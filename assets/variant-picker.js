@@ -50,7 +50,7 @@ export default class VariantPicker extends Component {
   }
 
   /**
-   * Collection cards: order is shatter-proof-balls title suffix → URL slug → priority Theme list.
+   * Collection cards: product title suffix (after – or -) → URL slug → priority Theme list.
    * Deferred so parent `product-card` refs (e.g. product title link) exist.
    */
   async #runProductCardAutoThemeSelection() {
@@ -60,7 +60,7 @@ export default class VariantPicker extends Component {
 
     await yieldToMainThread();
 
-    if (this.#autoSelectThemeFromShatterProofTitleSuffix()) return;
+    if (this.#autoSelectThemeFromProductTitleSuffix()) return;
     if (this.#autoSelectThemeFromCollectionPathname()) return;
     this.#autoSelectPriorityThemeOnLoad();
   }
@@ -218,21 +218,48 @@ export default class VariantPicker extends Component {
       return true;
     }
 
+    // Swatch-only pickers: no Theme `legend` / `fieldsets[]` refs; radios live in these fieldsets.
+    for (const fs of this.querySelectorAll('fieldset.variant-option--swatches')) {
+      if (!(fs instanceof HTMLFieldSetElement)) continue;
+      const inputs = Array.from(fs.querySelectorAll('input[type="radio"]'));
+      const target = inputs.find((input) => {
+        const label = this.#normalizeThemeText(input.getAttribute('aria-label') || input.value);
+        const disabled = input.getAttribute('aria-disabled') === 'true' || input.disabled;
+        return !disabled && label === wantedNormalized;
+      });
+      if (!target) continue;
+      if (target.checked) return true;
+      target.click();
+      return true;
+    }
+
     return false;
   }
 
   /**
-   * /collections/shatter-proof-balls: auto-select Theme from text after ` - ` in the card product title
-   * (e.g. "70Mm X12Pk With Hp - Festive Christmas" → Festive Christmas).
+   * Text after the first en dash, em dash, or hyphen in the product title ("Name – Theme").
+   * @param {string} raw
+   * @returns {string}
    */
-  #autoSelectThemeFromShatterProofTitleSuffix() {
+  #extractSuffixAfterTitleDash(raw) {
+    const collapsed = raw.replace(/\s+/g, ' ').trim();
+    if (!collapsed) return '';
+    const m = collapsed.match(/^(.+?)\s*[\u2013\u2014\-]\s*(.+)$/);
+    return m ? m[2].trim() : '';
+  }
+
+  /**
+   * Collection grid: match Theme (buttons, dropdown, or swatches) to the title suffix after ` – ` / ` - `,
+   * e.g. title paragraph "70Mm X12Pk With Hp – Emerald Christmas" → Emerald Christmas.
+   */
+  #autoSelectThemeFromProductTitleSuffix() {
     if (!this.closest('product-card')) return false;
     if (this.closest('quick-add-dialog')) return false;
     if (this.dataset.templateProductMatch === 'true') return false;
-    if (this.dataset.autoShatterTitleThemeApplied === 'true') return false;
+    if (this.dataset.autoTitleSuffixThemeApplied === 'true') return false;
 
     try {
-      if (!window.location.pathname.includes('/collections/shatter-proof-balls')) return false;
+      if (!window.location.pathname.includes('/collections/')) return false;
     } catch {
       return false;
     }
@@ -245,19 +272,19 @@ export default class VariantPicker extends Component {
       fromRefs instanceof HTMLElement
         ? fromRefs
         : card.querySelector('[ref="productTitleLink"]');
-    const raw = (titleLink?.textContent ?? '').replace(/\s+/g, ' ').trim();
+    if (!(titleLink instanceof HTMLElement)) return false;
+
+    const titleParagraph = titleLink.querySelector('p');
+    const raw =
+      (titleParagraph?.textContent ?? titleLink.textContent ?? '').replace(/\s+/g, ' ').trim();
     if (!raw) return false;
 
-    const marker = ' - ';
-    const markerIndex = raw.indexOf(marker);
-    if (markerIndex === -1) return false;
-
-    const suffix = raw.slice(markerIndex + marker.length).trim();
+    const suffix = this.#extractSuffixAfterTitleDash(raw);
     if (!suffix) return false;
 
     const wanted = this.#normalizeThemeText(suffix);
     const ok = this.#selectThemeIfMatching(wanted);
-    if (ok) this.dataset.autoShatterTitleThemeApplied = 'true';
+    if (ok) this.dataset.autoTitleSuffixThemeApplied = 'true';
     return ok;
   }
 

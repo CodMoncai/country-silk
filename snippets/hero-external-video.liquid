@@ -7,7 +7,6 @@
   @param external_url {string} - The external video URL (Vimeo, YouTube, or direct file)
   @param video_class {string} - CSS class for the video/iframe element
   @param data_testid {string} - Optional data-testid value
-  @param poster_image {image} - Optional image shown until iframe or external file video is ready
 {%- endcomment -%}
 
 {% liquid
@@ -60,99 +59,31 @@
 %}
 
 {% if video_type == 'vimeo' and video_id != blank %}
-  {% capture vimeo_embed_src -%}
-    https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0{% if vimeo_hash != blank %}&h={{ vimeo_hash }}{% endif %}
-  {%- endcapture %}
-  {% if poster_image != blank %}
-    {%- comment -%}
-      Sibling before the absolute layer: in-flow height from poster aspect (and theme min-height) so the
-      slot is not 0px tall. The iframe wrapper must stay a sibling, not wrap this guard.
-    {%- endcomment -%}
-    <span
-      class="hero__video-deferred-size-guard"
-      style="aspect-ratio: {{ poster_image.aspect_ratio }};"
-      aria-hidden="true"
-    ></span>
-    <div
-      class="hero__video-iframe-wrapper {{ video_class }} hero__video-iframe-wrapper--deferred"
-      data-hero-embed-src="{{ vimeo_embed_src | strip | escape }}"
-      data-hero-iframe-class="{{ video_class | escape }}"
-      data-hero-embed-allow="autoplay; fullscreen; picture-in-picture"
+  <div class="hero__video-iframe-wrapper {{ video_class }}">
+    <iframe
+      src="https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0{% if vimeo_hash != blank %}&h={{ vimeo_hash }}{% endif %}"
+      class="hero__video-iframe {{ video_class }}"
+      allow="autoplay; fullscreen; picture-in-picture"
+      allowfullscreen
+      title="Hero background video"
       {% if data_testid != blank %}
-        data-hero-testid="{{ data_testid | escape }}"
+        data-testid="{{ data_testid }}"
       {% endif %}
-    >
-      {{
-        poster_image
-        | image_url: width: 1920
-        | image_tag:
-          width: poster_image.width,
-          widths: '832, 1200, 1600, 1920',
-          height: poster_image.height,
-          class: 'hero__video-poster-embed',
-          loading: 'eager',
-          alt: ''
-      }}
-    </div>
-  {% else %}
-    <div class="hero__video-iframe-wrapper {{ video_class }}">
-      <iframe
-        src="{{ vimeo_embed_src | strip | escape }}"
-        class="hero__video-iframe {{ video_class }}"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowfullscreen
-        title="Hero background video"
-        {% if data_testid != blank %}
-          data-testid="{{ data_testid }}"
-        {% endif %}
-      ></iframe>
-    </div>
-  {% endif %}
+    ></iframe>
+  </div>
 {% elsif video_type == 'youtube' and video_id != blank %}
-  {% capture youtube_embed_src -%}
-    https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0&playsinline=1
-  {%- endcapture %}
-  {% if poster_image != blank %}
-    <span
-      class="hero__video-deferred-size-guard"
-      style="aspect-ratio: {{ poster_image.aspect_ratio }};"
-      aria-hidden="true"
-    ></span>
-    <div
-      class="hero__video-iframe-wrapper {{ video_class }} hero__video-iframe-wrapper--deferred"
-      data-hero-embed-src="{{ youtube_embed_src | strip | escape }}"
-      data-hero-iframe-class="{{ video_class | escape }}"
-      data-hero-embed-allow="autoplay; encrypted-media; fullscreen"
+  <div class="hero__video-iframe-wrapper {{ video_class }}">
+    <iframe
+      src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0&playsinline=1"
+      class="hero__video-iframe {{ video_class }}"
+      allow="autoplay; encrypted-media; fullscreen"
+      allowfullscreen
+      title="Hero background video"
       {% if data_testid != blank %}
-        data-hero-testid="{{ data_testid | escape }}"
+        data-testid="{{ data_testid }}"
       {% endif %}
-    >
-      {{
-        poster_image
-        | image_url: width: 1920
-        | image_tag:
-          width: poster_image.width,
-          widths: '832, 1200, 1600, 1920',
-          height: poster_image.height,
-          class: 'hero__video-poster-embed',
-          loading: 'eager',
-          alt: ''
-      }}
-    </div>
-  {% else %}
-    <div class="hero__video-iframe-wrapper {{ video_class }}">
-      <iframe
-        src="{{ youtube_embed_src | strip | escape }}"
-        class="hero__video-iframe {{ video_class }}"
-        allow="autoplay; encrypted-media; fullscreen"
-        allowfullscreen
-        title="Hero background video"
-        {% if data_testid != blank %}
-          data-testid="{{ data_testid }}"
-        {% endif %}
-      ></iframe>
-    </div>
-  {% endif %}
+    ></iframe>
+  </div>
 {% else %}
   <video
     autoplay
@@ -160,9 +91,6 @@
     muted
     playsinline
     class="{{ video_class }}"
-    {% if poster_image != blank %}
-      poster="{{ poster_image | image_url: width: 1920 }}"
-    {% endif %}
     {% if data_testid != blank %}
       data-testid="{{ data_testid }}"
     {% endif %}

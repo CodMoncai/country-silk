@@ -757,6 +757,9 @@
     display: grid;
     grid-column: 1 / -1;
     grid-template-columns: repeat(var(--hero-media-count, 1), 1fr);
+    /* One full-height row so cells are non-zero even when children are only position:absolute (poster + deferred iframe). */
+    grid-auto-rows: minmax(0, 1fr);
+    min-height: 100%;
   }
 
   .hero--auto .hero__image,
@@ -826,8 +829,13 @@
     }
   }
 
-  .hero__video-wrapper--desktop {
+  .hero__video-wrapper--desktop,
+  .hero__video-wrapper--mobile {
     position: relative;
+    align-self: stretch;
+    min-height: 100%;
+    height: 100%;
+    width: 100%;
   }
 
   /* Vimeo/YouTube iframe: fill and cover like native video */
@@ -837,6 +845,8 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
   }
 
   .hero__video-iframe {

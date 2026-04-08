@@ -50,7 +50,8 @@ export default class VariantPicker extends Component {
   }
 
   /**
-   * Collection cards: product title suffix (after – or -) → URL slug → priority Theme list.
+   * Product cards: title suffix (after – or -) → URL slug → priority Theme list.
+   * Title suffix runs only under `[data-template="collection"]` (see layout `main#MainContent`).
    * Deferred so parent `product-card` refs (e.g. product title link) exist.
    */
   async #runProductCardAutoThemeSelection() {
@@ -249,20 +250,15 @@ export default class VariantPicker extends Component {
   }
 
   /**
-   * Collection grid: match Theme (buttons, dropdown, or swatches) to the title suffix after ` – ` / ` - `,
-   * e.g. title paragraph "70Mm X12Pk With Hp – Emerald Christmas" → Emerald Christmas.
+   * Under `data-template="collection"`: match Theme (buttons, dropdown, or swatches) to the title
+   * suffix after ` – ` / ` - ` (e.g. "70Mm X12Pk With Hp – Emerald Christmas" → Emerald Christmas).
    */
   #autoSelectThemeFromProductTitleSuffix() {
     if (!this.closest('product-card')) return false;
     if (this.closest('quick-add-dialog')) return false;
     if (this.dataset.templateProductMatch === 'true') return false;
     if (this.dataset.autoTitleSuffixThemeApplied === 'true') return false;
-
-    try {
-      if (!window.location.pathname.includes('/collections/')) return false;
-    } catch {
-      return false;
-    }
+    if (!this.closest('[data-template="collection"]')) return false;
 
     const card = this.closest('product-card');
     if (!(card instanceof HTMLElement)) return false;

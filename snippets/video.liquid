@@ -124,7 +124,7 @@
   <deferred-media
     class="{{ video_class }}"
     style="{{ video_style }}"
-    {% if video_autoplay %}
+    {% if video_autoplay or video_preview_image == blank %}
       autoplay
     {% endif %}
     {{ additional_attributes }}
@@ -176,14 +176,6 @@
         {{ video_tag }}
       {% endif %}
     </template>
-
-    {% if video_autoplay or video_preview_image == blank %}
-      {% if video_from_url %}
-        {{ video_iframe }}
-      {% else %}
-        {{ video_tag }}
-      {% endif %}
-    {% endif %}
   </deferred-media>
 {% else %}
   <div

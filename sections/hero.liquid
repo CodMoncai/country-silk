@@ -208,13 +208,13 @@
           external_url: section.settings.video_1_external_url,
           video_class: media_video_desktop_class,
           data_testid: 'hero-desktop-video-1',
-          poster_image: hero_image_1
+          poster_image: section.settings.image_1
         %}
-      {%- elsif hero_image_1 != blank -%}
+      {%- elsif section.settings.image_1 != blank -%}
         {{
           section.settings.video_1
           | video_tag:
-            poster: hero_image_1,
+            poster: section.settings.image_1,
             autoplay: true,
             loop: true,
             controls: false,
@@ -263,13 +263,13 @@
             external_url: section.settings.video_1_mobile_external_url,
             video_class: 'hero__video hero__video--mobile',
             data_testid: 'hero-mobile-video-1',
-            poster_image: hero_image_1_mobile
+            poster_image: section.settings.image_1_mobile
           %}
-        {%- elsif hero_image_1_mobile != blank -%}
+        {%- elsif section.settings.image_1_mobile != blank -%}
           {{
             section.settings.video_1_mobile
             | video_tag:
-              poster: hero_image_1_mobile,
+              poster: section.settings.image_1_mobile,
               autoplay: true,
               loop: true,
               controls: false,
@@ -674,16 +674,6 @@
     hero.querySelectorAll('.hero__video-iframe-wrapper--deferred').forEach(function (wrapper) {
       var embedSrc = wrapper.getAttribute('data-hero-embed-src');
       if (!embedSrc) return;
-
-      var posterDebugFromLiquid = wrapper.getAttribute('data-hero-poster-debug-url');
-      var posterImg = wrapper.querySelector('img.hero__video-poster-embed');
-      console.log('[Hero poster debug] section {{ section.id }}', {
-        liquidImageUrlAttr: posterDebugFromLiquid || null,
-        imgFound: !!posterImg,
-        imgSrcAttribute: posterImg ? posterImg.getAttribute('src') : null,
-        imgCurrentSrc: posterImg ? posterImg.currentSrc || null : null,
-        imgSrcset: posterImg ? posterImg.getAttribute('srcset') : null,
-      });
 
       function injectIframe() {
         if (wrapper.querySelector('iframe.hero__video-iframe')) return;

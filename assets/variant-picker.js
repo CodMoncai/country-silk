@@ -46,13 +46,23 @@ export default class VariantPicker extends Component {
     this.addEventListener('change', this.variantChanged.bind(this));
     this.#resizeObserver.observe(this);
 
-    // Collection cards: pathname handle (e.g. /collections/enchanted-christmas → "Enchanted Christmas") takes
-    // precedence over priority Theme list when it matches a Theme option value on each card.
-    const pathApplied = this.#autoSelectThemeFromCollectionPathname();
-    if (!pathApplied) {
-      // Optionally auto-select the first priority Theme value on initial page load.
-      this.#autoSelectPriorityThemeOnLoad();
-    }
+    void this.#runProductCardAutoThemeSelection();
+  }
+
+  /**
+   * Collection cards: order is shatter-proof-balls title suffix → URL slug → priority Theme list.
+   * Deferred so parent `product-card` refs (e.g. product title link) exist.
+   */
+  async #runProductCardAutoThemeSelection() {
+    if (!this.closest('product-card')) return;
+    if (this.closest('quick-add-dialog')) return;
+    if (this.dataset.templateProductMatch === 'true') return;
+
+    await yieldToMainThread();
+
+    if (this.#autoSelectThemeFromShatterProofTitleSuffix()) return;
+    if (this.#autoSelectThemeFromCollectionPathname()) return;
+    this.#autoSelectPriorityThemeOnLoad();
   }
 
   disconnectedCallback() {
@@ -209,6 +219,46 @@ export default class VariantPicker extends Component {
     }
 
     return false;
+  }
+
+  /**
+   * /collections/shatter-proof-balls: auto-select Theme from text after ` - ` in the card product title
+   * (e.g. "70Mm X12Pk With Hp - Festive Christmas" → Festive Christmas).
+   */
+  #autoSelectThemeFromShatterProofTitleSuffix() {
+    if (!this.closest('product-card')) return false;
+    if (this.closest('quick-add-dialog')) return false;
+    if (this.dataset.templateProductMatch === 'true') return false;
+    if (this.dataset.autoShatterTitleThemeApplied === 'true') return false;
+
+    try {
+      if (!window.location.pathname.includes('/collections/shatter-proof-balls')) return false;
+    } catch {
+      return false;
+    }
+
+    const card = this.closest('product-card');
+    if (!(card instanceof HTMLElement)) return false;
+
+    const fromRefs = /** @type {{ refs?: { productTitleLink?: HTMLElement } }} */ (card).refs?.productTitleLink;
+    const titleLink =
+      fromRefs instanceof HTMLElement
+        ? fromRefs
+        : card.querySelector('[ref="productTitleLink"]');
+    const raw = (titleLink?.textContent ?? '').replace(/\s+/g, ' ').trim();
+    if (!raw) return false;
+
+    const marker = ' - ';
+    const markerIndex = raw.indexOf(marker);
+    if (markerIndex === -1) return false;
+
+    const suffix = raw.slice(markerIndex + marker.length).trim();
+    if (!suffix) return false;
+
+    const wanted = this.#normalizeThemeText(suffix);
+    const ok = this.#selectThemeIfMatching(wanted);
+    if (ok) this.dataset.autoShatterTitleThemeApplied = 'true';
+    return ok;
   }
 
   /**

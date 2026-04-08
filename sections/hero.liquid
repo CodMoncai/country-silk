@@ -207,8 +207,21 @@
         {% render 'hero-external-video',
           external_url: section.settings.video_1_external_url,
           video_class: media_video_desktop_class,
-          data_testid: 'hero-desktop-video-1'
+          data_testid: 'hero-desktop-video-1',
+          poster_image: hero_image_1
         %}
+      {%- elsif hero_image_1 != blank -%}
+        {{
+          section.settings.video_1
+          | video_tag:
+            poster: hero_image_1,
+            autoplay: true,
+            loop: true,
+            controls: false,
+            muted: true,
+            class: media_video_desktop_class,
+            data-testid: 'hero-desktop-video-1'
+        }}
       {%- else -%}
         {{
           section.settings.video_1
@@ -249,8 +262,21 @@
           {% render 'hero-external-video',
             external_url: section.settings.video_1_mobile_external_url,
             video_class: 'hero__video hero__video--mobile',
-            data_testid: 'hero-mobile-video-1'
+            data_testid: 'hero-mobile-video-1',
+            poster_image: hero_image_1_mobile
           %}
+        {%- elsif hero_image_1_mobile != blank -%}
+          {{
+            section.settings.video_1_mobile
+            | video_tag:
+              poster: hero_image_1_mobile,
+              autoplay: true,
+              loop: true,
+              controls: false,
+              muted: true,
+              class: 'hero__video hero__video--mobile',
+              data-testid: 'hero-mobile-video-1'
+          }}
         {%- else -%}
           {{
             section.settings.video_1_mobile
@@ -323,8 +349,21 @@
         {% render 'hero-external-video',
           external_url: section.settings.video_2_external_url,
           video_class: media_video_desktop_class,
-          data_testid: 'hero-desktop-video-2'
+          data_testid: 'hero-desktop-video-2',
+          poster_image: section.settings.image_2
         %}
+      {%- elsif section.settings.image_2 != blank -%}
+        {{
+          section.settings.video_2
+          | video_tag:
+            poster: section.settings.image_2,
+            autoplay: true,
+            loop: true,
+            controls: false,
+            muted: true,
+            class: media_video_desktop_class,
+            data-testid: 'hero-desktop-video-2'
+        }}
       {%- else -%}
         {{
           section.settings.video_2
@@ -365,8 +404,21 @@
           {% render 'hero-external-video',
             external_url: section.settings.video_2_mobile_external_url,
             video_class: 'hero__video hero__video--mobile',
-            data_testid: 'hero-mobile-video-2'
+            data_testid: 'hero-mobile-video-2',
+            poster_image: section.settings.image_2_mobile
           %}
+        {%- elsif section.settings.image_2_mobile != blank -%}
+          {{
+            section.settings.video_2_mobile
+            | video_tag:
+              poster: section.settings.image_2_mobile,
+              autoplay: true,
+              loop: true,
+              controls: false,
+              muted: true,
+              class: 'hero__video hero__video--mobile',
+              data-testid: 'hero-mobile-video-2'
+          }}
         {%- else -%}
           {{
             section.settings.video_2_mobile
@@ -618,6 +670,30 @@
       video.addEventListener('loadeddata', function () { tryPlay(video); });
       video.addEventListener('canplay', function () { tryPlay(video); });
     });
+
+    hero.querySelectorAll('.hero__video-iframe-wrapper--deferred').forEach(function (wrapper) {
+      var embedSrc = wrapper.getAttribute('data-hero-embed-src');
+      if (!embedSrc) return;
+
+      function injectIframe() {
+        if (wrapper.querySelector('iframe.hero__video-iframe')) return;
+        var iframe = document.createElement('iframe');
+        iframe.src = embedSrc;
+        var extraClass = wrapper.getAttribute('data-hero-iframe-class') || '';
+        iframe.className = 'hero__video-iframe' + (extraClass !== '' ? ' ' + extraClass : '');
+        var allow = wrapper.getAttribute('data-hero-embed-allow');
+        if (allow) iframe.setAttribute('allow', allow);
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.title = 'Hero background video';
+        var testId = wrapper.getAttribute('data-hero-testid');
+        if (testId) iframe.setAttribute('data-testid', testId);
+        wrapper.appendChild(iframe);
+      }
+
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(injectIframe);
+      });
+    });
   })();
 </script>
 
@@ -758,10 +834,30 @@
     height: 100%;
   }
 
+  /* In-flow: gives the slot height when inner media is only absolutely positioned (external poster + iframe). */
+  .hero__video-deferred-size-guard {
+    display: block;
+    width: 100%;
+    min-height: 45svh;
+    pointer-events: none;
+  }
+
+  .hero__video-poster-embed {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    z-index: 0;
+    pointer-events: none;
+  }
+
   .hero__video-iframe {
     position: absolute;
     top: 50%;
     left: 50%;
+    z-index: 1;
     width: 100vw;
     height: 56.25vw;
     min-width: 177.78vh;
@@ -922,7 +1018,7 @@
       "type": "image_picker",
       "id": "image_1",
       "label": "t:settings.image",
-      "visible_if": "{{ section.settings.media_type_1 == 'image' }}"
+      "visible_if": "{{ section.settings.media_type_1 == 'image' or section.settings.media_type_1 == 'video' }}"
     },
     {
       "type": "video",
@@ -960,7 +1056,7 @@
       "type": "image_picker",
       "id": "image_2",
       "label": "t:settings.image",
-      "visible_if": "{{ section.settings.media_type_2 == 'image' }}"
+      "visible_if": "{{ section.settings.media_type_2 == 'image' or section.settings.media_type_2 == 'video' }}"
     },
     {
       "type": "video",
@@ -1016,7 +1112,7 @@
       "type": "image_picker",
       "id": "image_1_mobile",
       "label": "t:settings.image",
-      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'image' }}"
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'image' or section.settings.custom_mobile_media and section.settings.media_type_1_mobile == 'video' }}"
     },
     {
       "type": "video",
@@ -1057,7 +1153,7 @@
       "type": "image_picker",
       "id": "image_2_mobile",
       "label": "t:settings.image",
-      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'image' }}"
+      "visible_if": "{{ section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'image' or section.settings.custom_mobile_media and section.settings.media_type_2_mobile == 'video' }}"
     },
     {
       "type": "video",

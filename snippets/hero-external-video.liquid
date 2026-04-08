@@ -60,10 +60,19 @@
 %}
 
 {% if video_type == 'vimeo' and video_id != blank %}
-  <div
-    class="hero__video-iframe-wrapper {{ video_class }}{% if poster_image != blank %} hero__video-iframe-wrapper--has-poster{% endif %}"
-  >
-    {% if poster_image != blank %}
+  {% capture vimeo_embed_src -%}
+    https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0{% if vimeo_hash != blank %}&h={{ vimeo_hash }}{% endif %}
+  {%- endcapture %}
+  {% if poster_image != blank %}
+    <div
+      class="hero__video-iframe-wrapper {{ video_class }} hero__video-iframe-wrapper--deferred"
+      data-hero-embed-src="{{ vimeo_embed_src | strip | escape }}"
+      data-hero-iframe-class="{{ video_class | escape }}"
+      data-hero-embed-allow="autoplay; fullscreen; picture-in-picture"
+      {% if data_testid != blank %}
+        data-hero-testid="{{ data_testid | escape }}"
+      {% endif %}
+    >
       {{
         poster_image
         | image_url: width: 1920
@@ -75,22 +84,35 @@
           loading: 'eager',
           alt: ''
       }}
-    {% endif %}
-    <iframe
-      src="https://player.vimeo.com/video/{{ video_id }}?autoplay=1&muted=1&loop=1&background=1&autopause=0{% if vimeo_hash != blank %}&h={{ vimeo_hash }}{% endif %}"
-      class="hero__video-iframe {{ video_class }}"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-      title="Hero background video"
-      onload="this.closest('.hero__video-iframe-wrapper')?.classList.add('hero__video-iframe-wrapper--loaded')"
-      {% if data_testid != blank %}data-testid="{{ data_testid }}"{% endif %}
-    ></iframe>
-  </div>
+    </div>
+  {% else %}
+    <div class="hero__video-iframe-wrapper {{ video_class }}">
+      <iframe
+        src="{{ vimeo_embed_src | strip | escape }}"
+        class="hero__video-iframe {{ video_class }}"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen
+        title="Hero background video"
+        {% if data_testid != blank %}
+          data-testid="{{ data_testid }}"
+        {% endif %}
+      ></iframe>
+    </div>
+  {% endif %}
 {% elsif video_type == 'youtube' and video_id != blank %}
-  <div
-    class="hero__video-iframe-wrapper {{ video_class }}{% if poster_image != blank %} hero__video-iframe-wrapper--has-poster{% endif %}"
-  >
-    {% if poster_image != blank %}
+  {% capture youtube_embed_src -%}
+    https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0&playsinline=1
+  {%- endcapture %}
+  {% if poster_image != blank %}
+    <div
+      class="hero__video-iframe-wrapper {{ video_class }} hero__video-iframe-wrapper--deferred"
+      data-hero-embed-src="{{ youtube_embed_src | strip | escape }}"
+      data-hero-iframe-class="{{ video_class | escape }}"
+      data-hero-embed-allow="autoplay; encrypted-media; fullscreen"
+      {% if data_testid != blank %}
+        data-hero-testid="{{ data_testid | escape }}"
+      {% endif %}
+    >
       {{
         poster_image
         | image_url: width: 1920
@@ -102,17 +124,21 @@
           loading: 'eager',
           alt: ''
       }}
-    {% endif %}
-    <iframe
-      src="https://www.youtube.com/embed/{{ video_id }}?autoplay=1&mute=1&loop=1&playlist={{ video_id }}&controls=0&rel=0&playsinline=1"
-      class="hero__video-iframe {{ video_class }}"
-      allow="autoplay; encrypted-media; fullscreen"
-      allowfullscreen
-      title="Hero background video"
-      onload="this.closest('.hero__video-iframe-wrapper')?.classList.add('hero__video-iframe-wrapper--loaded')"
-      {% if data_testid != blank %}data-testid="{{ data_testid }}"{% endif %}
-    ></iframe>
-  </div>
+    </div>
+  {% else %}
+    <div class="hero__video-iframe-wrapper {{ video_class }}">
+      <iframe
+        src="{{ youtube_embed_src | strip | escape }}"
+        class="hero__video-iframe {{ video_class }}"
+        allow="autoplay; encrypted-media; fullscreen"
+        allowfullscreen
+        title="Hero background video"
+        {% if data_testid != blank %}
+          data-testid="{{ data_testid }}"
+        {% endif %}
+      ></iframe>
+    </div>
+  {% endif %}
 {% else %}
   <video
     autoplay
@@ -120,8 +146,12 @@
     muted
     playsinline
     class="{{ video_class }}"
-    {% if poster_image != blank %}poster="{{ poster_image | image_url: width: 1920 }}"{% endif %}
-    {% if data_testid != blank %}data-testid="{{ data_testid }}"{% endif %}
+    {% if poster_image != blank %}
+      poster="{{ poster_image | image_url: width: 1920 }}"
+    {% endif %}
+    {% if data_testid != blank %}
+      data-testid="{{ data_testid }}"
+    {% endif %}
   >
     <source src="{{ external_url }}">
   </video>

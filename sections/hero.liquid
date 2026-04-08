@@ -671,20 +671,33 @@
       video.addEventListener('canplay', function () { tryPlay(video); });
     });
 
-    function markIframePosterLoaded(wrapper) {
-      if (!wrapper || wrapper.classList.contains('hero__video-iframe-wrapper--loaded')) return;
-      wrapper.classList.add('hero__video-iframe-wrapper--loaded');
-    }
+    /*
+      External iframe with poster: no iframe src in HTML so the poster paints first. We inject the iframe
+      after two animation frames so the embed is not covered (opacity tricks broke autoplay and compositing).
+    */
+    hero.querySelectorAll('.hero__video-iframe-wrapper--deferred').forEach(function (wrapper) {
+      var embedSrc = wrapper.getAttribute('data-hero-embed-src');
+      if (!embedSrc) return;
 
-    hero.querySelectorAll('.hero__video-iframe-wrapper--has-poster').forEach(function (wrapper) {
-      var iframe = wrapper.querySelector('iframe.hero__video-iframe');
-      if (!iframe) return;
-      iframe.addEventListener('load', function () {
-        markIframePosterLoaded(wrapper);
+      function injectIframe() {
+        if (wrapper.querySelector('iframe.hero__video-iframe')) return;
+
+        var iframe = document.createElement('iframe');
+        iframe.src = embedSrc;
+        var extraClass = wrapper.getAttribute('data-hero-iframe-class') || '';
+        iframe.className = 'hero__video-iframe' + (extraClass !== '' ? ' ' + extraClass : '');
+        var allow = wrapper.getAttribute('data-hero-embed-allow');
+        if (allow) iframe.setAttribute('allow', allow);
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.title = 'Hero background video';
+        var testId = wrapper.getAttribute('data-hero-testid');
+        if (testId) iframe.setAttribute('data-testid', testId);
+        wrapper.appendChild(iframe);
+      }
+
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(injectIframe);
       });
-      window.setTimeout(function () {
-        markIframePosterLoaded(wrapper);
-      }, 12000);
     });
   })();
 </script>
@@ -837,17 +850,6 @@
     min-height: 100vh;
     transform: translate(-50%, -50%);
     border: 0;
-    opacity: 1;
-    transition: opacity 0.45s ease;
-  }
-
-  /*
-    With a poster image: keep the iframe transparent until it has loaded so (1) the poster shows through
-    and (2) autoplay is not blocked by an opaque element covering the embed. Do not stack the poster on
-    top of the iframe — that prevents Vimeo/YouTube from treating the player as visible.
-  */
-  .hero__video-iframe-wrapper--has-poster:not(.hero__video-iframe-wrapper--loaded) .hero__video-iframe {
-    opacity: 0;
   }
 
   .hero__video-poster-embed {

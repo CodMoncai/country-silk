@@ -670,6 +670,22 @@
       video.addEventListener('loadeddata', function () { tryPlay(video); });
       video.addEventListener('canplay', function () { tryPlay(video); });
     });
+
+    function markIframePosterLoaded(wrapper) {
+      if (!wrapper || wrapper.classList.contains('hero__video-iframe-wrapper--loaded')) return;
+      wrapper.classList.add('hero__video-iframe-wrapper--loaded');
+    }
+
+    hero.querySelectorAll('.hero__video-iframe-wrapper--has-poster').forEach(function (wrapper) {
+      var iframe = wrapper.querySelector('iframe.hero__video-iframe');
+      if (!iframe) return;
+      iframe.addEventListener('load', function () {
+        markIframePosterLoaded(wrapper);
+      });
+      window.setTimeout(function () {
+        markIframePosterLoaded(wrapper);
+      }, 12000);
+    });
   })();
 </script>
 
@@ -821,9 +837,19 @@
     min-height: 100vh;
     transform: translate(-50%, -50%);
     border: 0;
+    opacity: 1;
+    transition: opacity 0.45s ease;
   }
 
-  /* Poster must stack above the iframe: iframes paint an opaque surface and hide anything beneath. */
+  /*
+    With a poster image: keep the iframe transparent until it has loaded so (1) the poster shows through
+    and (2) autoplay is not blocked by an opaque element covering the embed. Do not stack the poster on
+    top of the iframe — that prevents Vimeo/YouTube from treating the player as visible.
+  */
+  .hero__video-iframe-wrapper--has-poster:not(.hero__video-iframe-wrapper--loaded) .hero__video-iframe {
+    opacity: 0;
+  }
+
   .hero__video-poster-embed {
     position: absolute;
     inset: 0;
@@ -831,13 +857,8 @@
     height: 100%;
     object-fit: cover;
     object-position: center center;
-    z-index: 2;
+    z-index: 0;
     pointer-events: none;
-    transition: opacity 0.45s ease;
-  }
-
-  .hero__video-iframe-wrapper--loaded .hero__video-poster-embed {
-    opacity: 0;
   }
 
   .hero__video-poster--desktop {

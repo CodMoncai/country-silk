@@ -60,7 +60,9 @@
 %}
 
 {% if video_type == 'vimeo' and video_id != blank %}
-  <div class="hero__video-iframe-wrapper {{ video_class }}">
+  <div
+    class="hero__video-iframe-wrapper {{ video_class }}{% if poster_image != blank %} hero__video-iframe-wrapper--has-poster{% endif %}"
+  >
     {% if poster_image != blank %}
       {{
         poster_image
@@ -85,7 +87,9 @@
     ></iframe>
   </div>
 {% elsif video_type == 'youtube' and video_id != blank %}
-  <div class="hero__video-iframe-wrapper {{ video_class }}">
+  <div
+    class="hero__video-iframe-wrapper {{ video_class }}{% if poster_image != blank %} hero__video-iframe-wrapper--has-poster{% endif %}"
+  >
     {% if poster_image != blank %}
       {{
         poster_image

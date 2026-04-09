@@ -1046,8 +1046,9 @@
     z-index: 0;
   }
 
-  /* Vimeo/YouTube iframe: fill and cover like native video */
+  /* Vimeo/YouTube iframe: fill and cover like native video + poster (same box, not the viewport). */
   .hero__video-iframe-wrapper {
+    container-type: size;
     position: absolute;
     inset: 0;
     overflow: hidden;
@@ -1060,12 +1061,23 @@
     top: 50%;
     left: 50%;
     z-index: 0;
+    /* Viewport fallback when cqw is unsupported (invalid width would break the embed). */
     width: 100vw;
     height: 56.25vw;
     min-width: 177.78vh;
     min-height: 100vh;
     transform: translate(-50%, -50%);
     border: 0;
+  }
+
+  /* 16:9 cover relative to the hero slot — matches poster object-fit: cover in the same box. */
+  @supports (width: 1cqw) {
+    .hero__video-iframe {
+      width: 100cqw;
+      height: 56.25cqw;
+      min-width: 177.78cqh;
+      min-height: 100cqh;
+    }
   }
 
   .hero .hero__media-wrapper video {

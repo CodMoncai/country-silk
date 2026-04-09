@@ -791,6 +791,19 @@
     --hero-height-offset: 0px;
   }
 
+  @media screen and (max-width: 749px) {
+    /*
+      True edge-to-edge on phones when any ancestor is narrower than the viewport
+      (same idea as --full-page-margin-inline-offset in base.css).
+    */
+    .shopify-section.hero-wrapper {
+      position: relative;
+      width: 100vw;
+      max-width: 100vw;
+      margin-inline: calc(50% - 50vw);
+    }
+  }
+
   /* Being extra specific in the selector for performance reasons */
   body:has(> #header-group > .header-section > #header-component) .hero-wrapper:first-child {
     --hero-height-offset: var(--header-group-height, 0);
@@ -899,6 +912,38 @@
     .hero__video--mobile,
     .hero__video-wrapper--mobile {
       display: block;
+    }
+
+    /*
+      .hero__container is also .section: tri-column page grid (side margins + center).
+      On mobile, absolute hero media can size to the center track; one column = full bleed.
+    */
+    .hero .hero__container.section.section--full-width {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hero .hero__content-wrapper.page-width {
+      grid-column: 1 / -1;
+      width: 100%;
+      max-width: var(--full-page-grid-central-column-width);
+      margin-inline: auto;
+      justify-self: center;
+    }
+
+    .hero .hero__media-wrapper {
+      width: 100%;
+      min-width: 100%;
+    }
+
+    .hero .hero__video-wrapper,
+    .hero .hero__video-external-poster-root {
+      width: 100%;
+      min-width: 100%;
+      max-width: none;
+    }
+
+    .hero .hero__video-iframe {
+      max-width: none;
     }
 
     .hero__media-wrapper {

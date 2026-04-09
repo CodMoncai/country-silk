@@ -49,7 +49,7 @@
         "video_1_external_url": "https://vimeo.com/1174768470",
         "media_type_2": "video",
         "video_2_external_url": "",
-        "stack_media_on_mobile": false,
+        "stack_media_on_mobile": true,
         "custom_mobile_media": true,
         "media_type_1_mobile": "video",
         "image_1_mobile": "shopify://shop_images/HOME_PAGE_TOP_INITIAL_IMAGE.jpg",

@@ -905,6 +905,15 @@
       grid-template-columns: repeat(var(--hero-media-count-mobile, 1), 1fr);
     }
 
+    /*
+      Default stack_media_on_mobile is false, so two mobile media stay in one row (e.g. 50% + 50%).
+      Video + image side-by-side looks like a narrow strip with the image “behind” / beside the embed.
+      Any hero video should use the full mobile width; additional media stack beneath.
+    */
+    .hero__media-wrapper:has(.hero__video-wrapper, video.hero__video) {
+      grid-template-columns: 1fr;
+    }
+
     .hero__video-wrapper--desktop::before {
       background-image: var(--hero-video-wrapper-bg-mobile, var(--hero-video-wrapper-bg, none));
     }

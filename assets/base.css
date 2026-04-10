@@ -4175,3 +4175,7 @@ text-component {
 [data-template="collection.shatter-proof-balls"] variant-picker {
   display: none !important;
 }
+
+[data-template="collection"] variant-picker {
+  display: none !important;
+}

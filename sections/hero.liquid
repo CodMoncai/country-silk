@@ -150,6 +150,16 @@
     assign media_width_mobile = '50vw'
   endif
 
+  # Mobile breakpoint CSS (hero--mobile-video): custom mobile vs desktop fallback.
+  assign hero_shows_video_on_mobile = false
+  if section.settings.custom_mobile_media and fallback_to_desktop == false
+    if media_1_mobile == 'video' or media_2_mobile == 'video'
+      assign hero_shows_video_on_mobile = true
+    endif
+  elsif media_1 == 'video' or media_2 == 'video'
+    assign hero_shows_video_on_mobile = true
+  endif
+
   assign sizes = '(min-width: 750px) ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
   assign widths = '832, 1200, 1600, 1920, 2560, 3840'
   assign sizes_mobile = media_width_mobile
@@ -630,7 +640,7 @@
 
 <div
   id="Hero-{{ section.id }}"
-  class="hero color-{{ section.settings.color_scheme }}{% if section.blocks.size == 0 and section.settings.section_height == 'auto' %} hero--no-blocks-auto-height{% endif %}{% if section.settings.stack_media_on_mobile %} hero--stack-mobile{% endif %}"
+  class="hero color-{{ section.settings.color_scheme }}{% if section.blocks.size == 0 and section.settings.section_height == 'auto' %} hero--no-blocks-auto-height{% endif %}{% if section.settings.stack_media_on_mobile %} hero--stack-mobile{% endif %}{% if hero_shows_video_on_mobile %} hero--mobile-video{% endif %}"
   style="
     --hero-border-style: {{ section.settings.border }};
     --hero-border-width: {{ section.settings.border_width }}px;
@@ -936,10 +946,17 @@
     }
 
     /*
-      Video embeds use 100vw sizing; if the media layer is narrower than the viewport,
-      overflow:hidden on .hero__container clips them. Pin the media grid to the viewport.
+      YouTube/Vimeo iframes are sized with 100vw/100vh and centered; overflow:hidden on
+      .hero__container, .hero__video-external-poster-root, and .hero__video-iframe-wrapper
+      was clipping them to the inner column. hero--mobile-video is set in Liquid when the
+      storefront actually shows video at this breakpoint.
     */
-    .hero .hero__container:has(.hero__video-wrapper, video.hero__video) {
+    .hero--mobile-video .hero__container {
+      overflow: visible;
+    }
+
+    .hero--mobile-video .hero__video-external-poster-root,
+    .hero--mobile-video .hero__video-iframe-wrapper {
       overflow: visible;
     }
 
@@ -948,7 +965,7 @@
       min-width: 100%;
     }
 
-    .hero:not(.hero--no-blocks-auto-height) .hero__media-wrapper:has(.hero__video-wrapper, video.hero__video) {
+    .hero--mobile-video:not(.hero--no-blocks-auto-height) .hero__media-wrapper {
       inset: unset;
       top: 0;
       bottom: 0;
@@ -959,7 +976,7 @@
       margin-left: -50vw;
     }
 
-    .hero.hero--no-blocks-auto-height .hero__media-wrapper:has(.hero__video-wrapper, video.hero__video) {
+    .hero--mobile-video.hero--no-blocks-auto-height .hero__media-wrapper {
       position: relative;
       inset: unset;
       left: 50%;
@@ -989,7 +1006,7 @@
       Video + image side-by-side looks like a narrow strip with the image “behind” / beside the embed.
       Any hero video should use the full mobile width; additional media stack beneath.
     */
-    .hero__media-wrapper:has(.hero__video-wrapper, video.hero__video) {
+    .hero--mobile-video .hero__media-wrapper {
       grid-template-columns: 1fr;
     }
 

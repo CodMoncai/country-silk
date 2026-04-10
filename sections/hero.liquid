@@ -930,9 +930,43 @@
       justify-self: center;
     }
 
+    .hero-wrapper .hero {
+      width: 100%;
+      max-width: none;
+    }
+
+    /*
+      Video embeds use 100vw sizing; if the media layer is narrower than the viewport,
+      overflow:hidden on .hero__container clips them. Pin the media grid to the viewport.
+    */
+    .hero .hero__container:has(.hero__video-wrapper, video.hero__video) {
+      overflow: visible;
+    }
+
     .hero .hero__media-wrapper {
       width: 100%;
       min-width: 100%;
+    }
+
+    .hero:not(.hero--no-blocks-auto-height) .hero__media-wrapper:has(.hero__video-wrapper, video.hero__video) {
+      inset: unset;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      right: auto;
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: -50vw;
+    }
+
+    .hero.hero--no-blocks-auto-height .hero__media-wrapper:has(.hero__video-wrapper, video.hero__video) {
+      position: relative;
+      inset: unset;
+      left: 50%;
+      right: auto;
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: -50vw;
     }
 
     .hero .hero__video-wrapper,

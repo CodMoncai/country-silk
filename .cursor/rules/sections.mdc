@@ -81,3 +81,7 @@ Every section must include:
 - Use `container-queries` for responsive behavior
 
 [section-example.liquid](mdc:.cursor/rules/examples/section-example.liquid)
+
+## Hero: mobile external video overflow
+
+In `hero.liquid`, mobile Vimeo/YouTube embeds use `overflow: visible` on the container so full-bleed iframes are not clipped horizontally. Those iframes are sized with viewport-based “cover” rules including `min-height: 100vh`, so they extend past **short** section heights (e.g. medium). Without a clip at the section root, the following Shopify section paints on top of the visible video overflow. Fix: `overflow: hidden` on `.hero.hero--mobile-video` (excluding `hero--no-blocks-auto-height`) inside the mobile breakpoint, while keeping inner `overflow: visible` for horizontal bleed—`.hero-wrapper` is already `100vw` on small screens.

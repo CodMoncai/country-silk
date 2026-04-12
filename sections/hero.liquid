@@ -951,6 +951,16 @@
       was clipping them to the inner column. hero--mobile-video is set in Liquid when the
       storefront actually shows video at this breakpoint.
     */
+    /*
+      Iframes also use min-height: 100vh, so with visible overflow they paint past short
+      heroes (small/medium/large). The next section then stacks over the video tail.
+      Clip at the hero root: .hero-wrapper is full-bleed 100vw on mobile, so horizontal
+      bleed from the media wrapper is preserved.
+    */
+    .hero--mobile-video:not(.hero--no-blocks-auto-height) {
+      overflow: hidden;
+    }
+
     .hero--mobile-video .hero__container {
       overflow: visible;
     }

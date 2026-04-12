@@ -53,6 +53,7 @@
         "stack_media_on_mobile": false,
         "custom_mobile_media": true,
         "media_type_1_mobile": "video",
+        "image_1_mobile": "shopify://shop_images/HOME_PAGE_TOP_INITIAL_IMAGE.jpg",
         "video_1_mobile": "shopify://files/videos/SHORT FOX VERTICAL 4-10-2026 C.mp4",
         "video_1_mobile_external_url": "https://vimeo.com/1175996041",
         "media_type_2_mobile": "image",

@@ -4181,7 +4181,7 @@ text-component {
 }
 
 .hero__video-wrapper--desktop {
-  margin: -5px 0 !important;
+  margin-top: -5px !important;
 }
 
 .hero__media-wrapper, .hero__video-wrapper--mobile {

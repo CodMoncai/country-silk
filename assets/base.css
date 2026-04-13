@@ -4180,10 +4180,10 @@ text-component {
   display: none !important;
 }
 
-.hero__media-wrapper, .hero__video-wrapper--desktop {
+.hero__video-wrapper--desktop {
   margin: -5px 0 !important;
 }
 
-/* .hero__video-wrapper--mobile {
-  margin: -10px 0 !important;
-} */
+.hero__media-wrapper, .hero__video-wrapper--mobile {
+  margin-top: -10px !important;
+}

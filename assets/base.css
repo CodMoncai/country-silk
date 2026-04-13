@@ -4179,3 +4179,7 @@ text-component {
 [data-template="collection"] variant-picker {
   display: none !important;
 }
+
+.hero__video-wrapper--desktop {
+  margin: -5px 0 !important;
+}

@@ -4180,6 +4180,6 @@ text-component {
   display: none !important;
 }
 
-.hero__video-wrapper--desktop, .hero__video-wrapper--mobile {
+.hero__video-wrapper--desktop, .hero__video-wrapper--mobile video {
   margin: -5px 0 !important;
 }

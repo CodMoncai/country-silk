@@ -785,7 +785,6 @@
           if (videoWrap) videoWrap.classList.add('hero__video-wrapper--embed-revealed');
         }
         iframe.addEventListener('load', showHeroEmbedIframe);
-        window.setTimeout(showHeroEmbedIframe, 8000);
         wrapper.appendChild(iframe);
       }
 
@@ -1074,7 +1073,16 @@
     pointer-events: none;
   }
 
-  .hero__video-wrapper--embed-revealed::before {
+  /*
+    External embed: only hide CSS poster when the iframe is actually in the DOM.
+    Otherwise a timeout / blocked embed / removed iframe leaves a transparent hole and
+    the blurred reflection layer (z-index: -1) shows through as strips top and bottom.
+    Native <video> heroes use embed-revealed without .hero__video-external-poster-root.
+  */
+  .hero__video-wrapper--embed-revealed:not(:has(.hero__video-external-poster-root))::before,
+  .hero__video-wrapper--embed-revealed:has(.hero__video-external-poster-root):has(
+      .hero__video-iframe
+    )::before {
     opacity: 0;
   }
 
@@ -1105,7 +1113,9 @@
     transition: background-color 2s ease-in-out;
   }
 
-  .hero__video-external-poster-root--embed-revealed.hero__video-external-poster-root--fallback {
+  .hero__video-external-poster-root--embed-revealed.hero__video-external-poster-root--fallback:has(
+      .hero__video-iframe
+    ) {
     background-color: transparent;
   }
 
@@ -1135,8 +1145,8 @@
     transition: opacity 2s ease-in-out;
   }
 
-  .hero__video-external-poster-root--embed-revealed .hero__video-poster-inline,
-  .hero__video-external-poster-root--embed-revealed .hero__video-embed-placeholder {
+  .hero__video-external-poster-root--embed-revealed:has(.hero__video-iframe) .hero__video-poster-inline,
+  .hero__video-external-poster-root--embed-revealed:has(.hero__video-iframe) .hero__video-embed-placeholder {
     opacity: 0;
   }
 
@@ -1202,12 +1212,15 @@
       transition: none;
     }
 
-    .hero__video-external-poster-root--embed-revealed .hero__video-poster-inline,
-    .hero__video-external-poster-root--embed-revealed .hero__video-embed-placeholder {
+    .hero__video-external-poster-root--embed-revealed:has(.hero__video-iframe) .hero__video-poster-inline,
+    .hero__video-external-poster-root--embed-revealed:has(.hero__video-iframe) .hero__video-embed-placeholder {
       opacity: 0;
     }
 
-    .hero__video-wrapper--embed-revealed::before {
+    .hero__video-wrapper--embed-revealed:not(:has(.hero__video-external-poster-root))::before,
+    .hero__video-wrapper--embed-revealed:has(.hero__video-external-poster-root):has(
+        .hero__video-iframe
+      )::before {
       opacity: 0;
     }
 

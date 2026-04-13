@@ -85,3 +85,7 @@ Every section must include:
 ## Hero: mobile external video overflow
 
 In `hero.liquid`, mobile Vimeo/YouTube embeds use `overflow: visible` on the container so full-bleed iframes are not clipped horizontally. Those iframes are sized with viewport-based “cover” rules including `min-height: 100vh`, so they extend past **short** section heights (e.g. medium). Without a clip at the section root, the following Shopify section paints on top of the visible video overflow. Fix: `overflow: hidden` on `.hero.hero--mobile-video` (excluding `hero--no-blocks-auto-height`) inside the mobile breakpoint, while keeping inner `overflow: visible` for horizontal bleed—`.hero-wrapper` is already `100vw` on small screens.
+
+## Hero: deferred YouTube/Vimeo poster vs iframe
+
+Do **not** fade the poster (or hide the `::before` poster layer) unless a `.hero__video-iframe` is present. A timed “reveal” without a loaded iframe, or removing the iframe after load, leaves the media area transparent so `.hero__blurred-image` (below the container) reads as blurred gaps at the top and bottom. Prefer revealing only on the iframe `load` event, and gate poster opacity / fallback background on `:has(.hero__video-iframe)`. Native `<video>` heroes still use `hero__video-wrapper--embed-revealed` without `.hero__video-external-poster-root`, so their `::before` can hide when revealed as before.

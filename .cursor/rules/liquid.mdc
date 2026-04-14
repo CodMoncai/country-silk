@@ -87,6 +87,13 @@ See [@schemas](mdc:.cursor/rules/schemas.mdc) for more details.
 - `money_with_currency` - With symbol: `price | money_with_currency`
 - `money_without_currency` - No symbol: `price | money_without_currency`
 
+**Compatibility note (non-theme Liquid):**
+
+- Some Shopify surfaces (notably **Shopify Flow email/message templates**) run Liquid with a reduced filter set and may throw `Liquid error: undefined filter money`.
+- In those contexts, prefer using preformatted strings (if provided) or output the numeric amount + currency code, for example:
+  - `{{ order.total_price_set.shop_money.amount }} {{ order.total_price_set.shop_money.currency_code }}`
+  - `{{ line_item.original_total_set.shop_money.amount }} {{ line_item.original_total_set.shop_money.currency_code }}`
+
 **Media Filters:**
 
 - `image_url` - Responsive image: `image | image_url: width: 800`

@@ -278,7 +278,7 @@
               "type": "text",
               "name": "t:names.description",
               "settings": {
-                "text": "<p>Phone: 732-752-5556</p><p>Email: info@countrysilk.com</p>",
+                "text": "<p>Address:  2147 Rt 27, Suite 110 Edison, Nj  08817</p><p>Phone: 732-752-5556</p><p>Email: info@countrysilk.com</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",

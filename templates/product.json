@@ -9,6 +9,12 @@
  */
 {
   "sections": {
+    "members_only_gate": {
+      "type": "members-only-gate",
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
+    },
     "hero_qnKN8F": {
       "type": "hero",
       "name": "t:names.hero",
@@ -574,6 +580,7 @@
     }
   },
   "order": [
+    "members_only_gate",
     "hero_qnKN8F",
     "1774545717a5d1e5ea",
     "main",

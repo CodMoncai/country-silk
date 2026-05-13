@@ -9,6 +9,12 @@
  */
 {
   "sections": {
+    "members_only_gate": {
+      "type": "members-only-gate",
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
+    },
     "hero_rnBJiH": {
       "type": "hero",
       "blocks": {
@@ -717,6 +723,7 @@
     }
   },
   "order": [
+    "members_only_gate",
     "hero_rnBJiH",
     "section_H6FxQm",
     "main",

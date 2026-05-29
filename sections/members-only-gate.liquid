@@ -40,22 +40,28 @@
       display: none !important;
     }
   </style>
-
-  <script>
-    (function() {
-      var params = typeof URLSearchParams !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-      if (!params) return;
-      var bypass = params.get('members_only_bypass');
-      if (bypass === '1' || bypass === 'true' || bypass === 'on') {
-        var wrapper = document.querySelector('.members-only-gate-wrapper');
-        if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
-        document.querySelectorAll('.members-only-gate-wrapper ~ .shopify-section').forEach(function(section) {
-          section.style.setProperty('display', 'block', 'important');
-        });
-      }
-    })();
-  </script>
 {% endunless %}
+
+<script>
+  (function() {
+    var params = typeof URLSearchParams !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    if (!params) return;
+    var bypass = params.get('members_only_bypass');
+    if (bypass === '1' || bypass === 'true' || bypass === 'on') {
+      var wrapper = document.querySelector('.members-only-gate-wrapper');
+      if (wrapper) wrapper.parentElement.removeChild(wrapper);
+      
+      var hidingStyle = document.querySelector('style');
+      if (hidingStyle && hidingStyle.textContent.includes('members-only-gate-wrapper ~ .shopify-section')) {
+        hidingStyle.parentElement.removeChild(hidingStyle);
+      }
+      
+      document.querySelectorAll('.shopify-section').forEach(function(section) {
+        section.style.setProperty('display', '', '');
+      });
+    }
+  })();
+</script>
 
 {% stylesheet %}
   .members-only-gate {

@@ -113,5 +113,62 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
+
+    <script>
+      (function() {
+        var params = new URLSearchParams(window.location.search);
+        var bypassValue = params.get('members_only_bypass');
+        if (!bypassValue) {
+          return;
+        }
+
+        var currentOrigin = window.location.origin;
+
+        function shouldPreserve(href) {
+          if (!href) return false;
+          if (href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
+            return false;
+          }
+          try {
+            var target = new URL(href, currentOrigin);
+            return target.origin === currentOrigin;
+          } catch (error) {
+            return false;
+          }
+        }
+
+        function appendBypass(href) {
+          try {
+            var target = new URL(href, currentOrigin);
+            if (!target.searchParams.has('members_only_bypass')) {
+              target.searchParams.set('members_only_bypass', bypassValue);
+            }
+            return target.href;
+          } catch (error) {
+            return href;
+          }
+        }
+
+        document.querySelectorAll('a[href]').forEach(function(anchor) {
+          var href = anchor.getAttribute('href');
+          if (!shouldPreserve(href)) return;
+          anchor.setAttribute('href', appendBypass(href));
+        });
+
+        document.querySelectorAll('form[action]').forEach(function(form) {
+          var action = form.getAttribute('action') || window.location.pathname;
+          if (!shouldPreserve(action)) return;
+          if (form.method && form.method.toLowerCase() === 'get') {
+            var hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'members_only_bypass';
+            hiddenInput.value = bypassValue;
+            form.appendChild(hiddenInput);
+          } else {
+            form.setAttribute('action', appendBypass(action));
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

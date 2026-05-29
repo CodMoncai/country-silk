@@ -1,4 +1,11 @@
-{% unless customer %}
+{% liquid
+  assign bypass_members_only_gate = false
+  if request.query_string contains 'members_only_bypass=1' or request.query_string contains 'members_only_bypass=true' or request.query_string contains 'members_only_bypass=on'
+    assign bypass_members_only_gate = true
+  endif
+%}
+
+{% unless customer or bypass_members_only_gate %}
   <div class="section section--page-width color-{{ section.settings.color_scheme }}">
     <div class="members-only-gate">
       <svg
@@ -33,6 +40,21 @@
       display: none !important;
     }
   </style>
+
+  <script>
+    (function() {
+      var params = typeof URLSearchParams !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      if (!params) return;
+      var bypass = params.get('members_only_bypass');
+      if (bypass === '1' || bypass === 'true' || bypass === 'on') {
+        var wrapper = document.querySelector('.members-only-gate-wrapper');
+        if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
+        document.querySelectorAll('.members-only-gate-wrapper ~ .shopify-section').forEach(function(section) {
+          section.style.setProperty('display', 'block', 'important');
+        });
+      }
+    })();
+  </script>
 {% endunless %}
 
 {% stylesheet %}

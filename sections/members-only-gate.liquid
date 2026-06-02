@@ -1,6 +1,6 @@
 {% liquid
   assign bypass_members_only_gate = false
-  if request.query_string contains 'members_only_bypass=1' or request.query_string contains 'members_only_bypass=true' or request.query_string contains 'members_only_bypass=on'
+  if request.url contains 'members_only_bypass' or request.query_string contains 'members_only_bypass'
     assign bypass_members_only_gate = true
   endif
 %}

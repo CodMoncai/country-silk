@@ -2,9 +2,17 @@
   Outputs "true" when pricing should be shown, otherwise nothing.
   Show pricing when: theme editor (design_mode) OR customer has tag "administrator"/"admin" OR customer has custom.display_pricing set to true.
   Metafield must have "Storefront access" enabled.
+  Pricing is always hidden when members_only_bypass is present on the URL.
 {%- endcomment -%}
 {%- liquid
-  if request.design_mode
+  assign bypass_members_only_pricing = false
+  if request.url contains 'members_only_bypass' or request.query_string contains 'members_only_bypass'
+    assign bypass_members_only_pricing = true
+  endif
+
+  if bypass_members_only_pricing
+    echo ''
+  elsif request.design_mode
     echo 'true'
   elsif customer
     if customer.tags contains 'administrator' or customer.tags contains 'admin'

@@ -168,6 +168,13 @@
             form.setAttribute('action', appendBypass(action));
           }
         });
+
+        var bypassStyle = document.createElement('style');
+        bypassStyle.textContent = [
+          '.price, .compare-at-price, .unit-price, .price-range, .volume-pricing-note { display: none !important; }',
+          '.price::before, .compare-at-price::before, .unit-price::before, .price-range::before { content: none !important; }'
+        ].join(' ');
+        document.head.appendChild(bypassStyle);
       })();
     </script>
   </body>

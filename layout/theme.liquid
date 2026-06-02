@@ -197,17 +197,42 @@
         document.addEventListener('shopify:section:load', hidePriceTotalLabels);
 
         function disableCheckoutButtons() {
-          document.querySelectorAll('button#checkout, button[name="checkout"], input[name="checkout"], a#checkout, a[href*="/checkout"], .cart__checkout-button').forEach(function(el) {
+          var checkoutSelectors = [
+            'button#checkout',
+            'button[name="checkout"]',
+            'input[name="checkout"]',
+            'a#checkout',
+            'a[href*="/checkout"]',
+            '.cart__checkout-button',
+            '.additional-checkout-buttons button',
+            'button.btn.btn-checkout'
+          ];
+          
+          document.querySelectorAll(checkoutSelectors.join(',') || '*').forEach(function(el) {
+            if (!el) return;
             if (el instanceof HTMLButtonElement || el instanceof HTMLInputElement) {
-              el.disabled = true;
+              el.setAttribute('disabled', 'disabled');
             }
+            el.classList.add('disabled');
+            el.style.setProperty('cursor', 'not-allowed', 'important');
             el.style.setProperty('pointer-events', 'none', 'important');
             el.style.setProperty('opacity', '0.5', 'important');
           });
         }
 
+        function hideAllPricesCart() {
+          document.querySelectorAll('[class*="price"], [class*="total"], [class*="subtotal"], [data-attr*="price"], [data-attr*="total"]').forEach(function(el) {
+            var classes = el.className || '';
+            if (classes.match(/(price|total|subtotal|original[-_]total|cart[-_]total|money)/i)) {
+              el.style.setProperty('display', 'none', 'important');
+            }
+          });
+        }
+
         disableCheckoutButtons();
+        hideAllPricesCart();
         document.addEventListener('shopify:section:load', disableCheckoutButtons);
+        document.addEventListener('shopify:section:load', hideAllPricesCart);
       })();
     </script>
   </body>

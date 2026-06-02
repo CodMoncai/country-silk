@@ -224,13 +224,28 @@
           
           document.querySelectorAll(checkoutSelectors.join(',') || '*').forEach(function(el) {
             if (!el) return;
-            if (el instanceof HTMLButtonElement || el instanceof HTMLInputElement) {
-              el.setAttribute('disabled', 'disabled');
+            
+            // Intercept checkout attempts and redirect back when bypass is active
+            el.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              // Redirect to referrer or collections page
+              var redirectUrl = document.referrer || window.location.origin + '/collections/all';
+              window.location.href = redirectUrl;
+            }, true);
+            
+            // Also prevent form submission for cart form
+            if (el.tagName === 'BUTTON' && el.name === 'checkout') {
+              var cartForm = el.closest('form');
+              if (cartForm) {
+                cartForm.addEventListener('submit', function(e) {
+                  e.preventDefault();
+                  var redirectUrl = document.referrer || window.location.origin + '/collections/all';
+                  window.location.href = redirectUrl;
+                }, true);
+              }
             }
-            el.classList.add('disabled');
-            el.style.setProperty('cursor', 'not-allowed', 'important');
-            el.style.setProperty('pointer-events', 'none', 'important');
-            el.style.setProperty('opacity', '0.5', 'important');
           });
         }
 
@@ -282,11 +297,12 @@
             
             // Disable checkout button in drawer
             drawer.querySelectorAll('button#checkout, button[name="checkout"], .cart__checkout-button, .additional-checkout-buttons button').forEach(function(btn) {
-              btn.setAttribute('disabled', 'disabled');
-              btn.classList.add('disabled');
-              btn.style.setProperty('cursor', 'not-allowed', 'important');
-              btn.style.setProperty('pointer-events', 'none', 'important');
-              btn.style.setProperty('opacity', '0.5', 'important');
+              btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var redirectUrl = document.referrer || window.location.origin + '/collections/all';
+                window.location.href = redirectUrl;
+              }, true);
             });
           }
         }

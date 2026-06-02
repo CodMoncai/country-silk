@@ -171,10 +171,30 @@
 
         var bypassStyle = document.createElement('style');
         bypassStyle.textContent = [
-          '.price, .compare-at-price, .unit-price, .price-range, .volume-pricing-note { display: none !important; }',
+          '.price, .compare-at-price, .unit-price, .price-range, .volume-pricing-note, .cart__original-total-label, .cart__original-total-value, .cart__total-label, .cart__total-value, .header-actions__cart-total, .quick-order-list__grid-cell--total, .quick-order-list-total__price, .quick-order-list-total__subtotal-value, .quick-order-list-total__subtotal, .variant-item__total-price, .product-price__column--price, .product-price__column--total, text-component[ref="cartTotal"] { display: none !important; }',
           '.price::before, .compare-at-price::before, .unit-price::before, .price-range::before { content: none !important; }'
         ].join(' ');
         document.head.appendChild(bypassStyle);
+
+        function hidePriceTotalLabels() {
+          var labels = ['price', 'total', 'estimated total', 'subtotal', 'product subtotal', 'product total'];
+          document.querySelectorAll('span,div,p,label,button,th,td').forEach(function(el) {
+            var text = (el.textContent || '').trim().toLowerCase();
+            if (!text) return;
+            if (labels.indexOf(text) !== -1) {
+              el.style.setProperty('display', 'none', 'important');
+              return;
+            }
+            labels.forEach(function(label) {
+              if (text === label || text === label + ':' || text.indexOf(label + ' ') === 0 || text.indexOf(label + ':') === 0) {
+                el.style.setProperty('display', 'none', 'important');
+              }
+            });
+          });
+        }
+
+        hidePriceTotalLabels();
+        document.addEventListener('shopify:section:load', hidePriceTotalLabels);
       })();
     </script>
   </body>

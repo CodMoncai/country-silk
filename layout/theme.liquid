@@ -177,19 +177,33 @@
         document.head.appendChild(bypassStyle);
 
         function hidePriceTotalLabels() {
-          var labels = ['price', 'total', 'estimated total', 'subtotal', 'product subtotal', 'product total'];
+          var labels = ['price', 'estimated total', 'subtotal', 'product subtotal', 'product total', 'total'];
+          var exceptions = ['total items', 'total item'];
+
+          function shouldHideText(text) {
+            if (exceptions.indexOf(text) !== -1) {
+              return false;
+            }
+
+            if (labels.indexOf(text) !== -1) {
+              return true;
+            }
+
+            return labels.some(function(label) {
+              if (label === 'total') {
+                return text === 'total' || text === 'total:' || text === 'total due' || text === 'order total' || text === 'cart total';
+              }
+
+              return text === label || text === label + ':' || text.indexOf(label + ' ') === 0 || text.indexOf(label + ':') === 0;
+            });
+          }
+
           document.querySelectorAll('span,div,p,label,button,th,td').forEach(function(el) {
             var text = (el.textContent || '').trim().toLowerCase();
             if (!text) return;
-            if (labels.indexOf(text) !== -1) {
+            if (shouldHideText(text)) {
               el.style.setProperty('display', 'none', 'important');
-              return;
             }
-            labels.forEach(function(label) {
-              if (text === label || text === label + ':' || text.indexOf(label + ' ') === 0 || text.indexOf(label + ':') === 0) {
-                el.style.setProperty('display', 'none', 'important');
-              }
-            });
           });
         }
 

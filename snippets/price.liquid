@@ -123,7 +123,17 @@
 {% capture bypass_members_only_pricing %}{% if request.url contains 'members_only_bypass' or request.query_string contains 'members_only_bypass' %}true{% endif %}{% endcapture %}
 <div ref="priceContainer">
   {% if can_show_pricing != blank %}
-    {%- if has_rlp_display and rlp_cents_display > 0 -%}
+    {%- if show_pricing_mode -%}
+      {%- comment -%} Show RLP metafield price in show_pricing mode {%- endcomment -%}
+      {%- liquid
+        if use_currency
+          assign pricing_display = price | money_with_currency
+        else
+          assign pricing_display = price | money
+        endif
+      -%}
+      <span class="price">{{ pricing_display }}</span>
+    {%- elsif has_rlp_display and rlp_cents_display > 0 -%}
       {%- liquid
         if use_currency
           assign rlp_formatted = rlp_cents_display | money_with_currency

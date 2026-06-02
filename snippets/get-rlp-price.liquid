@@ -1,26 +1,38 @@
 {%- comment -%}
   Retrieves RLP price from metafields with fallback to regular price.
+  Handles both metafield value access and raw metafield object access.
   
   @param {object} product - Product object
   @param {object} variant - Variant object  
-  @param {string} [field_name] - Custom field name, defaults to 'price'
   
   Outputs: price in cents (e.g., 2999 for $29.99)
 {%- endcomment -%}
 
 {%- liquid
-  assign field_name = field_name | default: 'price'
   assign rlp_price = nil
   assign fallback_price = nil
 
-  # Try to get RLP price from variant metafield first
+  # Try to get RLP price from variant metafield first (check both .value and direct value)
   if variant and variant.metafields.custom.rlp
-    assign rlp_price = variant.metafields.custom.rlp.value
+    assign rlp_check = variant.metafields.custom.rlp
+    if rlp_check.value
+      assign rlp_price = rlp_check.value
+    elsif rlp_check != blank
+      # Direct value (not an object with .value property)
+      assign rlp_price = rlp_check
+    endif
   endif
 
   # Fall back to product metafield if variant doesn't have it
   if rlp_price == blank and product
-    assign rlp_price = product.metafields.custom.rlp.value
+    assign product_rlp_check = product.metafields.custom.rlp
+    if product_rlp_check
+      if product_rlp_check.value
+        assign rlp_price = product_rlp_check.value
+      elsif product_rlp_check != blank
+        assign rlp_price = product_rlp_check
+      endif
+    endif
   endif
 
   # Set fallback to variant or product price
@@ -30,10 +42,15 @@
     assign fallback_price = product.selected_or_first_available_variant.price
   endif
 
-  # Output RLP price if available, otherwise fallback price
+  # Convert rlp_price to number if it's a string
   if rlp_price != blank
+    assign rlp_price = rlp_price | plus: 0
+  endif
+
+  # Output RLP price if available and greater than 0, otherwise fallback price
+  if rlp_price > 0
     echo rlp_price
-  elsif fallback_price != blank
+  elsif fallback_price != blank and fallback_price > 0
     echo fallback_price
   else
     echo 0

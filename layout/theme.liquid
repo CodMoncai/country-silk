@@ -171,8 +171,8 @@
 
         var bypassStyle = document.createElement('style');
         bypassStyle.textContent = [
-          '.price, .compare-at-price, .unit-price, .price-range, .volume-pricing-note, .cart__original-total-label, .cart__original-total-value, .cart__total-label, .cart__total-value, .header-actions__cart-total, .quick-order-list__grid-cell--total, .quick-order-list-total__price, .quick-order-list-total__subtotal-value, .quick-order-list-total__subtotal, .variant-item__total-price, .product-price__column--price, .product-price__column--total, text-component[ref="cartTotal"] { display: none !important; }',
-          '.price::before, .compare-at-price::before, .unit-price::before, .price-range::before { content: none !important; }'
+          '.price, .compare-at-price, .unit-price, .price-range, .volume-pricing-note, .cart__original-total-label, .cart__original-total-value, .cart__total-label, .cart__total-value, .header-actions__cart-total, .quick-order-list__grid-cell--total, .quick-order-list-total__price, .quick-order-list-total__subtotal-value, .quick-order-list-total__subtotal, .variant-item__total-price, .product-price__column--price, .product-price__column--total, text-component[ref="cartTotal"], .cart-items__price, .cart-items__price-unit, .money { display: none !important; }',
+          '.price::before, .compare-at-price::before, .unit-price::before, .price-range::before, .money::before { content: none !important; }'
         ].join(' ');
         document.head.appendChild(bypassStyle);
 
@@ -291,9 +291,31 @@
           }
         }
 
+        // Also process cart page directly
+        function processCartPage() {
+          // Hide unclassed price spans on cart page
+          document.querySelectorAll('.cart-items__wrapper .visually-hidden').forEach(function(hiddenSpan) {
+            var nextSpan = hiddenSpan.nextElementSibling;
+            if (nextSpan && nextSpan.tagName === 'SPAN' && !nextSpan.className) {
+              nextSpan.style.setProperty('display', 'none', 'important');
+            }
+            var nextEl = hiddenSpan.nextElementSibling;
+            while (nextEl) {
+              if (nextEl.tagName === 'S' || (nextEl.tagName === 'SPAN' && nextEl.className.includes('compare-at-price'))) {
+                nextEl.style.setProperty('display', 'none', 'important');
+              }
+              nextEl = nextEl.nextElementSibling;
+            }
+          });
+        }
+
         // Run immediately and on intervals
         processCartDrawer();
-        setInterval(processCartDrawer, 500);
+        processCartPage();
+        setInterval(function() {
+          processCartDrawer();
+          processCartPage();
+        }, 500);
 
         // Monitor cart drawer dialog opening
         var cartDrawerDialog = document.querySelector('.cart-drawer__dialog');

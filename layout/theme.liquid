@@ -210,6 +210,26 @@
         hidePriceTotalLabels();
         document.addEventListener('shopify:section:load', hidePriceTotalLabels);
 
+        function getBypassRedirectUrl() {
+          var params = new URLSearchParams(window.location.search);
+          var bypassValue = params.get('members_only_bypass');
+          var fallbackUrl = window.location.origin + '/collections/all';
+          var redirectUrl = document.referrer || fallbackUrl;
+
+          try {
+            var url = new URL(redirectUrl, window.location.origin);
+            if (bypassValue) {
+              url.searchParams.set('members_only_bypass', bypassValue);
+            }
+            return url.toString();
+          } catch (error) {
+            if (bypassValue) {
+              return fallbackUrl + '?members_only_bypass=' + encodeURIComponent(bypassValue);
+            }
+            return fallbackUrl;
+          }
+        }
+
         function disableCheckoutButtons() {
           var checkoutSelectors = [
             'button#checkout',
@@ -230,9 +250,7 @@
               e.preventDefault();
               e.stopPropagation();
               
-              // Redirect to referrer or collections page
-              var redirectUrl = document.referrer || window.location.origin + '/collections/all';
-              window.location.href = redirectUrl;
+              window.location.href = getBypassRedirectUrl();
             }, true);
             
             // Also prevent form submission for cart form
@@ -241,8 +259,7 @@
               if (cartForm) {
                 cartForm.addEventListener('submit', function(e) {
                   e.preventDefault();
-                  var redirectUrl = document.referrer || window.location.origin + '/collections/all';
-                  window.location.href = redirectUrl;
+                  window.location.href = getBypassRedirectUrl();
                 }, true);
               }
             }
@@ -300,8 +317,7 @@
               btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                var redirectUrl = document.referrer || window.location.origin + '/collections/all';
-                window.location.href = redirectUrl;
+                window.location.href = getBypassRedirectUrl();
               }, true);
             });
           }

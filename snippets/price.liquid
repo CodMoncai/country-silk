@@ -38,6 +38,18 @@
   assign variant_price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
   assign price = variant_price
+  
+  # Check if show_pricing mode (RLP pricing) is active
+  assign show_pricing_mode = false
+  if request.url contains 'show_pricing' or request.query_string contains 'show_pricing'
+    assign show_pricing_mode = true
+    # Use RLP metafield price when in show_pricing mode
+    capture rlp_metafield_price
+      render 'get-rlp-price', product: product_resource, variant: selected_variant
+    endcapture
+    assign price = rlp_metafield_price | strip | plus: 0
+  endif
+  
   capture _rlp_line
     render 'rlp-variant-unit-cents', variant: selected_variant, product: product_resource
   endcapture

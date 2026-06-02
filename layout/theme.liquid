@@ -118,7 +118,9 @@
       (function() {
         var params = new URLSearchParams(window.location.search);
         var bypassValue = params.get('members_only_bypass');
-        if (!bypassValue) {
+        var showPricingValue = params.get('show_pricing');
+        
+        if (!bypassValue && !showPricingValue) {
           return;
         }
 
@@ -140,8 +142,11 @@
         function appendBypass(href) {
           try {
             var target = new URL(href, currentOrigin);
-            if (!target.searchParams.has('members_only_bypass')) {
+            if (bypassValue && !target.searchParams.has('members_only_bypass')) {
               target.searchParams.set('members_only_bypass', bypassValue);
+            }
+            if (showPricingValue && !target.searchParams.has('show_pricing')) {
+              target.searchParams.set('show_pricing', showPricingValue);
             }
             return target.href;
           } catch (error) {
@@ -159,22 +164,34 @@
           var action = form.getAttribute('action') || window.location.pathname;
           if (!shouldPreserve(action)) return;
           if (form.method && form.method.toLowerCase() === 'get') {
-            var hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'members_only_bypass';
-            hiddenInput.value = bypassValue;
-            form.appendChild(hiddenInput);
+            if (bypassValue) {
+              var hiddenBypass = document.createElement('input');
+              hiddenBypass.type = 'hidden';
+              hiddenBypass.name = 'members_only_bypass';
+              hiddenBypass.value = bypassValue;
+              form.appendChild(hiddenBypass);
+            }
+            if (showPricingValue) {
+              var hiddenPricing = document.createElement('input');
+              hiddenPricing.type = 'hidden';
+              hiddenPricing.name = 'show_pricing';
+              hiddenPricing.value = showPricingValue;
+              form.appendChild(hiddenPricing);
+            }
           } else {
             form.setAttribute('action', appendBypass(action));
           }
         });
 
-        var bypassStyle = document.createElement('style');
-        bypassStyle.textContent = [
-          '.price, .compare-at-price, .unit-price, .price-range, .volume-pricing-note, .cart__original-total-label, .cart__original-total-value, .cart__total-label, .cart__total-value, .header-actions__cart-total, .quick-order-list__grid-cell--total, .quick-order-list-total__price, .quick-order-list-total__subtotal-value, .quick-order-list-total__subtotal, .variant-item__total-price, .product-price__column--price, .product-price__column--total, text-component[ref="cartTotal"], .cart-items__price, .cart-items__price-unit, .money { display: none !important; }',
-          '.price::before, .compare-at-price::before, .unit-price::before, .price-range::before, .money::before { content: none !important; }'
-        ].join(' ');
-        document.head.appendChild(bypassStyle);
+        // Only apply price hiding CSS if members_only_bypass is active (not for show_pricing mode)
+        if (bypassValue && !showPricingValue) {
+          var bypassStyle = document.createElement('style');
+          bypassStyle.textContent = [
+            '.price, .compare-at-price, .unit-price, .price-range, .volume-pricing-note, .cart__original-total-label, .cart__original-total-value, .cart__total-label, .cart__total-value, .header-actions__cart-total, .quick-order-list__grid-cell--total, .quick-order-list-total__price, .quick-order-list-total__subtotal-value, .quick-order-list-total__subtotal, .variant-item__total-price, .product-price__column--price, .product-price__column--total, text-component[ref="cartTotal"], .cart-items__price, .cart-items__price-unit, .money { display: none !important; }',
+            '.price::before, .compare-at-price::before, .unit-price::before, .price-range::before, .money::before { content: none !important; }'
+          ].join(' ');
+          document.head.appendChild(bypassStyle);
+        }
 
         function hidePriceTotalLabels() {
           var labels = ['price', 'estimated total', 'subtotal', 'product subtotal', 'product total', 'total'];
@@ -207,12 +224,16 @@
           });
         }
 
-        hidePriceTotalLabels();
-        document.addEventListener('shopify:section:load', hidePriceTotalLabels);
+        // Only hide price labels if members_only_bypass is active (not for show_pricing mode)
+        if (bypassValue && !showPricingValue) {
+          hidePriceTotalLabels();
+          document.addEventListener('shopify:section:load', hidePriceTotalLabels);
+        }
 
         function getBypassRedirectUrl() {
           var params = new URLSearchParams(window.location.search);
           var bypassValue = params.get('members_only_bypass');
+          var showPricingValue = params.get('show_pricing');
           var fallbackUrl = window.location.origin + '/collections/all';
           var redirectUrl = document.referrer || fallbackUrl;
 
@@ -221,12 +242,19 @@
             if (bypassValue) {
               url.searchParams.set('members_only_bypass', bypassValue);
             }
+            if (showPricingValue) {
+              url.searchParams.set('show_pricing', showPricingValue);
+            }
             return url.toString();
           } catch (error) {
+            var fallbackWithParams = fallbackUrl;
             if (bypassValue) {
-              return fallbackUrl + '?members_only_bypass=' + encodeURIComponent(bypassValue);
+              fallbackWithParams += '?members_only_bypass=' + encodeURIComponent(bypassValue);
             }
-            return fallbackUrl;
+            if (showPricingValue) {
+              fallbackWithParams += (bypassValue ? '&' : '?') + 'show_pricing=' + encodeURIComponent(showPricingValue);
+            }
+            return fallbackWithParams;
           }
         }
 
@@ -282,10 +310,13 @@
           });
         }
 
-        disableCheckoutButtons();
-        hideAllPricesCart();
-        document.addEventListener('shopify:section:load', disableCheckoutButtons);
-        document.addEventListener('shopify:section:load', hideAllPricesCart);
+        // Only run bypass-specific functions if members_only_bypass is active (not for show_pricing mode)
+        if (bypassValue && !showPricingValue) {
+          disableCheckoutButtons();
+          hideAllPricesCart();
+          document.addEventListener('shopify:section:load', disableCheckoutButtons);
+          document.addEventListener('shopify:section:load', hideAllPricesCart);
+        }
 
         // Aggressive drawer management
         function processCartDrawer() {
@@ -341,25 +372,29 @@
           });
         }
 
-        // Run immediately and on intervals
-        processCartDrawer();
-        processCartPage();
-        setInterval(function() {
+        // Run immediately and on intervals (only for bypass mode)
+        if (bypassValue && !showPricingValue) {
           processCartDrawer();
           processCartPage();
-        }, 500);
+          setInterval(function() {
+            processCartDrawer();
+            processCartPage();
+          }, 500);
+        }
 
-        // Monitor cart drawer dialog opening
-        var cartDrawerDialog = document.querySelector('.cart-drawer__dialog');
-        if (cartDrawerDialog) {
-          var drawerObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-              if (mutation.attributeName === 'open') {
-                processCartDrawer();
-              }
+        // Monitor cart drawer dialog opening (only for bypass mode)
+        if (bypassValue && !showPricingValue) {
+          var cartDrawerDialog = document.querySelector('.cart-drawer__dialog');
+          if (cartDrawerDialog) {
+            var drawerObserver = new MutationObserver(function(mutations) {
+              mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'open') {
+                  processCartDrawer();
+                }
+              });
             });
-          });
-          drawerObserver.observe(cartDrawerDialog, { attributes: true, attributeFilter: ['open'] });
+            drawerObserver.observe(cartDrawerDialog, { attributes: true, attributeFilter: ['open'] });
+          }
         }
       })();
     </script>

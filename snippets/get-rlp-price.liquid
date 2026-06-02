@@ -1,0 +1,41 @@
+{%- comment -%}
+  Retrieves RLP price from metafields with fallback to regular price.
+  
+  @param {object} product - Product object
+  @param {object} variant - Variant object  
+  @param {string} [field_name] - Custom field name, defaults to 'price'
+  
+  Outputs: price in cents (e.g., 2999 for $29.99)
+{%- endcomment -%}
+
+{%- liquid
+  assign field_name = field_name | default: 'price'
+  assign rlp_price = nil
+  assign fallback_price = nil
+
+  # Try to get RLP price from variant metafield first
+  if variant and variant.metafields.custom.rlp
+    assign rlp_price = variant.metafields.custom.rlp.value
+  endif
+
+  # Fall back to product metafield if variant doesn't have it
+  if rlp_price == blank and product
+    assign rlp_price = product.metafields.custom.rlp.value
+  endif
+
+  # Set fallback to variant or product price
+  if variant
+    assign fallback_price = variant.price
+  elsif product
+    assign fallback_price = product.selected_or_first_available_variant.price
+  endif
+
+  # Output RLP price if available, otherwise fallback price
+  if rlp_price != blank
+    echo rlp_price
+  elsif fallback_price != blank
+    echo fallback_price
+  else
+    echo 0
+  endif
+-%}

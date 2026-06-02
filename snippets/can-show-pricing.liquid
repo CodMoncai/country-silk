@@ -1,8 +1,12 @@
 {%- comment -%}
   Outputs "true" when pricing should be shown, otherwise nothing.
-  Show pricing when: theme editor (design_mode) OR customer has tag "administrator"/"admin" OR customer has custom.display_pricing set to true.
-  Metafield must have "Storefront access" enabled.
+  Show pricing when: 
+    - show_pricing parameter is in URL (shows RLP metafield prices)
+    - theme editor (design_mode)
+    - customer has tag "administrator"/"admin"
+    - customer has custom.display_pricing set to true
   Pricing is always hidden when members_only_bypass is present on the URL.
+  Metafield must have "Storefront access" enabled.
 {%- endcomment -%}
 {%- liquid
   assign bypass_members_only_pricing = false
@@ -10,8 +14,15 @@
     assign bypass_members_only_pricing = true
   endif
 
+  assign show_pricing_mode = false
+  if request.url contains 'show_pricing' or request.query_string contains 'show_pricing'
+    assign show_pricing_mode = true
+  endif
+
   if bypass_members_only_pricing
     echo ''
+  elsif show_pricing_mode
+    echo 'rlp_pricing'
   elsif request.design_mode
     echo 'true'
   elsif customer

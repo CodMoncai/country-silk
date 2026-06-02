@@ -233,6 +233,42 @@
         hideAllPricesCart();
         document.addEventListener('shopify:section:load', disableCheckoutButtons);
         document.addEventListener('shopify:section:load', hideAllPricesCart);
+
+        // Aggressive drawer management
+        function processCartDrawer() {
+          var drawer = document.querySelector('.cart-drawer__dialog[open]');
+          if (drawer) {
+            // Hide all price-related elements specifically within drawer
+            drawer.querySelectorAll('[class*="price"], [class*="total"], [class*="original"], [class*="subtotal"], .cart__original-total-label, .cart__original-total-value, .cart__total-label, .cart__total-value').forEach(function(el) {
+              el.style.setProperty('display', 'none', 'important');
+            });
+            // Disable checkout button in drawer
+            drawer.querySelectorAll('button#checkout, button[name="checkout"], .cart__checkout-button, .additional-checkout-buttons button').forEach(function(btn) {
+              btn.setAttribute('disabled', 'disabled');
+              btn.classList.add('disabled');
+              btn.style.setProperty('cursor', 'not-allowed', 'important');
+              btn.style.setProperty('pointer-events', 'none', 'important');
+              btn.style.setProperty('opacity', '0.5', 'important');
+            });
+          }
+        }
+
+        // Run immediately and on intervals
+        processCartDrawer();
+        setInterval(processCartDrawer, 500);
+
+        // Monitor cart drawer dialog opening
+        var cartDrawerDialog = document.querySelector('.cart-drawer__dialog');
+        if (cartDrawerDialog) {
+          var drawerObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.attributeName === 'open') {
+                processCartDrawer();
+              }
+            });
+          });
+          drawerObserver.observe(cartDrawerDialog, { attributes: true, attributeFilter: ['open'] });
+        }
       })();
     </script>
   </body>

@@ -3,6 +3,9 @@
   if request.url contains 'members_only_bypass' or request.query_string contains 'members_only_bypass'
     assign bypass_members_only_gate = true
   endif
+  if request.url contains 'show_pricing' or request.query_string contains 'show_pricing'
+    assign bypass_members_only_gate = true
+  endif
 %}
 
 {% unless customer or bypass_members_only_gate %}
@@ -47,7 +50,8 @@
     var params = typeof URLSearchParams !== 'undefined' ? new URLSearchParams(window.location.search) : null;
     if (!params) return;
     var bypass = params.get('members_only_bypass');
-    if (bypass === '1' || bypass === 'true' || bypass === 'on') {
+    var showPricing = params.get('show_pricing');
+    if (bypass === '1' || bypass === 'true' || bypass === 'on' || showPricing === '1' || showPricing === 'true' || showPricing === 'on') {
       var wrapper = document.querySelector('.members-only-gate-wrapper');
       if (wrapper) wrapper.parentElement.removeChild(wrapper);
       

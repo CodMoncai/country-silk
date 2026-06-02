@@ -242,6 +242,23 @@
             drawer.querySelectorAll('[class*="price"], [class*="total"], [class*="original"], [class*="subtotal"], .cart__original-total-label, .cart__original-total-value, .cart__total-label, .cart__total-value').forEach(function(el) {
               el.style.setProperty('display', 'none', 'important');
             });
+            
+            // Hide price spans that come after visually-hidden labels (cart-products pattern)
+            drawer.querySelectorAll('.visually-hidden').forEach(function(hiddenSpan) {
+              var nextSpan = hiddenSpan.nextElementSibling;
+              if (nextSpan && nextSpan.tagName === 'SPAN' && !nextSpan.className) {
+                nextSpan.style.setProperty('display', 'none', 'important');
+              }
+              // Also check for <s> tags (strikethrough compare-at-price)
+              var nextEl = hiddenSpan.nextElementSibling;
+              while (nextEl) {
+                if (nextEl.tagName === 'S' || (nextEl.tagName === 'SPAN' && nextEl.className.includes('compare-at-price'))) {
+                  nextEl.style.setProperty('display', 'none', 'important');
+                }
+                nextEl = nextEl.nextElementSibling;
+              }
+            });
+            
             // Disable checkout button in drawer
             drawer.querySelectorAll('button#checkout, button[name="checkout"], .cart__checkout-button, .additional-checkout-buttons button').forEach(function(btn) {
               btn.setAttribute('disabled', 'disabled');

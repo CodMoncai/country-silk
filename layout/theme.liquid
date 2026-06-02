@@ -195,6 +195,19 @@
 
         hidePriceTotalLabels();
         document.addEventListener('shopify:section:load', hidePriceTotalLabels);
+
+        function disableCheckoutButtons() {
+          document.querySelectorAll('button#checkout, button[name="checkout"], input[name="checkout"], a#checkout, a[href*="/checkout"], .cart__checkout-button').forEach(function(el) {
+            if (el instanceof HTMLButtonElement || el instanceof HTMLInputElement) {
+              el.disabled = true;
+            }
+            el.style.setProperty('pointer-events', 'none', 'important');
+            el.style.setProperty('opacity', '0.5', 'important');
+          });
+        }
+
+        disableCheckoutButtons();
+        document.addEventListener('shopify:section:load', disableCheckoutButtons);
       })();
     </script>
   </body>

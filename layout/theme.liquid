@@ -235,11 +235,18 @@
         }
 
         function hideAllPricesCart() {
-          document.querySelectorAll('[class*="price"], [class*="total"], [class*="subtotal"], [data-attr*="price"], [data-attr*="total"]').forEach(function(el) {
-            var classes = el.className || '';
-            if (classes.match(/(price|total|subtotal|original[-_]total|cart[-_]total|money)/i)) {
-              el.style.setProperty('display', 'none', 'important');
+          document.querySelectorAll(
+            '.price, .compare-at-price, .unit-price, .price-range, .volume-pricing-note, .header-actions__cart-total, .cart__original-total-label, .cart__original-total-value, .cart__total-label, .cart__total-value, .quick-order-list-total__price, .quick-order-list-total__subtotal-value, .quick-order-list-total__subtotal, .variant-item__total-price, .product-price__column--price, .product-price__column--total, text-component[ref="cartTotal"]'
+          ).forEach(function(el) {
+            el.style.setProperty('display', 'none', 'important');
+          });
+
+          // Hide inline generic money values inside cart drawer and product sections
+          document.querySelectorAll('[class*="price"], [data-attr*="price"]').forEach(function(el) {
+            if (el.className && /quantity-selector|quantity-selector__total|quantity-selector__label|quantity-selector__input-row/i.test(el.className)) {
+              return;
             }
+            el.style.setProperty('display', 'none', 'important');
           });
         }
 

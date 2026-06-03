@@ -70,6 +70,11 @@
   if product.id == empty or product == blank
     assign onboarding = true
   endif
+
+  assign show_pricing_mode = false
+  if request.query_string contains 'show_pricing' or request.url contains 'show_pricing'
+    assign show_pricing_mode = true
+  endif
 %}
 
 {%- if settings.transition_to_main_product -%}
@@ -130,6 +135,42 @@
     "
   >
     {{ children }}
+    {%- if show_pricing_mode and not onboarding and children contains 'product-price' == false -%}
+      {%- assign _spm_variant = variant_to_link -%}
+      {%- capture _spm_rlp_raw -%}{% render 'get-rlp-price', product: product, variant: _spm_variant %}{%- endcapture -%}
+      {%- assign _spm_cents = _spm_rlp_raw | strip | plus: 0 -%}
+      <product-price
+        data-product-id="{{ product.id }}"
+        data-initial-variant-id="{{ _spm_variant.id }}"
+        data-variant-price="{{ _spm_cents }}"
+        data-currency="{{ cart.currency.iso_code }}"
+        data-show-pricing="true"
+      >
+        <script type="application/json" data-variant-unit-cents-map>
+          {
+          {%- for v in product.variants -%}
+            "{{ v.id }}": {%- capture _spm_v_rlp -%}{% render 'get-rlp-price', product: product, variant: v %}{%- endcapture -%}{{ _spm_v_rlp | strip | plus: 0 }}{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+          }
+        </script>
+        <div class="product-price__row">
+          <div class="product-price__column product-price__column--price">
+            <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>
+            <div class="product-price__price-cell">
+              <div ref="priceContainer">
+                <span class="price">{{ _spm_cents | money }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="product-price__column product-price__column--total">
+            <span class="product-price__label caption-large">{{ 'content.total' | t }}</span>
+            <div class="product-price__total-cell" ref="totalPriceContainer">
+              <span class="price" ref="totalPrice">{{ _spm_cents | money }}</span>
+            </div>
+          </div>
+        </div>
+      </product-price>
+    {%- endif -%}
   </div>
 </product-card>
 {%- if settings.transition_to_main_product -%}
@@ -160,5 +201,34 @@
   /* Hide "Choose" button when "Add" button is shown */
   [data-quick-add-button='add'] .quick-add__button--choose {
     display: none;
+  }
+
+  /* show_pricing price/total row injected on collection cards */
+  product-card .product-price__row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--gap-md);
+    width: 100%;
+  }
+
+  product-card .product-price__column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-2xs);
+    min-width: 0;
+  }
+
+  product-card .product-price__column--price { flex: 1 1 auto; }
+  product-card .product-price__column--total { flex: 0 0 auto; text-align: end; }
+
+  product-card .product-price__label {
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  product-card .product-price__price-cell,
+  product-card .product-price__total-cell {
+    min-height: 1.5em;
   }
 {% endstylesheet %}

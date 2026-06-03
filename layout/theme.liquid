@@ -193,6 +193,28 @@
           document.head.appendChild(bypassStyle);
         }
 
+        // If show_pricing param is present, force-unhide price elements and remove hiding styles
+        if (showPricingValue) {
+          // Add a high-specificity override to ensure prices display
+          var showStyle = document.createElement('style');
+          showStyle.textContent = [
+            '.price, .compare-at-price, .unit-price, .money { display: inline !important; }',
+            '.price[hidden], .compare-at-price[hidden], .money[hidden] { display: inline !important; }'
+          ].join(' ');
+          document.head.appendChild(showStyle);
+
+          // Remove inline display:none and hidden attributes from price nodes
+          document.querySelectorAll('.price, .compare-at-price, .unit-price, .money').forEach(function(el) {
+            if (!el) return;
+            try {
+              el.style.removeProperty('display');
+              el.removeAttribute('hidden');
+            } catch (e) {}
+          });
+
+          // Defensive: do not remove unrelated styles; only continue
+        }
+
         function hidePriceTotalLabels() {
           var labels = ['price', 'estimated total', 'subtotal', 'product subtotal', 'product total', 'total'];
           var exceptions = ['total items', 'total item'];

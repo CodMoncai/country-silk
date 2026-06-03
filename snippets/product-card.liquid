@@ -154,18 +154,18 @@
           {%- endfor -%}
           }
         </script>
-        <div class="product-price__row">
-          <div class="product-price__column product-price__column--price">
-            <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>
-            <div class="product-price__price-cell">
+        <div class="product-price__row" style="display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:var(--gap-md,0.75rem);width:100%;">
+          <div class="product-price__column product-price__column--price" style="display:flex;flex-direction:column;flex:1 1 auto;gap:var(--gap-2xs,0.25rem);min-width:0;">
+            <span class="product-price__label" style="display:block;font-size:var(--font-size--xs,0.75rem);color:rgb(var(--color-foreground-rgb,0 0 0)/var(--opacity-subdued-text,0.7));">{{ 'content.price' | t }}</span>
+            <div class="product-price__price-cell" style="min-height:1.5em;">
               <div ref="priceContainer">
                 <span class="price">{{ _spm_cents | money }}</span>
               </div>
             </div>
           </div>
-          <div class="product-price__column product-price__column--total">
-            <span class="product-price__label caption-large">{{ 'content.total' | t }}</span>
-            <div class="product-price__total-cell" ref="totalPriceContainer">
+          <div class="product-price__column product-price__column--total" style="display:flex;flex-direction:column;flex:0 0 auto;text-align:end;gap:var(--gap-2xs,0.25rem);min-width:0;">
+            <span class="product-price__label" style="display:block;font-size:var(--font-size--xs,0.75rem);color:rgb(var(--color-foreground-rgb,0 0 0)/var(--opacity-subdued-text,0.7));">{{ 'content.total' | t }}</span>
+            <div class="product-price__total-cell" style="min-height:1.5em;">
               <span class="price" ref="totalPrice">{{ _spm_cents | money }}</span>
             </div>
           </div>

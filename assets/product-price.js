@@ -72,6 +72,75 @@ class ProductPrice extends HTMLElement {
     }
   }
 
+  /**
+   * Builds the full Price / Total two-column row client-side.
+   * Used when the server-rendered HTML omitted it (e.g. CDN cached page rendered
+   * before ?show_pricing was added to the URL).
+   */
+  #ensureShowPricingRow() {
+    if (this.querySelector('.product-price__row')) return;
+
+    const priceCents = this.#displayUnitCents();
+    if (Number.isNaN(priceCents)) return;
+
+    const priceText = this.#formatMoney(priceCents);
+    const labelStyle = 'display:block;font-size:var(--font-size--xs,0.75rem);color:rgb(var(--color-foreground-rgb,0 0 0)/var(--opacity-subdued-text,0.7));';
+    const colBase = 'display:flex;flex-direction:column;gap:var(--gap-2xs,0.25rem);min-width:0;';
+
+    const row = document.createElement('div');
+    row.className = 'product-price__row';
+    row.style.cssText = 'display:flex;flex-direction:row;justify-content:space-between;align-items:flex-start;gap:var(--gap-md,0.75rem);width:100%;';
+
+    // Price column — reuse the existing priceContainer if present
+    const priceCol = document.createElement('div');
+    priceCol.className = 'product-price__column product-price__column--price';
+    priceCol.style.cssText = colBase + 'flex:1 1 auto;';
+    const priceLabel = document.createElement('span');
+    priceLabel.className = 'product-price__label';
+    priceLabel.style.cssText = labelStyle;
+    priceLabel.textContent = 'Price';
+    const priceCell = document.createElement('div');
+    priceCell.className = 'product-price__price-cell';
+    priceCell.style.minHeight = '1.5em';
+    const existingContainer = this.querySelector('[ref="priceContainer"]');
+    if (existingContainer) {
+      priceCell.appendChild(existingContainer);
+    } else {
+      const pc = document.createElement('div');
+      pc.setAttribute('ref', 'priceContainer');
+      const ps = document.createElement('span');
+      ps.className = 'price';
+      ps.textContent = priceText;
+      pc.appendChild(ps);
+      priceCell.appendChild(pc);
+    }
+    priceCol.appendChild(priceLabel);
+    priceCol.appendChild(priceCell);
+
+    // Total column
+    const totalCol = document.createElement('div');
+    totalCol.className = 'product-price__column product-price__column--total';
+    totalCol.style.cssText = colBase + 'flex:0 0 auto;text-align:end;';
+    const totalLabel = document.createElement('span');
+    totalLabel.className = 'product-price__label';
+    totalLabel.style.cssText = labelStyle;
+    totalLabel.textContent = 'Total';
+    const totalCell = document.createElement('div');
+    totalCell.className = 'product-price__total-cell';
+    totalCell.style.minHeight = '1.5em';
+    const totalSpan = document.createElement('span');
+    totalSpan.className = 'price';
+    totalSpan.setAttribute('ref', 'totalPrice');
+    totalSpan.textContent = priceText;
+    totalCell.appendChild(totalSpan);
+    totalCol.appendChild(totalLabel);
+    totalCol.appendChild(totalCell);
+
+    row.appendChild(priceCol);
+    row.appendChild(totalCol);
+    this.appendChild(row);
+  }
+
   connectedCallback() {
     const closestSection = this.closest('.shopify-section, dialog');
     if (!closestSection) return;
@@ -85,6 +154,10 @@ class ProductPrice extends HTMLElement {
       this.dataset.variantPrice = String(initialCents);
     }
     this.#ensurePriceContainer();
+
+    if (new URLSearchParams(window.location.search).has('show_pricing')) {
+      this.#ensureShowPricingRow();
+    }
 
     const { signal } = this.#abortController;
     closestSection.addEventListener(ThemeEvents.variantUpdate, this.updatePrice);

@@ -135,7 +135,8 @@
     "
   >
     {{ children }}
-    {%- if show_pricing_mode and not onboarding and children contains 'product-price' == false -%}
+    {%- if show_pricing_mode and not onboarding -%}
+    {%- unless children contains 'product-price' -%}
       {%- assign _spm_variant = variant_to_link -%}
       {%- capture _spm_rlp_raw -%}{% render 'get-rlp-price', product: product, variant: _spm_variant %}{%- endcapture -%}
       {%- assign _spm_cents = _spm_rlp_raw | strip | plus: 0 -%}
@@ -170,6 +171,7 @@
           </div>
         </div>
       </product-price>
+    {%- endunless -%}
     {%- endif -%}
   </div>
 </product-card>

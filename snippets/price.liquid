@@ -41,13 +41,14 @@
   
   # Check if show_pricing mode (RLP pricing) is active
   assign show_pricing_mode = false
+  assign rlp_raw_cents = 0
   if request.url contains 'show_pricing' or request.query_string contains 'show_pricing'
     assign show_pricing_mode = true
-    # Use RLP metafield price when in show_pricing mode
     capture rlp_metafield_price
       render 'get-rlp-price', product: product_resource, variant: selected_variant
     endcapture
-    assign price = rlp_metafield_price | strip | plus: 0
+    assign rlp_raw_cents = rlp_metafield_price | strip | plus: 0
+    assign price = rlp_raw_cents
   endif
   
   capture _rlp_line
@@ -124,15 +125,14 @@
 <div ref="priceContainer">
   {% if can_show_pricing != blank or show_pricing_mode %}
     {%- if show_pricing_mode -%}
-      {%- comment -%} Show RLP metafield price in show_pricing mode {%- endcomment -%}
       {%- liquid
         if use_currency
-          assign pricing_display = price | money_with_currency
+          assign pricing_display = rlp_raw_cents | money_with_currency
         else
-          assign pricing_display = price | money
+          assign pricing_display = rlp_raw_cents | money
         endif
       -%}
-      <span class="price" data-rlp-cents="{{ price }}" data-can-show-pricing="{{ can_show_pricing }}">{{ pricing_display }}</span>
+      <span class="price">{{ pricing_display }}</span>
     {%- elsif has_rlp_display and rlp_cents_display > 0 -%}
       {%- liquid
         if use_currency

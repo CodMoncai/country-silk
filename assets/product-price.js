@@ -46,6 +46,32 @@ class ProductPrice extends HTMLElement {
     return parseInt(this.dataset.variantPrice, 10);
   }
 
+  #ensurePriceContainer() {
+    let priceContainer = this.querySelector('[ref="priceContainer"]');
+    if (!priceContainer) {
+      priceContainer = document.createElement('div');
+      priceContainer.setAttribute('ref', 'priceContainer');
+      const scriptMap = this.querySelector('script[data-variant-unit-cents-map]');
+      if (scriptMap?.parentNode) {
+        scriptMap.insertAdjacentElement('afterend', priceContainer);
+      } else {
+        this.appendChild(priceContainer);
+      }
+    }
+
+    let priceElement = priceContainer.querySelector('.price');
+    if (!priceElement) {
+      priceElement = document.createElement('span');
+      priceElement.className = 'price';
+      priceContainer.appendChild(priceElement);
+    }
+
+    const priceCents = this.#displayUnitCents();
+    if (!Number.isNaN(priceCents)) {
+      priceElement.textContent = this.#formatMoney(priceCents);
+    }
+  }
+
   connectedCallback() {
     const closestSection = this.closest('.shopify-section, dialog');
     if (!closestSection) return;
@@ -58,6 +84,7 @@ class ProductPrice extends HTMLElement {
     if (!Number.isNaN(initialCents)) {
       this.dataset.variantPrice = String(initialCents);
     }
+    this.#ensurePriceContainer();
 
     const { signal } = this.#abortController;
     closestSection.addEventListener(ThemeEvents.variantUpdate, this.updatePrice);

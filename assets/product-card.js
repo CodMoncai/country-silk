@@ -274,7 +274,7 @@ export class ProductCard extends Component {
    * @param {VariantUpdateEvent} event - The variant update event.
    */
   updatePrice(event) {
-    const priceContainer = this.querySelectorAll(`product-price [ref='priceContainer']`)[1];
+    const priceContainer = this.querySelector(`product-price [ref='priceContainer']`);
     const newPriceElement = event.detail.data.html.querySelector(`product-price [ref='priceContainer']`);
 
     if (newPriceElement && priceContainer) {

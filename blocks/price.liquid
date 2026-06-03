@@ -7,8 +7,19 @@
     render 'rlp-variant-unit-cents', variant: selected_variant, product: product_resource
   endcapture
   assign _rlp_sel_parts = _rlp_sel_line | strip | split: '|'
+
+  assign show_pricing_mode = false
+  if request.url contains 'show_pricing' or request.query_string contains 'show_pricing'
+    assign show_pricing_mode = true
+  endif
+
   assign display_unit_cents = selected_variant.price
-  if _rlp_sel_parts[0] == '1'
+  if show_pricing_mode
+    capture display_rlp_price
+      render 'get-rlp-price', product: product_resource, variant: selected_variant
+    endcapture
+    assign display_unit_cents = display_rlp_price | strip | plus: 0
+  elsif _rlp_sel_parts[0] == '1'
     assign display_unit_cents = _rlp_sel_parts[1] | strip | plus: 0
   endif
 -%}
@@ -50,6 +61,7 @@
   data-initial-variant-id="{{ selected_variant.id }}"
   data-variant-price="{{ display_unit_cents }}"
   data-currency="{{ cart.currency.iso_code }}"
+  data-show-pricing="{{ show_pricing_mode }}"
   style="
     {% render 'typography-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
@@ -60,12 +72,12 @@
   <script type="application/json" data-variant-unit-cents-map>
     {
     {%- for v in product_resource.variants -%}
-      "{{ v.id }}": {% capture _rlp_map_c %}{% render 'rlp-variant-unit-cents', variant: v, product: product_resource %}{% endcapture %}{% assign _rlp_ms = _rlp_map_c | strip | split: '|' %}{% if _rlp_ms[0] == '1' %}{{ _rlp_ms[1] | strip }}{% else %}{{ v.price }}{% endif %}{% unless forloop.last %},{% endunless %}
+      "{{ v.id }}": {% if show_pricing_mode %}{% capture _rlp_variant_price %}{% render 'get-rlp-price', product: product_resource, variant: v %}{% endcapture %}{{ _rlp_variant_price | strip | plus: 0 }}{% else %}{% capture _rlp_map_c %}{% render 'rlp-variant-unit-cents', variant: v, product: product_resource %}{% endcapture %}{% assign _rlp_ms = _rlp_map_c | strip | split: '|' %}{% if _rlp_ms[0] == '1' %}{{ _rlp_ms[1] | strip }}{% else %}{{ v.price }}{% endif %}{% endif %}{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
     }
   </script>
   {% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
-  {% if can_show_pricing != blank %}
+  {% if can_show_pricing != blank or show_pricing_mode %}
     <div class="product-price__row">
       <div class="product-price__column product-price__column--price">
         <span class="product-price__label caption-large">{{ 'content.price' | t }}</span>

@@ -147,6 +147,19 @@ class ProductPrice extends HTMLElement {
   };
 
   /**
+   * Called by product-card after it morphs the price container on collection pages.
+   * The variantUpdate event is stopPropagated by product-card so this element's
+   * section-level listener never fires — this gives it a way to still refresh the total.
+   * @param {string | number} variantId
+   */
+  updateVariantId(variantId) {
+    if (variantId != null) {
+      this.dataset.activeVariantId = String(variantId);
+    }
+    this.#updateTotal();
+  }
+
+  /**
    * Updates the price and volume pricing note.
    * @param {VariantUpdateEvent} event - The variant update event.
    */

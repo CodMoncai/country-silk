@@ -280,6 +280,13 @@ export class ProductCard extends Component {
     if (newPriceElement && priceContainer) {
       morph(priceContainer, newPriceElement);
     }
+
+    // variantUpdate is stopPropagated at the card level so product-price's section
+    // listener never fires. Notify it directly so it can refresh the Total column.
+    const productPriceEl = this.querySelector('product-price');
+    if (productPriceEl && event.detail.resource?.id != null) {
+      productPriceEl.updateVariantId?.(event.detail.resource.id);
+    }
   }
 
   /**

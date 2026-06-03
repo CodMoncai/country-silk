@@ -135,7 +135,7 @@
     "
   >
     {{ children }}
-    {%- if show_pricing_mode and not onboarding -%}
+    {%- if show_pricing_mode and onboarding == false -%}
     {%- unless children contains 'product-price' -%}
       {%- assign _spm_variant = variant_to_link -%}
       {%- capture _spm_rlp_raw -%}{% render 'get-rlp-price', product: product, variant: _spm_variant %}{%- endcapture -%}

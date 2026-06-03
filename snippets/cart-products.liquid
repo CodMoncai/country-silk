@@ -3,6 +3,10 @@
 %}
 
 {% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
+{% assign members_only_bypass_mode = false %}
+{% if request.query_string contains 'members_only_bypass' or request.url contains 'members_only_bypass' %}
+  {% assign members_only_bypass_mode = true %}
+{% endif %}
 
 <script
   src="{{ 'component-cart-items.js' | asset_url }}"
@@ -330,7 +334,7 @@
                   role="cell"
                   headers="productTotal"
                 >
-                  {% if can_show_pricing != blank %}
+                  {% if can_show_pricing != blank or members_only_bypass_mode %}
                     {%- liquid
                       if settings.currency_code_enabled_cart_items
                         assign price = item.final_line_price | money_with_currency

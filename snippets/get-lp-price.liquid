@@ -1,52 +1,94 @@
 {%- comment -%}
-  Retrieves LP (list price) from metafields with fallback to regular price.
+  Retrieves LP (list price) from metafields in cents, with fallback to variant.price.
+  Handles money, number_decimal, number_integer, and text metafield types correctly.
   Checks variant.metafields.custom.lp first, then product.metafields.custom.lp.
 
   @param {object} product - Product object
   @param {object} variant - Variant object
 
-  Outputs: price in cents (e.g., 2999 for $29.99)
+  Outputs: price in cents (e.g., 6888 for $68.88)
 {%- endcomment -%}
 
 {%- liquid
-  assign lp_price = nil
-  assign fallback_price = nil
-
-  if variant and variant.metafields.custom.lp
-    assign lp_check = variant.metafields.custom.lp
-    if lp_check.value
-      assign lp_price = lp_check.value
-    elsif lp_check != blank
-      assign lp_price = lp_check
-    endif
-  endif
-
-  if lp_price == blank and product
-    assign product_lp_check = product.metafields.custom.lp
-    if product_lp_check
-      if product_lp_check.value
-        assign lp_price = product_lp_check.value
-      elsif product_lp_check != blank
-        assign lp_price = product_lp_check
-      endif
-    endif
-  endif
-
+  assign _lp_cents = nil
+  assign _lp_fallback = nil
   if variant
-    assign fallback_price = variant.price
+    assign _lp_fallback = variant.price
   elsif product
-    assign fallback_price = product.selected_or_first_available_variant.price
-  endif
-
-  if lp_price != blank
-    assign lp_price = lp_price | plus: 0
-  endif
-
-  if lp_price > 0
-    echo lp_price
-  elsif fallback_price != blank and fallback_price > 0
-    echo fallback_price
-  else
-    echo 0
+    assign _lp_fallback = product.selected_or_first_available_variant.price
   endif
 -%}
+
+{%- if variant and variant.metafields.custom.lp != blank -%}
+  {%- assign _mf = variant.metafields.custom.lp -%}
+  {%- assign _raw = _mf.value -%}
+  {%- if _raw == blank -%}{%- assign _raw = _mf -%}{%- endif -%}
+  {%- assign _type = _mf.type | default: '' -%}
+  {%- if _type == 'money' or _type contains 'money' -%}
+    {%- capture _cap -%}{{ _raw }}{%- endcapture -%}
+    {%- assign _s = _cap | strip | replace: '$', '' | replace: ' ', '' | remove: ',' -%}
+    {%- assign _lp_cents = _s | plus: 0 -%}
+    {%- if _lp_cents == 0 -%}
+      {%- capture _cap_mwc -%}{{ _raw | money_without_currency }}{%- endcapture -%}
+      {%- assign _lp_cents = _cap_mwc | strip | replace: ',', '.' | replace: ' ', '' | times: 100 | round -%}
+    {%- endif -%}
+  {%- elsif _type == 'number_decimal' -%}
+    {%- assign _lp_cents = _raw | times: 100 | round -%}
+  {%- elsif _type == 'number_integer' -%}
+    {%- assign _lp_cents = _raw | plus: 0 -%}
+  {%- elsif _type == 'single_line_text_field' -%}
+    {%- assign _cleaned = _raw | strip | replace: '$', '' | replace: ',', '' -%}
+    {%- assign _lp_cents = _cleaned | times: 100 | round -%}
+  {%- else -%}
+    {%- capture _cap_else -%}{{ _raw }}{%- endcapture -%}
+    {%- assign _str = _cap_else | strip | remove: ',' -%}
+    {%- assign _num = _str | plus: 0 -%}
+    {%- if _str contains '.' -%}
+      {%- assign _lp_cents = _num | times: 100 | round -%}
+    {%- else -%}
+      {%- assign _lp_cents = _num -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if _lp_cents == blank or _lp_cents <= 0 -%}
+  {%- if product and product.metafields.custom.lp != blank -%}
+    {%- assign _mf = product.metafields.custom.lp -%}
+    {%- assign _raw = _mf.value -%}
+    {%- if _raw == blank -%}{%- assign _raw = _mf -%}{%- endif -%}
+    {%- assign _type = _mf.type | default: '' -%}
+    {%- if _type == 'money' or _type contains 'money' -%}
+      {%- capture _cap -%}{{ _raw }}{%- endcapture -%}
+      {%- assign _s = _cap | strip | replace: '$', '' | replace: ' ', '' | remove: ',' -%}
+      {%- assign _lp_cents = _s | plus: 0 -%}
+      {%- if _lp_cents == 0 -%}
+        {%- capture _cap_mwc -%}{{ _raw | money_without_currency }}{%- endcapture -%}
+        {%- assign _lp_cents = _cap_mwc | strip | replace: ',', '.' | replace: ' ', '' | times: 100 | round -%}
+      {%- endif -%}
+    {%- elsif _type == 'number_decimal' -%}
+      {%- assign _lp_cents = _raw | times: 100 | round -%}
+    {%- elsif _type == 'number_integer' -%}
+      {%- assign _lp_cents = _raw | plus: 0 -%}
+    {%- elsif _type == 'single_line_text_field' -%}
+      {%- assign _cleaned = _raw | strip | replace: '$', '' | replace: ',', '' -%}
+      {%- assign _lp_cents = _cleaned | times: 100 | round -%}
+    {%- else -%}
+      {%- capture _cap_else -%}{{ _raw }}{%- endcapture -%}
+      {%- assign _str = _cap_else | strip | remove: ',' -%}
+      {%- assign _num = _str | plus: 0 -%}
+      {%- if _str contains '.' -%}
+        {%- assign _lp_cents = _num | times: 100 | round -%}
+      {%- else -%}
+        {%- assign _lp_cents = _num -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if _lp_cents != blank and _lp_cents > 0 -%}
+  {{- _lp_cents -}}
+{%- elsif _lp_fallback != blank and _lp_fallback > 0 -%}
+  {{- _lp_fallback -}}
+{%- else -%}
+  0
+{%- endif -%}

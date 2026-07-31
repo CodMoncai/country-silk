@@ -38,7 +38,16 @@
   assign variant_price = selected_variant.price
   assign compare_at_price = selected_variant.compare_at_price
   assign price = variant_price
-  
+
+  # Use LP (list price) metafield if available — overrides variant.price
+  capture _lp_raw
+    render 'get-lp-price', product: product_resource, variant: selected_variant
+  endcapture
+  assign _lp_cents = _lp_raw | strip | plus: 0
+  if _lp_cents > 0
+    assign price = _lp_cents
+  endif
+
   # Check if show_pricing mode (RLP pricing) is active
   assign show_pricing_mode = false
   assign rlp_raw_cents = 0

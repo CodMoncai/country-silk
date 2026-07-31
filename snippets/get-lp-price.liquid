@@ -1,0 +1,52 @@
+{%- comment -%}
+  Retrieves LP (list price) from metafields with fallback to regular price.
+  Checks variant.metafields.custom.lp first, then product.metafields.custom.lp.
+
+  @param {object} product - Product object
+  @param {object} variant - Variant object
+
+  Outputs: price in cents (e.g., 2999 for $29.99)
+{%- endcomment -%}
+
+{%- liquid
+  assign lp_price = nil
+  assign fallback_price = nil
+
+  if variant and variant.metafields.custom.lp
+    assign lp_check = variant.metafields.custom.lp
+    if lp_check.value
+      assign lp_price = lp_check.value
+    elsif lp_check != blank
+      assign lp_price = lp_check
+    endif
+  endif
+
+  if lp_price == blank and product
+    assign product_lp_check = product.metafields.custom.lp
+    if product_lp_check
+      if product_lp_check.value
+        assign lp_price = product_lp_check.value
+      elsif product_lp_check != blank
+        assign lp_price = product_lp_check
+      endif
+    endif
+  endif
+
+  if variant
+    assign fallback_price = variant.price
+  elsif product
+    assign fallback_price = product.selected_or_first_available_variant.price
+  endif
+
+  if lp_price != blank
+    assign lp_price = lp_price | plus: 0
+  endif
+
+  if lp_price > 0
+    echo lp_price
+  elsif fallback_price != blank and fallback_price > 0
+    echo fallback_price
+  else
+    echo 0
+  endif
+-%}

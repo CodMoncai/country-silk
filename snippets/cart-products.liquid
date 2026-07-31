@@ -117,6 +117,9 @@
 
           <tbody role="rowgroup">
             {% for item in cart.items %}
+              {%- capture _item_lp_raw -%}{% render 'get-lp-price', product: item.product, variant: item.variant %}{%- endcapture -%}
+              {%- assign _item_lp_cents = _item_lp_raw | strip | plus: 0 -%}
+              {%- assign _item_lp_line_total = _item_lp_cents | times: item.quantity -%}
               <tr
                 role="row"
                 class="cart-items__table-row{% if item.parent_relationship.parent != null %} cart-items__nested-line{% endif %}"
@@ -242,30 +245,14 @@
 
                   {% if can_show_pricing != blank %}
                     <div>
-                      {% if item.original_price != item.final_price %}
+                      {% if item.variant.compare_at_price > _item_lp_cents %}
                         <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-                        <span>{{ item.final_price | money }}</span>
+                        <span>{{ _item_lp_cents | money }}</span>
                         <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
-                        <s class="compare-at-price">
-                          {% if item.variant.compare_at_price > item.original_price %}
-                            {{ item.variant.compare_at_price | money }}
-                          {% else %}
-                            {{ item.original_price | money }}
-                          {% endif %}
-                        </s>
+                        <s class="compare-at-price">{{ item.variant.compare_at_price | money }}</s>
                       {% else %}
-                        {% if item.variant.compare_at_price > item.original_price %}
-                          <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
-                        {% else %}
-                          <span class="visually-hidden">{{ 'content.price' | t }}</span>
-                        {% endif %}
-
-                        <span>{{ item.original_price | money }}</span>
-
-                        {% if item.variant.compare_at_price > item.original_price %}
-                          <span class="visually-hidden">{{ 'content.price_regular' | t }}</span>
-                          <s class="compare-at-price">{{ item.variant.compare_at_price | money }}</s>
-                        {% endif %}
+                        <span class="visually-hidden">{{ 'content.price' | t }}</span>
+                        <span>{{ _item_lp_cents | money }}</span>
                       {% endif %}
                     </div>
                   {% endif %}
@@ -337,10 +324,10 @@
                   {% if can_show_pricing != blank or members_only_bypass_mode %}
                     {%- liquid
                       if settings.currency_code_enabled_cart_items
-                        assign price = item.final_line_price | money_with_currency
+                        assign price = _item_lp_line_total | money_with_currency
                         assign unit_price = item.unit_price | money_with_currency
                       else
-                        assign price = item.final_line_price | money
+                        assign price = _item_lp_line_total | money
                         assign unit_price = item.unit_price | money
                       endif
                     -%}

@@ -224,10 +224,19 @@
 
   {% if can_show_pricing != blank %}
     {%- liquid
+      assign lp_cart_total = 0
+      for item in cart.items
+        capture _lp_summary_raw
+          render 'get-lp-price', product: item.product, variant: item.variant
+        endcapture
+        assign _lp_summary_cents = _lp_summary_raw | strip | plus: 0
+        assign _lp_summary_line = _lp_summary_cents | times: item.quantity
+        assign lp_cart_total = lp_cart_total | plus: _lp_summary_line
+      endfor
       if settings.currency_code_enabled_cart_total
-        assign total_price = cart.total_price | money_with_currency
+        assign total_price = lp_cart_total | money_with_currency
       else
-        assign total_price = cart.total_price | money
+        assign total_price = lp_cart_total | money
       endif
     -%}
 

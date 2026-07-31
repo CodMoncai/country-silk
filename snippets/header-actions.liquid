@@ -23,16 +23,27 @@
     {% render 'cart-bubble', limit: 100, live_region: true, test_id: test_id %}
     {% capture can_show_pricing %}{% render 'can-show-pricing' %}{% endcapture %}
     {% if can_show_pricing != blank %}
+      {%- liquid
+        assign _lp_icon_total = 0
+        for item in cart.items
+          capture _lp_icon_raw
+            render 'get-lp-price', product: item.product, variant: item.variant
+          endcapture
+          assign _lp_icon_cents = _lp_icon_raw | strip | plus: 0
+          assign _lp_icon_line = _lp_icon_cents | times: item.quantity
+          assign _lp_icon_total = _lp_icon_total | plus: _lp_icon_line
+        endfor
+      -%}
       <span
         class="header-actions__cart-total"
         ref="cartTotal"
-        data-cart-total="{{ cart.total_price }}"
+        data-cart-total="{{ _lp_icon_total }}"
         data-currency="{{ cart.currency.iso_code }}"
-        {% if cart.total_price == 0 %}
+        {% if _lp_icon_total == 0 %}
           hidden
         {% endif %}
       >
-        {{ cart.total_price | money }}
+        {{ _lp_icon_total | money }}
       </span>
     {% endif %}
   </cart-icon>

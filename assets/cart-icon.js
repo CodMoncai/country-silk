@@ -143,30 +143,15 @@ class CartIcon extends Component {
   }
 
   /**
-   * @param {Object} resource
+   * @param {Object} _resource
    */
-  #updateCartTotal = async (resource) => {
+  #updateCartTotal = async (_resource) => {
     if (!this.refs.cartTotal) return;
-
-    if (resource && typeof resource.total_price === 'number') {
-      this.#setCartTotal(resource.total_price);
-      return;
-    }
-
-    try {
-      const response = await fetch('/cart.js', {
-        headers: { Accept: 'application/json' },
-      });
-
-      if (!response.ok) return;
-
-      const cart = await response.json();
-      if (typeof cart.total_price !== 'number') return;
-
-      this.#setCartTotal(cart.total_price);
-    } catch (_) {
-      // no-op
-    }
+    // LP (list price) totals are computed server-side in header-actions.liquid and
+    // reflected in data-cart-total after morphSection re-renders the header section.
+    // We yield to the macrotask queue so morphSection can update the DOM first.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    this.#updateCartTotalFromDataset();
   };
 
   /**
